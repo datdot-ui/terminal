@@ -14,7 +14,19 @@ function demo () {
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
     recipients['logs'](message)
-    // bel`<button class="btn" role="switch" aria-label="Toggle" aria-checked="${is_checked}" onclick=${() => handle_toggle_event('toggle') }>Toggle</button>`
+    recipients['logs'](make({to: '*', type: 'info'}))
+    recipients['logs'](make({to: '*', type: 'extrinsic'}))
+    recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+    recipients['logs'](make({to: '*', type: 'register'}))
+    recipients['logs'](make({to: '*', type: 'current-block'}))
+    recipients['logs'](make({to: '*', type: 'eventpool'}))
+    recipients['logs'](make({to: '*', type: 'keep-alive'}))
+    recipients['logs'](make({to: '*', type: 'user'}))
+    recipients['logs'](make({to: '*', type: 'peer'}))
+    recipients['logs'](make({to: '*', type: '@todo'}))
+    recipients['logs'](make({to: '*', type: 'hoster'}))
+    recipients['logs'](make({to: '*', type: 'encoder'}))
+    recipients['logs'](make({to: '*', type: 'attestor'}))
     const click = button({name: 'click', body: 'Click', 
     theme: {
         props: { 
@@ -45,7 +57,7 @@ function demo () {
             border_radius: '0'
         }
     }}, protocol('warning'))
-    const select = button({name: 'select', body: 'Select', selected: is_selected, 
+    const select = button({name: 'select', role: 'button', body: 'Select', selected: is_selected, 
     theme: {
         props: { 
             border_radius: '0'
@@ -57,18 +69,11 @@ function demo () {
             border_radius: '0'
         }
     }}, protocol('toggle'))
-    // bel`<button class="btn" role="button" aria-label="Select" aria-selected="${is_selected}" onclick=${() => handle_selected_event('select') }>Select</button>`
             
     const container = bel`
     <div class="${css.container}">
         <div class="${css.actions}">${click}${open}${close}${error}${warning}${toggle}${select}</div>
     </div>`
-
-    // <button class="btn" role="button" aria-label="Click" onclick=${() => handle_click_event('click') }>Click</button>
-    // <button class="btn" role="button" aria-label="Open" onclick=${() => handle_open_event('open') }>Open</button>
-    // <button class="btn" role="button" aria-label="Close" onclick=${() => handle_close_event('close') }>Close</button>
-    // <button class="btn" role="button" aria-label="Error" onclick=${() => handle_error_event('error') }>Error</button>
-    // <button class="btn" role="button" aria-label="Warning" onclick=${() => handle_warning_event('warning') }>Warning</button>
 
     const app = bel`
     <div class="${css.wrap}" data-state="debug">
@@ -77,60 +82,62 @@ function demo () {
 
     return app
 
-    function handle_click_event (target) {
+    function click_event (target) {
         const make = message_maker(`${target} / button / PLAN / handle_click_event`)
         const message = make({type: 'click'})
-        // recipients['logs']({page: 'JOBS', from: target, flow: 'button', type: 'click', fn: 'handle_click_event', line: 36})
         recipients['logs'](message)
-        handle_trigger_event(target)
+        trigger_event(target)
     }
-    function handle_trigger_event(target) {
+    function trigger_event(target) {
         const make = message_maker(`${target} / button / PLAN / handle_trigger_event`)
         const message = make({type: 'triggered'})
-        // recipients['logs']({page: 'Demo', from: target, flow: 'button', type: 'triggered', fn: 'handle_trigger_event', line: 40})
         recipients['logs'](message)
     }
-    function handle_open_event (target) {
+    function open_event (target) {
         const make = message_maker(`${target} / button / PLAN / handle_open_event`)
         const message = make({type: 'opened'})
-        // recipients['logs']({page: 'PLAN', from: target, flow: 'modal/button', type: 'opened', fn: 'handle_open_event', line: 43})
         recipients['logs'](message)
     }
-    function handle_close_event (target) {
+    function close_event (target) {
         const make = message_maker(`${target} / button / USER / handle_error_event`)
         const message = make({type: 'closed'})
-        // recipients['logs']({page: 'PLAN', from: target, flow: 'modal/button', type: 'closed', fn: 'handle_close_event', line: 46})
         recipients['logs'](message)
     }
-    function handle_error_event (target) {
+    function error_event (target) {
         const make = message_maker(`${target} / button / USER / handle_error_event`)
         const message = make({type: 'error'})
-        // recipients['logs']({page: 'USER', from: target, flow: 'transfer', type: 'error', fn: 'handle_error_event', line: 49})
         recipients['logs'](message)
     }
-    function handle_warning_event (target) {
+    function warning_event (target) {
         const make = message_maker(`${target} / button / PLAN / handle_warning_event`)
         const message = make({type: 'warning'})
-        // recipients['logs']({page: 'PLAN ', from: target, flow: 'plan', type: 'warning', fn: 'handle_error_event', line: 52})
         recipients['logs'](message)
     }
-    function handle_toggle_event(target) {
+    function toggle_event(target) {
         is_checked = !is_checked
         const type = is_checked === true ? 'checked' : 'unchecked'
         toggle.ariaChecked = is_checked
-        const make = message_maker(`button / JOBS / handle_toggle_event`)
+        const make = message_maker(`${target} / button / JOBS / handle_toggle_event`)
         const message = make({type})
-        // recipients['logs']({page: 'JOBS', from: target, flow: 'switch/button', type, fn: 'handle_toggle_event', line: 58})
         recipients['logs'](message)
     }
-    function handle_selected_event (target) {
+    function selected_event (target) {
         is_selected = !is_selected
         const type = is_selected === true ? 'selected' : 'unselected'
         select.ariaSelected = is_selected
-        const make = message_maker(`button / PLAN / handle_selected_event`)
+        const make = message_maker(`${target} / button / PLAN / handle_selected_event`)
         const message = make({type})
-        // recipients['logs']({page: 'PLAN', from: target, flow: 'date/button', type, fn: 'handle_selected_event', line: 64})
         recipients['logs'](message)
+    }
+    function handle_click (from) {
+        const [target, type, flow] = from.split(" ").join("").split("/")
+        if (target === 'select') return selected_event(target)
+        if (target === 'open') return open_event(target)
+        if (target === 'close') return close_event(target)
+        if (target === 'error') return error_event(target)
+        if (target === 'warning') return warning_event(target)
+        if (type === 'button') return click_event(target)
+        if (type === 'switch') return toggle_event(target)
     }
     function protocol (name) {
         return sender => {
@@ -139,6 +146,7 @@ function demo () {
                 const {head, type, data, refs, meta} = msg
                 // console.table( msg )
                 // console.log( `type: ${type}, file: ${file}, line: ${line}`);
+                if (type === 'click') return handle_click(head[0])
                 recipients['logs'](msg)
             }
         }
@@ -261,9 +269,9 @@ button:hover {
 [data-state="debug"] i-log {
     height: 100%;
 }
-[role="switch"][aria-checked="true"], [role="button"][aria-selected="true"] {
-    --color: var(--color-white);
-    --bgColor: var(--color-black);
+[aria-selected="true"] {
+    color: hsl(var(--color-white));
+    background-color: hsl(var(--primary-color));
 }
 `
 
@@ -2442,11 +2450,12 @@ function terminal (protocol, to = 'terminal') {
             const log = bel`
             <div class="log">
                 <span class="head">
-                    ${from}
-                    ${type_info}
-                    ${to}
+                ${type_info}
+                ${from} =＞ ${to}
                 </span>
+                ，
                 ${data_info}
+                ，
                 ${refs_info}
             </div>`
             var list = bel`
@@ -2475,31 +2484,31 @@ function terminal (protocol, to = 'terminal') {
 
 const style = `
 :host(i-terminal) {
-    --bgColor: var(--color-dark);
+    --bg-color: var(--color-dark);
     --opacity: 1;
     font-size: var(--size12);
     color: #fff;
-    background-color: hsla( var(--bgColor), var(--opacity));
+    background-color: hsla( var(--bg-color), var(--opacity));
     height: 100%;
     overflow: hidden auto;
     padding-top: 4px;
 }
 h4 {
-    --bgColor: var(--color-deep-black);
+    --bg-color: var(--color-deep-black);
     --opacity: 1;
     margin: 0;
     padding: 10px 10px;
     color: #fff;
-    background-color: hsl( var(--bgColor), var(--opacity) );
+    background-color: hsl( var(--bg-color), var(--opacity) );
 }
 log_list {}
 .list {
-    --bgColor: 0, 0%, 30%;
+    --bg-color: 0, 0%, 30%;
     --opacity: 0.25;
     --border-radius: 0;
     padding: 6px 10px;
     margin-bottom: 4px;
-    background-color: hsla( var(--bgColor), var(--opacity) );
+    background-color: hsla( var(--bg-color), var(--opacity) );
     border-radius: var(--border-radius);
     transition: background-color 0.6s ease-in-out;
 }
@@ -2513,7 +2522,7 @@ log_list {}
     height: auto;
 }
 log_list .list:last-child {
-    --bgColor: var(--color-verdigris);
+    --bg-color: var(--color-verdigris);
     --opacity: 0.5;
 }
 .log {
@@ -2534,10 +2543,10 @@ log_list .list:last-child {
 .to {}
 .type {
     --color: var(--color-greyD9);
-    --bgColor: var(--color-greyD9);
+    --bg-color: var(--color-greyD9);
     --opacity: .25;
     color: hsl( var(--color) );
-    background-color: hsla( var(--bgColor), var(--opacity) );
+    background-color: hsla( var(--bg-color), var(--opacity) );
     padding: 2px 10px;
     border-radius: 8px;
     justify-self: center;
@@ -2559,53 +2568,109 @@ log_list .list:last-child .file {
 }
 [aria-type="click"] {
     --color: var(--color-dark);
-    --bgColor: var(--color-yellow);
+    --bg-color: var(--color-yellow);
     --opacity: 1;
 }
 [aria-type="triggered"] {
     --color: var(--color-white);
-    --bgColor: var(--color-blue-jeans);
+    --bg-color: var(--color-blue-jeans);
     --opacity: .5;
 }
 [aria-type="opened"] {
-    --bgColor: var(--color-slate-blue);
+    --bg-color: var(--color-slate-blue);
     --opacity: 1;
 }
 [aria-type="closed"] {
-    --bgColor: var(--color-ultra-red);
+    --bg-color: var(--color-ultra-red);
     --opacity: 1;
 }
 [aria-type="error"] {
     --color: var(--color-white);
-    --bgColor: var(--color-red);
+    --bg-color: var(--color-red);
     --opacity: 1;
 }
 [aria-type="warning"] {
     --color: var(--color-white);
-    --bgColor: var(--color-deep-saffron);
+    --bg-color: var(--color-deep-saffron);
     --opacity: 1;
 }
 [aria-type="checked"] {
     --color: var(--color-dark);
-    --bgColor: var(--color-blue-jeans);
+    --bg-color: var(--color-blue-jeans);
     --opacity: 1;
 }
 [aria-type="unchecked"] {
-    --bgColor: var(--color-blue-jeans);
+    --bg-color: var(--color-blue-jeans);
     --opacity: .3;
 }
 [aria-type="selected"] {
     --color: var(--color-dark);
-    --bgColor: var(--color-lime-green);
+    --bg-color: var(--color-lime-green);
     --opacity: 1;
 }
 [aria-type="unselected"] {
-    --bgColor: var(--color-lime-green);
+    --bg-color: var(--color-lime-green);
     --opacity: .25;
 }
-
+[aria-type="info"] {
+    --bg-color: var(--color-dodger-blue);
+    --opacity: 1;
+}
+[aria-type="extrinsic"] {
+    --bg-color: var(--color-persian-rose);
+    --opacity: .5;
+}
+[aria-type="execute-extrinsic"] {
+    --bg-color: var(--color-persian-rose);
+    --opacity: 1;
+}
+[aria-type="register"] {
+    --color: var(--color-dark);
+    --bg-color: var(--color-amaranth-pink);
+    --opacity: 1;
+}
+[aria-type="current-block"] {
+    --color: var(--color-dark);
+    --bg-color: var(--color-maximum-blue-green);
+    --opacity: 1;
+}
+[aria-type="eventpool"] {
+    --bg-color: var(--color-blue);
+    --opacity: 1;
+}
+[aria-type="keep-alive"] {
+    --color: var(--color-dark);
+    --bg-color: var(--color-lime-green);
+    --opacity: 1;
+}
+[aria-type="user"] {
+    --bg-color: var(--color-medium-purple);
+    --opacity: 1;
+}
+[aria-type="peer"] {
+    --color: var(--color-dark);
+    --bg-color: var(--color-yellow);
+    --opacity: 1;
+}
+[aria-type="@todo"] {
+    --color: var(--color-grey33);
+    --bg-color: var(--color-orange);
+    --opacity: 1;
+}
+[aria-type="hoster"] {
+    --bg-color: var(--color-slate-blue);
+    --opacity: 1;
+}
+[aria-type="encoder"] {
+    --bg-color: var(--color-medium-purple);
+    --opacity: 1;
+}
+[aria-type="attestor"] {
+    --bg-color: var(--color-ultra-red);
+    --opacity: 1;
+}
 log_list .list:last-child [aria-type="ready"] {
-    --bgColor: var(--color-deep-black);
+    --bg-color: var(--color-deep-black);
     --opacity: 0.3;
 }
 .function {

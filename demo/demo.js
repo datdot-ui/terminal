@@ -13,7 +13,19 @@ function demo () {
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
     recipients['logs'](message)
-    // bel`<button class="btn" role="switch" aria-label="Toggle" aria-checked="${is_checked}" onclick=${() => handle_toggle_event('toggle') }>Toggle</button>`
+    recipients['logs'](make({to: '*', type: 'info'}))
+    recipients['logs'](make({to: '*', type: 'extrinsic'}))
+    recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+    recipients['logs'](make({to: '*', type: 'register'}))
+    recipients['logs'](make({to: '*', type: 'current-block'}))
+    recipients['logs'](make({to: '*', type: 'eventpool'}))
+    recipients['logs'](make({to: '*', type: 'keep-alive'}))
+    recipients['logs'](make({to: '*', type: 'user'}))
+    recipients['logs'](make({to: '*', type: 'peer'}))
+    recipients['logs'](make({to: '*', type: '@todo'}))
+    recipients['logs'](make({to: '*', type: 'hoster'}))
+    recipients['logs'](make({to: '*', type: 'encoder'}))
+    recipients['logs'](make({to: '*', type: 'attestor'}))
     const click = button({name: 'click', body: 'Click', 
     theme: {
         props: { 
@@ -44,7 +56,7 @@ function demo () {
             border_radius: '0'
         }
     }}, protocol('warning'))
-    const select = button({name: 'select', body: 'Select', selected: is_selected, 
+    const select = button({name: 'select', role: 'button', body: 'Select', selected: is_selected, 
     theme: {
         props: { 
             border_radius: '0'
@@ -56,18 +68,11 @@ function demo () {
             border_radius: '0'
         }
     }}, protocol('toggle'))
-    // bel`<button class="btn" role="button" aria-label="Select" aria-selected="${is_selected}" onclick=${() => handle_selected_event('select') }>Select</button>`
             
     const container = bel`
     <div class="${css.container}">
         <div class="${css.actions}">${click}${open}${close}${error}${warning}${toggle}${select}</div>
     </div>`
-
-    // <button class="btn" role="button" aria-label="Click" onclick=${() => handle_click_event('click') }>Click</button>
-    // <button class="btn" role="button" aria-label="Open" onclick=${() => handle_open_event('open') }>Open</button>
-    // <button class="btn" role="button" aria-label="Close" onclick=${() => handle_close_event('close') }>Close</button>
-    // <button class="btn" role="button" aria-label="Error" onclick=${() => handle_error_event('error') }>Error</button>
-    // <button class="btn" role="button" aria-label="Warning" onclick=${() => handle_warning_event('warning') }>Warning</button>
 
     const app = bel`
     <div class="${css.wrap}" data-state="debug">
@@ -76,60 +81,62 @@ function demo () {
 
     return app
 
-    function handle_click_event (target) {
+    function click_event (target) {
         const make = message_maker(`${target} / button / PLAN / handle_click_event`)
         const message = make({type: 'click'})
-        // recipients['logs']({page: 'JOBS', from: target, flow: 'button', type: 'click', fn: 'handle_click_event', line: 36})
         recipients['logs'](message)
-        handle_trigger_event(target)
+        trigger_event(target)
     }
-    function handle_trigger_event(target) {
+    function trigger_event(target) {
         const make = message_maker(`${target} / button / PLAN / handle_trigger_event`)
         const message = make({type: 'triggered'})
-        // recipients['logs']({page: 'Demo', from: target, flow: 'button', type: 'triggered', fn: 'handle_trigger_event', line: 40})
         recipients['logs'](message)
     }
-    function handle_open_event (target) {
+    function open_event (target) {
         const make = message_maker(`${target} / button / PLAN / handle_open_event`)
         const message = make({type: 'opened'})
-        // recipients['logs']({page: 'PLAN', from: target, flow: 'modal/button', type: 'opened', fn: 'handle_open_event', line: 43})
         recipients['logs'](message)
     }
-    function handle_close_event (target) {
+    function close_event (target) {
         const make = message_maker(`${target} / button / USER / handle_error_event`)
         const message = make({type: 'closed'})
-        // recipients['logs']({page: 'PLAN', from: target, flow: 'modal/button', type: 'closed', fn: 'handle_close_event', line: 46})
         recipients['logs'](message)
     }
-    function handle_error_event (target) {
+    function error_event (target) {
         const make = message_maker(`${target} / button / USER / handle_error_event`)
         const message = make({type: 'error'})
-        // recipients['logs']({page: 'USER', from: target, flow: 'transfer', type: 'error', fn: 'handle_error_event', line: 49})
         recipients['logs'](message)
     }
-    function handle_warning_event (target) {
+    function warning_event (target) {
         const make = message_maker(`${target} / button / PLAN / handle_warning_event`)
         const message = make({type: 'warning'})
-        // recipients['logs']({page: 'PLAN ', from: target, flow: 'plan', type: 'warning', fn: 'handle_error_event', line: 52})
         recipients['logs'](message)
     }
-    function handle_toggle_event(target) {
+    function toggle_event(target) {
         is_checked = !is_checked
         const type = is_checked === true ? 'checked' : 'unchecked'
         toggle.ariaChecked = is_checked
-        const make = message_maker(`button / JOBS / handle_toggle_event`)
+        const make = message_maker(`${target} / button / JOBS / handle_toggle_event`)
         const message = make({type})
-        // recipients['logs']({page: 'JOBS', from: target, flow: 'switch/button', type, fn: 'handle_toggle_event', line: 58})
         recipients['logs'](message)
     }
-    function handle_selected_event (target) {
+    function selected_event (target) {
         is_selected = !is_selected
         const type = is_selected === true ? 'selected' : 'unselected'
         select.ariaSelected = is_selected
-        const make = message_maker(`button / PLAN / handle_selected_event`)
+        const make = message_maker(`${target} / button / PLAN / handle_selected_event`)
         const message = make({type})
-        // recipients['logs']({page: 'PLAN', from: target, flow: 'date/button', type, fn: 'handle_selected_event', line: 64})
         recipients['logs'](message)
+    }
+    function handle_click (from) {
+        const [target, type, flow] = from.split(" ").join("").split("/")
+        if (target === 'select') return selected_event(target)
+        if (target === 'open') return open_event(target)
+        if (target === 'close') return close_event(target)
+        if (target === 'error') return error_event(target)
+        if (target === 'warning') return warning_event(target)
+        if (type === 'button') return click_event(target)
+        if (type === 'switch') return toggle_event(target)
     }
     function protocol (name) {
         return sender => {
@@ -138,6 +145,7 @@ function demo () {
                 const {head, type, data, refs, meta} = msg
                 // console.table( msg )
                 // console.log( `type: ${type}, file: ${file}, line: ${line}`);
+                if (type === 'click') return handle_click(head[0])
                 recipients['logs'](msg)
             }
         }
@@ -260,9 +268,9 @@ button:hover {
 [data-state="debug"] i-log {
     height: 100%;
 }
-[role="switch"][aria-checked="true"], [role="button"][aria-selected="true"] {
-    --color: var(--color-white);
-    --bgColor: var(--color-black);
+[aria-selected="true"] {
+    color: hsl(var(--color-white));
+    background-color: hsl(var(--primary-color));
 }
 `
 

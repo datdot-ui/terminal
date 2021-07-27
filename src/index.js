@@ -30,11 +30,12 @@ function terminal (protocol, to = 'terminal') {
             const log = bel`
             <div class="log">
                 <span class="head">
-                    ${from}
-                    ${type_info}
-                    ${to}
+                ${type_info}
+                ${from} =＞ ${to}
                 </span>
+                ，
                 ${data_info}
+                ，
                 ${refs_info}
             </div>`
             var list = bel`
@@ -63,31 +64,31 @@ function terminal (protocol, to = 'terminal') {
 
 const style = `
 :host(i-terminal) {
-    --bgColor: var(--color-dark);
+    --bg-color: var(--color-dark);
     --opacity: 1;
     font-size: var(--size12);
     color: #fff;
-    background-color: hsla( var(--bgColor), var(--opacity));
+    background-color: hsla( var(--bg-color), var(--opacity));
     height: 100%;
     overflow: hidden auto;
     padding-top: 4px;
 }
 h4 {
-    --bgColor: var(--color-deep-black);
+    --bg-color: var(--color-deep-black);
     --opacity: 1;
     margin: 0;
     padding: 10px 10px;
     color: #fff;
-    background-color: hsl( var(--bgColor), var(--opacity) );
+    background-color: hsl( var(--bg-color), var(--opacity) );
 }
 log_list {}
 .list {
-    --bgColor: 0, 0%, 30%;
+    --bg-color: 0, 0%, 30%;
     --opacity: 0.25;
     --border-radius: 0;
     padding: 6px 10px;
     margin-bottom: 4px;
-    background-color: hsla( var(--bgColor), var(--opacity) );
+    background-color: hsla( var(--bg-color), var(--opacity) );
     border-radius: var(--border-radius);
     transition: background-color 0.6s ease-in-out;
 }
@@ -101,7 +102,7 @@ log_list {}
     height: auto;
 }
 log_list .list:last-child {
-    --bgColor: var(--color-verdigris);
+    --bg-color: var(--color-verdigris);
     --opacity: 0.5;
 }
 .log {
@@ -122,10 +123,10 @@ log_list .list:last-child {
 .to {}
 .type {
     --color: var(--color-greyD9);
-    --bgColor: var(--color-greyD9);
+    --bg-color: var(--color-greyD9);
     --opacity: .25;
     color: hsl( var(--color) );
-    background-color: hsla( var(--bgColor), var(--opacity) );
+    background-color: hsla( var(--bg-color), var(--opacity) );
     padding: 2px 10px;
     border-radius: 8px;
     justify-self: center;
@@ -147,53 +148,109 @@ log_list .list:last-child .file {
 }
 [aria-type="click"] {
     --color: var(--color-dark);
-    --bgColor: var(--color-yellow);
+    --bg-color: var(--color-yellow);
     --opacity: 1;
 }
 [aria-type="triggered"] {
     --color: var(--color-white);
-    --bgColor: var(--color-blue-jeans);
+    --bg-color: var(--color-blue-jeans);
     --opacity: .5;
 }
 [aria-type="opened"] {
-    --bgColor: var(--color-slate-blue);
+    --bg-color: var(--color-slate-blue);
     --opacity: 1;
 }
 [aria-type="closed"] {
-    --bgColor: var(--color-ultra-red);
+    --bg-color: var(--color-ultra-red);
     --opacity: 1;
 }
 [aria-type="error"] {
     --color: var(--color-white);
-    --bgColor: var(--color-red);
+    --bg-color: var(--color-red);
     --opacity: 1;
 }
 [aria-type="warning"] {
     --color: var(--color-white);
-    --bgColor: var(--color-deep-saffron);
+    --bg-color: var(--color-deep-saffron);
     --opacity: 1;
 }
 [aria-type="checked"] {
     --color: var(--color-dark);
-    --bgColor: var(--color-blue-jeans);
+    --bg-color: var(--color-blue-jeans);
     --opacity: 1;
 }
 [aria-type="unchecked"] {
-    --bgColor: var(--color-blue-jeans);
+    --bg-color: var(--color-blue-jeans);
     --opacity: .3;
 }
 [aria-type="selected"] {
     --color: var(--color-dark);
-    --bgColor: var(--color-lime-green);
+    --bg-color: var(--color-lime-green);
     --opacity: 1;
 }
 [aria-type="unselected"] {
-    --bgColor: var(--color-lime-green);
+    --bg-color: var(--color-lime-green);
     --opacity: .25;
 }
-
+[aria-type="info"] {
+    --bg-color: var(--color-dodger-blue);
+    --opacity: 1;
+}
+[aria-type="extrinsic"] {
+    --bg-color: var(--color-persian-rose);
+    --opacity: .5;
+}
+[aria-type="execute-extrinsic"] {
+    --bg-color: var(--color-persian-rose);
+    --opacity: 1;
+}
+[aria-type="register"] {
+    --color: var(--color-dark);
+    --bg-color: var(--color-amaranth-pink);
+    --opacity: 1;
+}
+[aria-type="current-block"] {
+    --color: var(--color-dark);
+    --bg-color: var(--color-maximum-blue-green);
+    --opacity: 1;
+}
+[aria-type="eventpool"] {
+    --bg-color: var(--color-blue);
+    --opacity: 1;
+}
+[aria-type="keep-alive"] {
+    --color: var(--color-dark);
+    --bg-color: var(--color-lime-green);
+    --opacity: 1;
+}
+[aria-type="user"] {
+    --bg-color: var(--color-medium-purple);
+    --opacity: 1;
+}
+[aria-type="peer"] {
+    --color: var(--color-dark);
+    --bg-color: var(--color-yellow);
+    --opacity: 1;
+}
+[aria-type="@todo"] {
+    --color: var(--color-grey33);
+    --bg-color: var(--color-orange);
+    --opacity: 1;
+}
+[aria-type="hoster"] {
+    --bg-color: var(--color-slate-blue);
+    --opacity: 1;
+}
+[aria-type="encoder"] {
+    --bg-color: var(--color-medium-purple);
+    --opacity: 1;
+}
+[aria-type="attestor"] {
+    --bg-color: var(--color-ultra-red);
+    --opacity: 1;
+}
 log_list .list:last-child [aria-type="ready"] {
-    --bgColor: var(--color-deep-black);
+    --bg-color: var(--color-deep-black);
     --opacity: 0.3;
 }
 .function {
