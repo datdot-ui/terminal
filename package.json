@@ -1,0 +1,40 @@
+{
+  "name": "datdot-termninal",
+  "version": "0.1.0",
+  "description": "Debug codes and trace for data entries",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "budo demo/demo.js:bundle.js --open --live",
+    "build": "browserify demo/demo.js -o bundle.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fionataeyang/datdot-terminal.git"
+  },
+  "keywords": [
+    "datdot",
+    "component",
+    "debug",
+    "log",
+    "dev tool"
+  ],
+  "author": {
+    "name": "fionataeyang",
+    "url": "https://github.com/fionataeyang"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fionataeyang/datdot-terminal/issues"
+  },
+  "homepage": "https://github.com/fionataeyang/datdot-terminal#readme",
+  "devDependencies": {
+    "browserify": "^17.0.0",
+    "budo": "^11.6.4"
+  },
+  "dependencies": {
+    "bel": "^6.0.0",
+    "csjs-inject": "^1.0.1",
+    "datdot-ui-button": "https://github.com/fionataeyang/datdot-ui-button"
+  }
+}
