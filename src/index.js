@@ -19,7 +19,6 @@ function terminal (protocol, to = 'terminal') {
     return el
 
     function get (msg) {
-        // const {page = 'Demo', from, flow, type, body, fn, file, line} = msg
         const {head, refs, type, data, meta} = msg
         try {
             const from = bel`<span aria-label=${head[0]} class="from">${head[0]}</span>`

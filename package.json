@@ -1,5 +1,5 @@
 {
-  "name": "datdot-termninal",
+  "name": "datdot-terminal",
   "version": "0.1.0",
   "description": "Debug codes and trace for data entries",
   "main": "src/index.js",
