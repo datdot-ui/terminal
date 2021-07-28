@@ -33,9 +33,7 @@ function terminal (protocol, to = 'terminal') {
                 ${type_info}
                 ${from} =＞ ${to}
                 </span>
-                ，
                 ${data_info}
-                ，
                 ${refs_info}
             </div>`
             var list = bel`
@@ -86,7 +84,7 @@ log_list {}
     --bg-color: 0, 0%, 30%;
     --opacity: 0.25;
     --border-radius: 0;
-    padding: 6px 10px;
+    padding: 4px 10px 2px 0px;
     margin-bottom: 4px;
     background-color: hsla( var(--bg-color), var(--opacity) );
     border-radius: var(--border-radius);
@@ -100,6 +98,7 @@ log_list {}
 .list[aria-expanded="true"] .file {
     opacity: 1;
     height: auto;
+    padding: 8px 8px 4px 8px;
 }
 log_list .list:last-child {
     --bg-color: var(--color-verdigris);
@@ -127,10 +126,10 @@ log_list .list:last-child {
     --opacity: .25;
     color: hsl( var(--color) );
     background-color: hsla( var(--bg-color), var(--opacity) );
-    padding: 2px 10px;
-    border-radius: 8px;
+    padding: 2px 4px;
     justify-self: center;
     align-self: center;
+    margin:0 12px 0 0;
 }
 log_list .list:last-child .type {}
 .file {
@@ -261,10 +260,12 @@ log_list .list:last-child .function {
     --color: var(--color-white);
 }
 .head {
+    padding-right: 8px;
 }
 .refs {
     display: inline-flex;
     gap: 5px;
     color: white;
+    padding-left: 8px;
 }
 `
