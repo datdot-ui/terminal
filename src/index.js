@@ -3,8 +3,8 @@ const style_sheet = require('support-style-sheet')
 const message_maker = require('message_maker')
 
 module.exports = terminal
-function terminal (protocol, to = 'terminal') {
-    let is_expanded = false
+function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false) {
+    let is_expanded = expanded
     const send = protocol(get)
     const make = message_maker(`terminal / index.js`)
     const message = make({to, type: 'ready', refs: ['old_logs', 'new_logs']})
@@ -29,15 +29,17 @@ function terminal (protocol, to = 'terminal') {
             refs.map( (ref, i) => refs_info.append(bel`<span aria-label="${ref}">${ref}${i < refs.length - 1 ? ', ' : ''}</span>`))
             const log = bel`
             <div class="log">
-                <span class="head">
+                <div class="head">
                 ${type_info}
-                ${from} =＞ ${to}
-                </span>
+                ${from}
+                <span class="arrow">=＞</span>
+                ${to}
+                </div>
                 ${data_info}
                 ${refs_info}
             </div>`
             var list = bel`
-            <section class="list" aria-expanded="false" onclick=${(e) => handle_accordion_event(list)}>
+            <section class="list" aria-expanded="${is_expanded}" onclick=${(e) => handle_accordion_event(list)}>
                 ${log}
                 <div class="file">
                     <span>${meta.stack[0]}</span>
@@ -84,8 +86,8 @@ log_list {}
     --bg-color: 0, 0%, 30%;
     --opacity: 0.25;
     --border-radius: 0;
-    padding: 4px 10px 2px 0px;
-    margin-bottom: 4px;
+    padding: 2px 10px 2px 0px;
+    margin-bottom: 1px;
     background-color: hsla( var(--bg-color), var(--opacity) );
     border-radius: var(--border-radius);
     transition: background-color 0.6s ease-in-out;
@@ -101,8 +103,8 @@ log_list {}
     padding: 8px 8px 4px 8px;
 }
 log_list .list:last-child {
-    --bg-color: var(--color-verdigris);
-    --opacity: 0.5;
+    --bg-color: var(--color-viridian-green);
+    --opacity: .3;
 }
 .log {
     line-height: 1.8;
@@ -113,25 +115,40 @@ log_list .list:last-child {
     --size: var(--size12);
     font-size: var(--size);
 }
-.from {
-    --color: var(--color-maximum-blue-green);
-    color: hsl( var(--color) );
-    justify-content: center;
-    align-items: center;
+.head {
+    display: inline-block;
 }
-.to {}
 .type {
     --color: var(--color-greyD9);
     --bg-color: var(--color-greyD9);
     --opacity: .25;
+    display: inline-grid;
     color: hsl( var(--color) );
     background-color: hsla( var(--bg-color), var(--opacity) );
-    padding: 2px 4px;
+    padding: 0 2px;
     justify-self: center;
     align-self: center;
-    margin:0 12px 0 0;
+    text-align: center;
+    min-width: 92px;
 }
-log_list .list:last-child .type {}
+.from {
+    --color: var(--color-maximum-blue-green);
+    display: inline-block;
+    color: hsl( var(--color) );
+    justify-content: center;
+    align-items: center;
+    margin: 0 12px;
+}
+.to {
+    --color: var(--color-dodger-blue);
+    color: hsl(var(--color));
+    display: inline-block;
+    margin: 0 12px;
+}
+.arrow {
+    --color: var(--color-grey88);
+    color:  hsl(var(--color));
+}
 .file {
     --color: var(--color-greyA2);
     color: hsl( var(--color) );
@@ -141,6 +158,13 @@ log_list .list:last-child .type {}
 }
 .file > span {
     display: inline-block;
+}
+log_list .list:last-child .type {}
+log_list .list:last-child .arrow {
+    --color: var(--color-white);
+}
+log_list .list:last-child .to {
+    --color: var(--color-blue-jeans);
 }
 log_list .list:last-child .file {
     --color: var(--color-white);
@@ -258,9 +282,6 @@ log_list .list:last-child [aria-type="ready"] {
 }
 log_list .list:last-child .function {
     --color: var(--color-white);
-}
-.head {
-    padding-right: 8px;
 }
 .refs {
     display: inline-flex;
