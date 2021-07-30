@@ -11,11 +11,9 @@ function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false
     send(message)
     const el = document.createElement('i-terminal')
     const shadow = el.attachShadow({mode: 'closed'})
-    const log_list = document.createElement('log_list')
+    const log_list = document.createElement('log-list')
     style_sheet(shadow, style)
     shadow.append(log_list)
-    document.addEventListener('DOMContentLoaded', () => { log_list.scrollTop = log_list.scrollHeight })
-
     return el
 
     function get (msg) {
@@ -48,7 +46,7 @@ function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false
             </section>
             `
             log_list.append(list)
-            log_list.scrollTop = log_list.scrollHeight
+            el.scrollTop = el.scrollHeight
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => log_list.append(list))
             return false
@@ -81,7 +79,9 @@ h4 {
     color: #fff;
     background-color: hsl( var(--bg-color), var(--opacity) );
 }
-log_list {}
+log-list {
+    height: 100%;
+}
 .list {
     --bg-color: 0, 0%, 30%;
     --opacity: 0.25;
@@ -102,7 +102,7 @@ log_list {}
     height: auto;
     padding: 8px 8px 4px 8px;
 }
-log_list .list:last-child {
+log-list .list:last-child {
     --bg-color: var(--color-viridian-green);
     --opacity: .3;
 }
@@ -159,15 +159,15 @@ log_list .list:last-child {
 .file > span {
     display: inline-block;
 }
-log_list .list:last-child .type {}
-log_list .list:last-child .arrow {
-    --color: var(--color-white);
+.function {
+    --color: 0, 0%, 70%;
+    color: var(--color);
 }
-log_list .list:last-child .to {
-    --color: var(--color-blue-jeans);
-}
-log_list .list:last-child .file {
-    --color: var(--color-white);
+.refs {
+    display: inline-flex;
+    gap: 5px;
+    color: white;
+    padding-left: 8px;
 }
 [aria-type="click"] {
     --color: var(--color-dark);
@@ -272,21 +272,22 @@ log_list .list:last-child .file {
     --bg-color: var(--color-ultra-red);
     --opacity: 1;
 }
-log_list .list:last-child [aria-type="ready"] {
+log-list .list:last-child .type {}
+log-list .list:last-child .arrow {
+    --color: var(--color-white);
+}
+log-list .list:last-child .to {
+    --color: var(--color-blue-jeans);
+}
+log-list .list:last-child .file {
+    --color: var(--color-white);
+}
+log-list .list:last-child [aria-type="ready"] {
     --bg-color: var(--color-deep-black);
     --opacity: 0.3;
 }
-.function {
-    --color: 0, 0%, 70%;
-    color: var(--color);
-}
-log_list .list:last-child .function {
+log-list .list:last-child .function {
     --color: var(--color-white);
 }
-.refs {
-    display: inline-flex;
-    gap: 5px;
-    color: white;
-    padding-left: 8px;
-}
+
 `
