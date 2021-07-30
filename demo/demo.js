@@ -1,14 +1,20 @@
+// 3rd dependances
 const bel = require('bel')
 const csjs = require('csjs-inject')
-const message_maker = require('../src/node_modules/message_maker')
-const logs = require('..')
+// init
 const head = require('head')()
+const fullScreen = require('fullScreen')()
+const int2hsla = require('int2hsla')
+// modules
+const message_maker = require('../src/node_modules/message-maker')
+const logs = require('..')
 const button = require('datdot-ui-button')
 
 function demo () {
     const recipients = []
     let is_checked = false
     let is_selected = false
+    let types = []
     const log_list = logs(protocol('logs'))
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
@@ -79,6 +85,7 @@ function demo () {
         ${container}${log_list}
     </div>`
 
+    
     return app
 
     function click_event (target) {
@@ -130,6 +137,7 @@ function demo () {
     }
     function handle_click (from) {
         const [target, type, flow] = from.split(" ").join("").split("/")
+        store_types (type)
         if (target === 'select') return selected_event(target)
         if (target === 'open') return open_event(target)
         if (target === 'close') return close_event(target)
@@ -138,13 +146,24 @@ function demo () {
         if (type === 'button') return click_event(target)
         if (type === 'switch') return toggle_event(target)
     }
+    function store_types (type) {
+        if (types.length === 0) types.push(type)
+        if (types.length > 0) {
+            types.forEach( (t, i) => { 
+                if (type === t) return
+                if (type !== types[i]) return types[types.length] = type
+            })
+            console.log( types );
+        }
+    }
     function protocol (name) {
         return sender => {
             recipients[name] = sender
             return (msg) => {
-                const {head, type, data, refs, meta} = msg
+                let {head, type, data, refs, meta} = msg
                 // console.table( msg )
                 // console.log( `type: ${type}, file: ${file}, line: ${line}`);
+                store_types(type)
                 if (type === 'click') return handle_click(head[0])
                 recipients['logs'](msg)
             }

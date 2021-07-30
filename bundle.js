@@ -1,15 +1,21 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+// 3rd dependances
 const bel = require('bel')
 const csjs = require('csjs-inject')
-const message_maker = require('../src/node_modules/message_maker')
-const logs = require('..')
+// init
 const head = require('head')()
+const fullScreen = require('fullScreen')()
+const int2hsla = require('int2hsla')
+// modules
+const message_maker = require('../src/node_modules/message-maker')
+const logs = require('..')
 const button = require('datdot-ui-button')
 
 function demo () {
     const recipients = []
     let is_checked = false
     let is_selected = false
+    let types = []
     const log_list = logs(protocol('logs'))
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
@@ -80,6 +86,7 @@ function demo () {
         ${container}${log_list}
     </div>`
 
+    
     return app
 
     function click_event (target) {
@@ -131,6 +138,7 @@ function demo () {
     }
     function handle_click (from) {
         const [target, type, flow] = from.split(" ").join("").split("/")
+        store_types (type)
         if (target === 'select') return selected_event(target)
         if (target === 'open') return open_event(target)
         if (target === 'close') return close_event(target)
@@ -139,13 +147,24 @@ function demo () {
         if (type === 'button') return click_event(target)
         if (type === 'switch') return toggle_event(target)
     }
+    function store_types (type) {
+        if (types.length === 0) types.push(type)
+        if (types.length > 0) {
+            types.forEach( (t, i) => { 
+                if (type === t) return
+                if (type !== types[i]) return types[types.length] = type
+            })
+            console.log( types );
+        }
+    }
     function protocol (name) {
         return sender => {
             recipients[name] = sender
             return (msg) => {
-                const {head, type, data, refs, meta} = msg
+                let {head, type, data, refs, meta} = msg
                 // console.table( msg )
                 // console.log( `type: ${type}, file: ${file}, line: ${line}`);
+                store_types(type)
                 if (type === 'click') return handle_click(head[0])
                 recipients['logs'](msg)
             }
@@ -277,7 +296,26 @@ button:hover {
 `
 
 document.body.append( demo() )
-},{"..":32,"../src/node_modules/message_maker":33,"bel":4,"csjs-inject":7,"datdot-ui-button":24,"head":2}],2:[function(require,module,exports){
+},{"..":34,"../src/node_modules/message-maker":35,"bel":6,"csjs-inject":9,"datdot-ui-button":26,"fullScreen":2,"head":3,"int2hsla":4}],2:[function(require,module,exports){
+module.exports = fullscreen
+
+function fullscreen () {
+    document.body.addEventListener("keydown",  (e) => {
+        const key = e.which || e.keyCode || e.charCode
+        if (key === 70) toggleFullScreen()
+    })
+}
+
+function toggleFullScreen () {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen()
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen()
+        }
+    }
+}
+},{}],3:[function(require,module,exports){
 module.exports = head
 
 function head (lang = 'utf8', title = 'Terminal - DatDot') {
@@ -287,7 +325,32 @@ function head (lang = 'utf8', title = 'Terminal - DatDot') {
     meta.setAttribute('content', 'width=device-width, initial-scale=1.0')
     document.head.appendChild(meta)
 }
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
+ module.exports = int2hsla
+ // 1. some example message types:
+ const types = ['foo', 'bar', 'baz', 'info', 'data', 'fail', 'request', 'response']
+
+ // 2. generate colors and compare them:
+ for (var i = types.length; i--;) {
+     const type = types[i] // string
+     const integer1 = str2hashint(type)
+     const integer2 = str2hashint(type)
+     const color1 = int2hsla(integer1)
+     const color2 = int2hsla(integer2)
+     const same = color1 === color2
+     if (same) console.log({ color: color1 })
+     else console.error({ color1, color2 })
+ }
+ function int2hsla (i) { return `hsla(${i % 360}, 100%, 70%, 1)` }
+ function str2hashint (str) {
+     let hash = 0
+     const arr = str.split('')
+     arr.forEach( (v, i) => {
+         hash = str.charCodeAt(i) + ((hash << 5) - hash)
+     })
+     return hash
+ }
+},{}],5:[function(require,module,exports){
 var trailingNewlineRegex = /\n[\s]+$/
 var leadingNewlineRegex = /^\n[\s]+/
 var trailingSpaceRegex = /[\s]+$/
@@ -420,7 +483,7 @@ module.exports = function appendChild (el, childs) {
   }
 }
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var hyperx = require('hyperx')
 var appendChild = require('./appendChild')
 
@@ -521,7 +584,7 @@ module.exports = hyperx(belCreateElement, {comments: true})
 module.exports.default = module.exports
 module.exports.createElement = belCreateElement
 
-},{"./appendChild":3,"hyperx":28}],5:[function(require,module,exports){
+},{"./appendChild":5,"hyperx":30}],7:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
@@ -540,12 +603,12 @@ function csjsInserter() {
 module.exports = csjsInserter;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"csjs":10,"insert-css":29}],6:[function(require,module,exports){
+},{"csjs":12,"insert-css":31}],8:[function(require,module,exports){
 'use strict';
 
 module.exports = require('csjs/get-css');
 
-},{"csjs/get-css":9}],7:[function(require,module,exports){
+},{"csjs/get-css":11}],9:[function(require,module,exports){
 'use strict';
 
 var csjs = require('./csjs');
@@ -554,17 +617,17 @@ module.exports = csjs;
 module.exports.csjs = csjs;
 module.exports.getCss = require('./get-css');
 
-},{"./csjs":5,"./get-css":6}],8:[function(require,module,exports){
+},{"./csjs":7,"./get-css":8}],10:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib/csjs');
 
-},{"./lib/csjs":14}],9:[function(require,module,exports){
+},{"./lib/csjs":16}],11:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib/get-css');
 
-},{"./lib/get-css":18}],10:[function(require,module,exports){
+},{"./lib/get-css":20}],12:[function(require,module,exports){
 'use strict';
 
 var csjs = require('./csjs');
@@ -574,7 +637,7 @@ module.exports.csjs = csjs;
 module.exports.noScope = csjs({ noscope: true });
 module.exports.getCss = require('./get-css');
 
-},{"./csjs":8,"./get-css":9}],11:[function(require,module,exports){
+},{"./csjs":10,"./get-css":11}],13:[function(require,module,exports){
 'use strict';
 
 /**
@@ -596,7 +659,7 @@ module.exports = function encode(integer) {
   return str;
 };
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 var makeComposition = require('./composition').makeComposition;
@@ -640,7 +703,7 @@ function getClassChain(obj) {
   return acc;
 }
 
-},{"./composition":13}],13:[function(require,module,exports){
+},{"./composition":15}],15:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -720,7 +783,7 @@ function ignoreComposition(values) {
  */
 function Composition() {}
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 var extractExtends = require('./css-extract-extends');
@@ -798,7 +861,7 @@ function without(obj, unwanted) {
   }, {});
 }
 
-},{"./build-exports":12,"./composition":13,"./css-extract-extends":15,"./css-key":16,"./extract-exports":17,"./scopeify":23}],15:[function(require,module,exports){
+},{"./build-exports":14,"./composition":15,"./css-extract-extends":17,"./css-key":18,"./extract-exports":19,"./scopeify":25}],17:[function(require,module,exports){
 'use strict';
 
 var makeComposition = require('./composition').makeComposition;
@@ -851,7 +914,7 @@ function getClassName(str) {
   return trimmed[0] === '.' ? trimmed.substr(1) : trimmed;
 }
 
-},{"./composition":13}],16:[function(require,module,exports){
+},{"./composition":15}],18:[function(require,module,exports){
 'use strict';
 
 /**
@@ -861,7 +924,7 @@ function getClassName(str) {
 
 module.exports = ' css ';
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 var regex = require('./regex');
@@ -888,7 +951,7 @@ function getExport(css, regex) {
   return prop;
 }
 
-},{"./regex":20}],18:[function(require,module,exports){
+},{"./regex":22}],20:[function(require,module,exports){
 'use strict';
 
 var cssKey = require('./css-key');
@@ -897,7 +960,7 @@ module.exports = function getCss(csjs) {
   return csjs[cssKey];
 };
 
-},{"./css-key":16}],19:[function(require,module,exports){
+},{"./css-key":18}],21:[function(require,module,exports){
 'use strict';
 
 /**
@@ -915,7 +978,7 @@ module.exports = function hashStr(str) {
   return hash >>> 0;
 };
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 var findClasses = /(\.)(?!\d)([^\s\.,{\[>+~#:)]*)(?![^{]*})/.source;
@@ -931,7 +994,7 @@ module.exports = {
   ignoreComments: ignoreComments,
 };
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 var ignoreComments = require('./regex').ignoreComments;
 
 module.exports = replaceAnimations;
@@ -962,7 +1025,7 @@ function replaceAnimations(result) {
   return result;
 }
 
-},{"./regex":20}],22:[function(require,module,exports){
+},{"./regex":22}],24:[function(require,module,exports){
 'use strict';
 
 var encode = require('./base62-encode');
@@ -976,7 +1039,7 @@ module.exports = function fileScoper(fileSrc) {
   }
 };
 
-},{"./base62-encode":11,"./hash-string":19}],23:[function(require,module,exports){
+},{"./base62-encode":13,"./hash-string":21}],25:[function(require,module,exports){
 'use strict';
 
 var fileScoper = require('./scoped-name');
@@ -1017,7 +1080,7 @@ function scopify(css, ignores) {
   return replaceAnimations(result);
 }
 
-},{"./regex":20,"./replace-animations":21,"./scoped-name":22}],24:[function(require,module,exports){
+},{"./regex":22,"./replace-animations":23,"./scoped-name":24}],26:[function(require,module,exports){
 (function (__filename){(function (){
 const file = require('path').basename(__filename)
 const style_sheet = require('support-style-sheet')
@@ -1332,7 +1395,7 @@ function i_button (option, protocol) {
     return widget()
 }
 }).call(this)}).call(this,"/node_modules/datdot-ui-button/src/index.js")
-},{"message_maker":25,"path":30,"support-style-sheet":26}],25:[function(require,module,exports){
+},{"message_maker":27,"path":32,"support-style-sheet":28}],27:[function(require,module,exports){
 module.exports = function message_maker (from) {
     let msg_id = 0
     return function make ({to, type, data = null, refs = []}) {
@@ -1341,7 +1404,7 @@ module.exports = function message_maker (from) {
         return message
     }
 }
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 module.exports = support_style_sheet
 function support_style_sheet (root, style) {
     return (() => {
@@ -1357,7 +1420,7 @@ function support_style_sheet (root, style) {
         }
     })()
 }
-},{}],27:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 module.exports = attributeToProperty
 
 var transform = {
@@ -1378,7 +1441,7 @@ function attributeToProperty (h) {
   }
 }
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var attrToProp = require('hyperscript-attribute-to-property')
 
 var VAR = 0, TEXT = 1, OPEN = 2, CLOSE = 3, ATTR = 4
@@ -1675,7 +1738,7 @@ var closeRE = RegExp('^(' + [
 ].join('|') + ')(?:[\.#][a-zA-Z0-9\u007F-\uFFFF_:-]+)*$')
 function selfClosing (tag) { return closeRE.test(tag) }
 
-},{"hyperscript-attribute-to-property":27}],29:[function(require,module,exports){
+},{"hyperscript-attribute-to-property":29}],31:[function(require,module,exports){
 var inserted = {};
 
 module.exports = function (css, options) {
@@ -1699,7 +1762,7 @@ module.exports = function (css, options) {
     }
 };
 
-},{}],30:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 (function (process){(function (){
 // 'path' module extracted from Node.js v8.11.1 (only the posix part)
 // transplited with Babel
@@ -2232,7 +2295,7 @@ posix.posix = posix;
 module.exports = posix;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":31}],31:[function(require,module,exports){
+},{"_process":33}],33:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -2418,10 +2481,10 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],32:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 const bel = require('bel')
 const style_sheet = require('support-style-sheet')
-const message_maker = require('message_maker')
+const message_maker = require('message-maker')
 
 module.exports = terminal
 function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false) {
@@ -2443,7 +2506,7 @@ function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false
             const from = bel`<span aria-label=${head[0]} class="from">${head[0]}</span>`
             const to = bel`<span aria-label="to" class="to">${head[1]}</span>`
             const data_info = bel`<span aira-label="data" class="data">data: ${typeof data === 'object' ? JSON.stringify(data) : data}</span>`
-            const type_info = bel`<span aria-type="${type}" aria-label="${type}"  class="type">${type}</span>`
+            const type_info = bel`<span aria-type="${type}" aria-label="${type}" class="type">${type}</span>`
             const refs_info = bel`<div class="refs">refs: </div>`
             refs.map( (ref, i) => refs_info.append(bel`<span aria-label="${ref}">${ref}${i < refs.length - 1 ? ', ' : ''}</span>`))
             const log = bel`
@@ -2712,8 +2775,8 @@ log-list .list:last-child .function {
 }
 
 `
-},{"bel":4,"message_maker":33,"support-style-sheet":34}],33:[function(require,module,exports){
-arguments[4][25][0].apply(exports,arguments)
-},{"dup":25}],34:[function(require,module,exports){
-arguments[4][26][0].apply(exports,arguments)
-},{"dup":26}]},{},[1]);
+},{"bel":6,"message-maker":35,"support-style-sheet":36}],35:[function(require,module,exports){
+arguments[4][27][0].apply(exports,arguments)
+},{"dup":27}],36:[function(require,module,exports){
+arguments[4][28][0].apply(exports,arguments)
+},{"dup":28}]},{},[1]);

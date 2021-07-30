@@ -1,6 +1,6 @@
 const bel = require('bel')
 const style_sheet = require('support-style-sheet')
-const message_maker = require('message_maker')
+const message_maker = require('message-maker')
 
 module.exports = terminal
 function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false) {
@@ -22,7 +22,7 @@ function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false
             const from = bel`<span aria-label=${head[0]} class="from">${head[0]}</span>`
             const to = bel`<span aria-label="to" class="to">${head[1]}</span>`
             const data_info = bel`<span aira-label="data" class="data">data: ${typeof data === 'object' ? JSON.stringify(data) : data}</span>`
-            const type_info = bel`<span aria-type="${type}" aria-label="${type}"  class="type">${type}</span>`
+            const type_info = bel`<span aria-type="${type}" aria-label="${type}" class="type">${type}</span>`
             const refs_info = bel`<div class="refs">refs: </div>`
             refs.map( (ref, i) => refs_info.append(bel`<span aria-label="${ref}">${ref}${i < refs.length - 1 ? ', ' : ''}</span>`))
             const log = bel`
