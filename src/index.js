@@ -335,14 +335,7 @@ log-list .list:last-child .function {
 [aria-label="comfortable"] .refs {
     padding-left: 0;
 }
-[aria-label="comfortable"] [aria-expanded="false"] .refs {
-    height: 0;
-    opacity: 0;
-    transition: opacity 0.3s, height 0.3s ease-in-out;
-}
 [aria-label="comfortable"] [aria-expanded="true"] .refs {
-    height: auto;
-    opacity: 1;
     padding-top: 6px;
 }
 [aria-label="comfortable"] [aria-expanded="true"] .refs span:nth-child(1) {
