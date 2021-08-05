@@ -4,7 +4,6 @@ const csjs = require('csjs-inject')
 // init
 const head = require('head')()
 const fullScreen = require('fullScreen')()
-const int2hsla = require('int2hsla')
 // modules
 const message_maker = require('../src/node_modules/message-maker')
 const logs = require('..')
@@ -137,7 +136,6 @@ function demo () {
     }
     function handle_click (from) {
         const [target, type, flow] = from.split(" ").join("").split("/")
-        store_types (type)
         if (target === 'select') return selected_event(target)
         if (target === 'open') return open_event(target)
         if (target === 'close') return close_event(target)
@@ -146,16 +144,6 @@ function demo () {
         if (type === 'button') return click_event(target)
         if (type === 'switch') return toggle_event(target)
     }
-    function store_types (type) {
-        if (types.length === 0) types.push(type)
-        if (types.length > 0) {
-            types.forEach( (t, i) => { 
-                if (type === t) return
-                if (type !== types[i]) return types[types.length] = type
-            })
-            console.log( types );
-        }
-    }
     function protocol (name) {
         return sender => {
             recipients[name] = sender
@@ -163,7 +151,6 @@ function demo () {
                 let {head, type, data, refs, meta} = msg
                 // console.table( msg )
                 // console.log( `type: ${type}, file: ${file}, line: ${line}`);
-                store_types(type)
                 if (type === 'click') return handle_click(head[0])
                 recipients['logs'](msg)
             }

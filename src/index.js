@@ -1,10 +1,12 @@
 const bel = require('bel')
 const style_sheet = require('support-style-sheet')
 const message_maker = require('message-maker')
+const {int2hsla, str2hashint} = require('generator-color')
 
 module.exports = terminal
 function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false) {
     let is_expanded = expanded
+    let types = []
     const send = protocol(get)
     const make = message_maker(`terminal / index.js`)
     const message = make({to, type: 'ready', refs: ['old_logs', 'new_logs']})
@@ -18,6 +20,18 @@ function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false
 
     function get (msg) {
         const {head, refs, type, data, meta} = msg
+        types.push(type)
+        const unique_type = [...new Set(types)]
+        const colors = Array.from(unique_type, t => {
+            const int = str2hashint(t)
+            const color = int2hsla(int)
+            return {type: t, color}
+        })
+        let bg_color = null
+        colors.map( obj => {
+            if (type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|error|warning|toggled/)) return
+            obj.type === type ? bg_color = obj.color : bg_color = bg_color
+        })
         try {
             const from = bel`<span aria-label=${head[0]} class="from">${head[0]}</span>`
             const to = bel`<span aria-label="to" class="to">${head[1]}</span>`
@@ -45,6 +59,10 @@ function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false
                 </div>
             </section>
             `
+            if (bg_color) {
+                type_info.style.color = `hsl(var(--color-dark))`
+                type_info.style.backgroundColor = bg_color
+            }
             log_list.append(list)
             el.scrollTop = el.scrollHeight
         } catch (error) {
