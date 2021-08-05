@@ -14,12 +14,11 @@ function demo () {
     const recipients = []
     let is_checked = false
     let is_selected = false
-    let types = []
-    const log_list = logs(protocol('logs'))
+    const log_list = logs({mode: 'comfortable', expanded: false}, protocol('logs'))
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
     recipients['logs'](message)
-    recipients['logs'](make({to: '*', type: 'info'}))
+    recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
     recipients['logs'](make({to: '*', type: 'extrinsic'}))
     recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
     recipients['logs'](make({to: '*', type: 'register'}))
@@ -32,6 +31,7 @@ function demo () {
     recipients['logs'](make({to: '*', type: 'hoster'}))
     recipients['logs'](make({to: '*', type: 'encoder'}))
     recipients['logs'](make({to: '*', type: 'attestor'}))
+    recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
     const click = button({name: 'click', body: 'Click', 
     theme: {
         props: { 
@@ -2450,7 +2450,7 @@ const message_maker = require('message-maker')
 const {int2hsla, str2hashint} = require('generator-color')
 
 module.exports = terminal
-function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false) {
+function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protocol) {
     let is_expanded = expanded
     let types = []
     const send = protocol(get)
@@ -2460,6 +2460,7 @@ function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false
     const el = document.createElement('i-terminal')
     const shadow = el.attachShadow({mode: 'closed'})
     const log_list = document.createElement('log-list')
+    log_list.setAttribute('aria-label', mode)
     style_sheet(shadow, style)
     shadow.append(log_list)
     return el
@@ -2483,33 +2484,33 @@ function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false
             const to = bel`<span aria-label="to" class="to">${head[1]}</span>`
             const data_info = bel`<span aira-label="data" class="data">data: ${typeof data === 'object' ? JSON.stringify(data) : data}</span>`
             const type_info = bel`<span aria-type="${type}" aria-label="${type}" class="type">${type}</span>`
-            const refs_info = bel`<div class="refs">refs: </div>`
-            refs.map( (ref, i) => refs_info.append(bel`<span aria-label="${ref}">${ref}${i < refs.length - 1 ? ', ' : ''}</span>`))
-            const log = bel`
-            <div class="log">
-                <div class="head">
+            const refs_info = bel`<div class="refs"><span>refs:</span></div>`
+            refs.map( (ref, i) => refs_info.append(
+                bel`<span>${ref}${i < refs.length - 1 ? ',  ' : ''}</span>`
+            ))
+            const info = bel`<div class="info">${data_info}${refs_info}</div>`
+            const header = bel`
+            <div class="head">
                 ${type_info}
                 ${from}
                 <span class="arrow">=＞</span>
                 ${to}
-                </div>
-                ${data_info}
-                ${refs_info}
             </div>`
-            var list = bel`
-            <section class="list" aria-expanded="${is_expanded}" onclick=${(e) => handle_accordion_event(list)}>
-                ${log}
-                <div class="file">
-                    <span>${meta.stack[0]}</span>
-                    <span>${meta.stack[1]}</span>
-                </div>
-            </section>
-            `
+            const log = bel`<div class="log">${header}</div>`
+            if (mode === 'compact') log.append(data_info, refs_info)
+            if (mode === 'comfortable') log.append(info)
+            const file = bel`
+            <div class="file">
+                <span>${meta.stack[0]}</span>
+                <span>${meta.stack[1]}</span>
+            </div>`
+            var list = bel`<section class="list" aria-expanded="${is_expanded}">${log}${file}</section>`
             if (bg_color) {
                 type_info.style.color = `hsl(var(--color-dark))`
                 type_info.style.backgroundColor = bg_color
             }
             log_list.append(list)
+            if(!is_expanded) list.onclick = (e) => handle_accordion_event(list)
             el.scrollTop = el.scrollHeight
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => log_list.append(list))
@@ -2564,11 +2565,20 @@ log-list {
 .list[aria-expanded="true"] .file {
     opacity: 1;
     height: auto;
-    padding: 8px 8px 4px 8px;
+    padding: 4px 8px;
 }
 log-list .list:last-child {
     --bg-color: var(--color-viridian-green);
     --opacity: .3;
+}
+[aria-label="compact"] [aria-expanded="false"] .log {
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+[aria-label="compact"] [aria-expanded="false"] .data {
+    display: line-block;
 }
 .log {
     line-height: 1.8;
@@ -2627,10 +2637,13 @@ log-list .list:last-child {
     --color: 0, 0%, 70%;
     color: var(--color);
 }
+.data {
+    padding-left: 8px;
+}
 .refs {
-    display: inline-flex;
-    gap: 5px;
-    color: white;
+    --color: var(--color-white);
+    display: inline-block;
+    color: var(--color);
     padding-left: 8px;
 }
 [aria-type="click"] {
@@ -2753,7 +2766,34 @@ log-list .list:last-child [aria-type="ready"] {
 log-list .list:last-child .function {
     --color: var(--color-white);
 }
-
+[aria-label="comfortable"] .info {
+    padding: 8px;
+}
+[aria-label="comfortable"] [aria-expanded="false"] .info {
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+[aria-label="comfortable"] .data {
+    padding: 0 8px 0 0;
+}
+[aria-label="comfortable"] .refs {
+    padding-left: 0;
+}
+[aria-label="comfortable"] [aria-expanded="false"] .refs {
+    height: 0;
+    opacity: 0;
+    transition: opacity 0.3s, height 0.3s ease-in-out;
+}
+[aria-label="comfortable"] [aria-expanded="true"] .refs {
+    height: auto;
+    opacity: 1;
+    padding-top: 6px;
+}
+[aria-label="comfortable"] [aria-expanded="true"] .refs span:nth-child(1) {
+    padding-right: 5px;
+}
 `
 },{"bel":5,"generator-color":34,"message-maker":35,"support-style-sheet":36}],34:[function(require,module,exports){
  module.exports = {int2hsla, str2hashint}

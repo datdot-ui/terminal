@@ -4,7 +4,7 @@ const message_maker = require('message-maker')
 const {int2hsla, str2hashint} = require('generator-color')
 
 module.exports = terminal
-function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false) {
+function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protocol) {
     let is_expanded = expanded
     let types = []
     const send = protocol(get)
@@ -14,6 +14,7 @@ function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false
     const el = document.createElement('i-terminal')
     const shadow = el.attachShadow({mode: 'closed'})
     const log_list = document.createElement('log-list')
+    log_list.setAttribute('aria-label', mode)
     style_sheet(shadow, style)
     shadow.append(log_list)
     return el
@@ -37,33 +38,33 @@ function terminal (protocol, to = 'terminal', mode = 'compact', expanded = false
             const to = bel`<span aria-label="to" class="to">${head[1]}</span>`
             const data_info = bel`<span aira-label="data" class="data">data: ${typeof data === 'object' ? JSON.stringify(data) : data}</span>`
             const type_info = bel`<span aria-type="${type}" aria-label="${type}" class="type">${type}</span>`
-            const refs_info = bel`<div class="refs">refs: </div>`
-            refs.map( (ref, i) => refs_info.append(bel`<span aria-label="${ref}">${ref}${i < refs.length - 1 ? ', ' : ''}</span>`))
-            const log = bel`
-            <div class="log">
-                <div class="head">
+            const refs_info = bel`<div class="refs"><span>refs:</span></div>`
+            refs.map( (ref, i) => refs_info.append(
+                bel`<span>${ref}${i < refs.length - 1 ? ',  ' : ''}</span>`
+            ))
+            const info = bel`<div class="info">${data_info}${refs_info}</div>`
+            const header = bel`
+            <div class="head">
                 ${type_info}
                 ${from}
                 <span class="arrow">=＞</span>
                 ${to}
-                </div>
-                ${data_info}
-                ${refs_info}
             </div>`
-            var list = bel`
-            <section class="list" aria-expanded="${is_expanded}" onclick=${(e) => handle_accordion_event(list)}>
-                ${log}
-                <div class="file">
-                    <span>${meta.stack[0]}</span>
-                    <span>${meta.stack[1]}</span>
-                </div>
-            </section>
-            `
+            const log = bel`<div class="log">${header}</div>`
+            if (mode === 'compact') log.append(data_info, refs_info)
+            if (mode === 'comfortable') log.append(info)
+            const file = bel`
+            <div class="file">
+                <span>${meta.stack[0]}</span>
+                <span>${meta.stack[1]}</span>
+            </div>`
+            var list = bel`<section class="list" aria-expanded="${is_expanded}">${log}${file}</section>`
             if (bg_color) {
                 type_info.style.color = `hsl(var(--color-dark))`
                 type_info.style.backgroundColor = bg_color
             }
             log_list.append(list)
+            if(!is_expanded) list.onclick = (e) => handle_accordion_event(list)
             el.scrollTop = el.scrollHeight
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => log_list.append(list))
@@ -118,11 +119,20 @@ log-list {
 .list[aria-expanded="true"] .file {
     opacity: 1;
     height: auto;
-    padding: 8px 8px 4px 8px;
+    padding: 4px 8px;
 }
 log-list .list:last-child {
     --bg-color: var(--color-viridian-green);
     --opacity: .3;
+}
+[aria-label="compact"] [aria-expanded="false"] .log {
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+[aria-label="compact"] [aria-expanded="false"] .data {
+    display: line-block;
 }
 .log {
     line-height: 1.8;
@@ -181,10 +191,13 @@ log-list .list:last-child {
     --color: 0, 0%, 70%;
     color: var(--color);
 }
+.data {
+    padding-left: 8px;
+}
 .refs {
-    display: inline-flex;
-    gap: 5px;
-    color: white;
+    --color: var(--color-white);
+    display: inline-block;
+    color: var(--color);
     padding-left: 8px;
 }
 [aria-type="click"] {
@@ -307,5 +320,32 @@ log-list .list:last-child [aria-type="ready"] {
 log-list .list:last-child .function {
     --color: var(--color-white);
 }
-
+[aria-label="comfortable"] .info {
+    padding: 8px;
+}
+[aria-label="comfortable"] [aria-expanded="false"] .info {
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+[aria-label="comfortable"] .data {
+    padding: 0 8px 0 0;
+}
+[aria-label="comfortable"] .refs {
+    padding-left: 0;
+}
+[aria-label="comfortable"] [aria-expanded="false"] .refs {
+    height: 0;
+    opacity: 0;
+    transition: opacity 0.3s, height 0.3s ease-in-out;
+}
+[aria-label="comfortable"] [aria-expanded="true"] .refs {
+    height: auto;
+    opacity: 1;
+    padding-top: 6px;
+}
+[aria-label="comfortable"] [aria-expanded="true"] .refs span:nth-child(1) {
+    padding-right: 5px;
+}
 `
