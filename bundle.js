@@ -14,7 +14,7 @@ function demo () {
     const recipients = []
     let is_checked = false
     let is_selected = false
-    const log_list = logs({mode: 'comfortable', expanded: false}, protocol('logs'))
+    const log_list = logs({mode: 'compact', expanded: false}, protocol('logs'))
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
     recipients['logs'](message)
@@ -2505,12 +2505,12 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
                 <span>${meta.stack[1]}</span>
             </div>`
             var list = bel`<section class="list" aria-expanded="${is_expanded}">${log}${file}</section>`
+            list.onclick = (e) => handle_accordion_event(list)
             if (bg_color) {
                 type_info.style.color = `hsl(var(--color-dark))`
                 type_info.style.backgroundColor = bg_color
             }
             log_list.append(list)
-            if(!is_expanded) list.onclick = (e) => handle_accordion_event(list)
             el.scrollTop = el.scrollHeight
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => log_list.append(list))
