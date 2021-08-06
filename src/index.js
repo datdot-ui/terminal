@@ -6,7 +6,7 @@ const {int2hsla, str2hashint} = require('generator-color')
 module.exports = terminal
 function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protocol) {
     let is_expanded = expanded
-    let types = []
+    let types = {}
     const send = protocol(get)
     const make = message_maker(`terminal / index.js`)
     const message = make({to, type: 'ready', refs: ['old_logs', 'new_logs']})
@@ -21,18 +21,12 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
 
     function get (msg) {
         const {head, refs, type, data, meta} = msg
-        types.push(type)
-        const unique_type = [...new Set(types)]
-        const colors = Array.from(unique_type, t => {
-            const int = str2hashint(t)
-            const color = int2hsla(int)
-            return {type: t, color}
-        })
-        let bg_color = null
-        colors.map( obj => {
-            if (type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|error|warning|toggled/)) return
-            obj.type === type ? bg_color = obj.color : bg_color = bg_color
-        })
+        // make an object for type, count, color
+        const init = t => ({type: t, count: 0, color: type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|error|warning|toggled/) ? null : int2hsla(str2hashint(t)) })
+        // to check type is existing then do count++, else return new type
+        const add = t => ((types[t] || (types[t] = init(t))).count++, types[t])
+        add(type)
+        
         try {
             const from = bel`<span aria-label=${head[0]} class="from">${head[0]}</span>`
             const to = bel`<span aria-label="to" class="to">${head[1]}</span>`
@@ -58,12 +52,8 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
                 <span>${meta.stack[0]}</span>
                 <span>${meta.stack[1]}</span>
             </div>`
-            var list = bel`<section class="list" aria-expanded="${is_expanded}">${log}${file}</section>`
-            list.onclick = (e) => handle_accordion_event(list)
-            if (bg_color) {
-                type_info.style.color = `hsl(var(--color-dark))`
-                type_info.style.backgroundColor = bg_color
-            }
+            var list = bel`<section class="list" aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
+            generate_type_color(type, type_info)
             log_list.append(list)
             el.scrollTop = el.scrollHeight
         } catch (error) {
@@ -71,11 +61,18 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
             return false
         }
     }
-
-    function handle_accordion_event (e) {
+    function generate_type_color (type, el) {
+        for (let t in types) { 
+            if (t === type && types[t].color) {
+                el.style.color = `hsl(var(--color-dark))`
+                el.style.backgroundColor = types[t].color
+            }   
+        }
+    }
+    function handle_accordion_event (target) {
         const status = !is_expanded
         is_expanded = status
-        e.setAttribute('aria-expanded', is_expanded)
+        target.setAttribute('aria-expanded', is_expanded)
     }
 }
 
@@ -245,63 +242,6 @@ log-list .list:last-child {
 [aria-type="unselected"] {
     --bg-color: var(--color-lime-green);
     --opacity: .25;
-}
-[aria-type="info"] {
-    --bg-color: var(--color-dodger-blue);
-    --opacity: 1;
-}
-[aria-type="extrinsic"] {
-    --bg-color: var(--color-persian-rose);
-    --opacity: .5;
-}
-[aria-type="execute-extrinsic"] {
-    --bg-color: var(--color-persian-rose);
-    --opacity: 1;
-}
-[aria-type="register"] {
-    --color: var(--color-dark);
-    --bg-color: var(--color-amaranth-pink);
-    --opacity: 1;
-}
-[aria-type="current-block"] {
-    --color: var(--color-dark);
-    --bg-color: var(--color-maximum-blue-green);
-    --opacity: 1;
-}
-[aria-type="eventpool"] {
-    --bg-color: var(--color-blue);
-    --opacity: 1;
-}
-[aria-type="keep-alive"] {
-    --color: var(--color-dark);
-    --bg-color: var(--color-lime-green);
-    --opacity: 1;
-}
-[aria-type="user"] {
-    --bg-color: var(--color-medium-purple);
-    --opacity: 1;
-}
-[aria-type="peer"] {
-    --color: var(--color-dark);
-    --bg-color: var(--color-yellow);
-    --opacity: 1;
-}
-[aria-type="@todo"] {
-    --color: var(--color-grey33);
-    --bg-color: var(--color-orange);
-    --opacity: 1;
-}
-[aria-type="hoster"] {
-    --bg-color: var(--color-slate-blue);
-    --opacity: 1;
-}
-[aria-type="encoder"] {
-    --bg-color: var(--color-medium-purple);
-    --opacity: 1;
-}
-[aria-type="attestor"] {
-    --bg-color: var(--color-ultra-red);
-    --opacity: 1;
 }
 log-list .list:last-child .type {}
 log-list .list:last-child .arrow {
