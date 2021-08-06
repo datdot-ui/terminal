@@ -14,7 +14,7 @@ function demo () {
     const recipients = []
     let is_checked = false
     let is_selected = false
-    const log_list = logs({mode: 'comfortable', expanded: true}, protocol('logs'))
+    const log_list = logs({mode: 'comfortable', expanded: false}, protocol('logs'))
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
     recipients['logs'](message)
@@ -2472,7 +2472,6 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
         // to check type is existing then do count++, else return new type
         const add = t => ((types[t] || (types[t] = init(t))).count++, types[t])
         add(type)
-        
         try {
             const from = bel`<span aria-label=${head[0]} class="from">${head[0]}</span>`
             const to = bel`<span aria-label="to" class="to">${head[1]}</span>`
@@ -2498,9 +2497,10 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
                 <span>${meta.stack[0]}</span>
                 <span>${meta.stack[1]}</span>
             </div>`
-            var list = bel`<section class="list" aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
+            var list = bel`<section class="list" aria-label="${type}" aria-expanded="${is_expanded}">${log}${file}</section>`
             generate_type_color(type, type_info)
             log_list.append(list)
+            list.onclick = () => handle_accordion_event(list)
             el.scrollTop = el.scrollHeight
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => log_list.append(list))
@@ -2516,9 +2516,8 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
         }
     }
     function handle_accordion_event (target) {
-        const status = !is_expanded
-        is_expanded = status
-        target.setAttribute('aria-expanded', is_expanded)
+        const status = target.ariaExpanded === 'false' ? 'true' : 'false'
+        target.ariaExpanded = status
     }
 }
 
