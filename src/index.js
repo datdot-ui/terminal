@@ -51,10 +51,9 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
                 <span>${meta.stack[0]}</span>
                 <span>${meta.stack[1]}</span>
             </div>`
-            var list = bel`<section class="list" aria-label="${type}" aria-expanded="${is_expanded}">${log}${file}</section>`
+            var list = bel`<section class="list" aria-label="${type}" aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
             generate_type_color(type, type_info)
             log_list.append(list)
-            list.onclick = () => handle_accordion_event(list)
             el.scrollTop = el.scrollHeight
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => log_list.append(list))
