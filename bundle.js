@@ -172,6 +172,7 @@ const css = csjs`
     --color-amaranth-pink: 331, 86%, 78%;
     --color-persian-rose: 323, 100%, 56%;
     --color-orange: 35, 100%, 58%;
+    --color-safety-orange: 27, 100%, 50%;
     --color-deep-saffron: 31, 100%, 56%;
     --color-ultra-red: 348, 96%, 71%;
     --color-flame: 15, 80%, 50%;
@@ -2468,7 +2469,7 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
     function get (msg) {
         const {head, refs, type, data, meta} = msg
         // make an object for type, count, color
-        const init = t => ({type: t, count: 0, color: type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|error|warning|toggled/) ? null : int2hsla(str2hashint(t)) })
+        const init = t => ({type: t, count: 0, color: type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|error|warning|toggled|changed/) ? null : int2hsla(str2hashint(t)) })
         // to check type is existing then do count++, else return new type
         const add = t => ((types[t] || (types[t] = init(t))).count++, types[t])
         add(type)
@@ -2687,6 +2688,11 @@ log-list .list:last-child {
     --bg-color: var(--color-lime-green);
     --opacity: .25;
 }
+[aria-type="changed"] {
+    --color: var(--color-dark);
+    --bg-color: var(--color-safety-orange);
+    --opacity: 1;
+}
 log-list .list:last-child .type {}
 log-list .list:last-child .arrow {
     --color: var(--color-white);
@@ -2728,19 +2734,6 @@ log-list .list:last-child .function {
 `
 },{"bel":5,"generator-color":34,"message-maker":35,"support-style-sheet":36}],34:[function(require,module,exports){
  module.exports = {int2hsla, str2hashint}
- // 1. some example message types:
- const types = ['foo', 'bar', 'baz', 'info', 'data', 'fail', 'request', 'response']
- // 2. generate colors and compare them:
- for (var i = types.length; i--;) {
-     const type = types[i] // string
-     const integer1 = str2hashint(type)
-     const integer2 = str2hashint(type)
-     const color1 = int2hsla(integer1)
-     const color2 = int2hsla(integer2)
-     const same = color1 === color2
-     if (same) console.log({ color: color1 })
-     else console.error({ color1, color2 })
- }
  function int2hsla (i) { return `hsla(${i % 360}, 100%, 70%, 1)` }
  function str2hashint (str) {
      let hash = 0
