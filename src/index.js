@@ -31,7 +31,7 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
         const { childNodes } = log_list
         log_list.setAttribute('aria-label', mode)
         
-        if (expanded) {
+        if (expanded !== void 0) {
             is_expanded = expanded
             childNodes.forEach( list => {
                 list.setAttribute('aria-expanded', expanded)
@@ -147,9 +147,6 @@ log-list .list:last-child {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-[aria-label="compact"] .list[aria-expanded="false"] .data {
-    
-}
 [aria-label="compact"] .list[aria-expanded="true"] .log {
     padding-left: 8px;
     oveflow: auto;
@@ -159,6 +156,9 @@ log-list .list:last-child {
 }
 [aria-label="compact"] .list[aria-expanded="true"] .data {
     display: inlne-block;
+}
+[aria-label="compact"] .refs {
+    padding-left: 8px;
 }
 .log {
     line-height: 1.8;
