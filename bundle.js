@@ -14,7 +14,7 @@ function demo () {
     const recipients = []
     let is_checked = false
     let is_selected = false
-    const log_list = logs({mode: 'compact'}, protocol('logs'))
+    const log_list = logs({mode: 'compact', expanded: 'false'}, protocol('logs'))
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
     recipients['logs'](message)
@@ -138,7 +138,7 @@ function demo () {
         recipients['logs'](message)
     }
     function change_layout_event () {
-        const message = make({to: 'terminal', type: 'layout-mode', data: {mode: 'comfortable', expanded: 'true'}})
+        const message = make({to: 'terminal', type: 'layout-mode', data: {mode: 'comfortable', expanded: 'false'}})
         recipients['logs'](message)
     }
     function handle_click (from) {
@@ -235,10 +235,29 @@ const css = csjs`
     --size36: 3.6rem;
     --size40: 4rem;
     --define-primary: *---------------------------------------------*;
+    --primary-body-bg-color: var(--color-greyF2);
     --primary-color: var(--color-black);
-    --primary-bgColor: var(--color-greyF2);
+    --primary-color-hover: var(--color-white);
+    --primary-bg-color: var(--color-white);
+    --primary-bg-color-hover: var(--color-black);
     --primary-font: Arial, sens-serif;
-    --primary-font-size: var(--size16);
+    --primary-size: var(--size14);
+    --primary-size-hover: var(--primary-size);
+    --primary-border-width: 1px;
+    --primary-border-style: solid;
+    --primary-border-color: var(--color-black);
+    --primary-radius: 8px;
+    --primary-link-color: var(--color-heavy-blue);
+    --primary-link-color-hover: var(--color-dodger-blue);
+    --primary-disabled-color: var(--color-greyA2);
+    --primary-disabled-bg-color: var(--color-greyEB);
+    --primary-disabled-fill: var(--color-greyA2);
+    --primary-current-size: var(--primary-size);
+    --primary-current-color: var(--primary-bg-color);
+    --primary-current-bg-color: var(--primary-color);
+    --primary-selected-icon-fill: var(--primary-color);
+    --primary-selected-icon-fill-hover: var(--primary-color-hover);
+    --primary-current-icon-fill: var(--color-white);
 }
 * {
     box-sizing: border-box;
@@ -248,6 +267,7 @@ html {
     height: 100%;
 }
 body {
+    -webkit-text-size-adjust:100%;
     font-size: var(--primary-font-size);
     font-family: var(--primary-font);
     background-color: hsl( var(--primary-bgColor) );
@@ -2522,9 +2542,7 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
                 <span class="arrow">=＞</span>
                 ${to}
             </div>`
-            const log = bel`<div class="log">${header}</div>`
-            if (mode === 'compact') log.append(data_info, refs_info)
-            if (mode === 'comfortable') log.append(info)
+            const log = bel`<div class="log">${header}${data_info}${refs_info}</div>`
             const file = bel`
             <div class="file">
                 <span>${meta.stack[0]}</span>
@@ -2558,8 +2576,10 @@ const style = `
 :host(i-terminal) {
     --bg-color: var(--color-dark);
     --opacity: 1;
-    font-size: var(--size12);
-    color: #fff;
+    --size: var(--size12);
+    --color: var(--color-white);
+    font-size: var(--size);
+    color: hsl(var(--color));
     background-color: hsla( var(--bg-color), var(--opacity));
     height: 100%;
     overflow: hidden auto;
@@ -2600,23 +2620,29 @@ log-list .list:last-child {
     --bg-color: var(--color-viridian-green);
     --opacity: .3;
 }
-[aria-label="compact"] [aria-expanded="false"] .log {
+[aria-label="compact"] .list[aria-expanded="false"] .log {
     white-space: nowrap;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-[aria-label="compact"] [aria-expanded="false"] .data {
-    display: line-block;
+[aria-label="compact"] .list[aria-expanded="false"] .data {
+    
+}
+[aria-label="compact"] .list[aria-expanded="true"] .log {
+    padding-left: 8px;
+    oveflow: auto;
+}
+[aria-label="compact"] .list[aria-expanded="true"] .log .head {
+    margin-left: -8px;
+}
+[aria-label="compact"] .list[aria-expanded="true"] .data {
+    display: inlne-block;
 }
 .log {
     line-height: 1.8;
     word-break: break-all;
     white-space: pre-wrap;
-}
-.log span {
-    --size: var(--size12);
-    font-size: var(--size);
 }
 .head {
     display: inline-block;
@@ -2666,14 +2692,10 @@ log-list .list:last-child {
     --color: 0, 0%, 70%;
     color: var(--color);
 }
-.data {
-    padding-left: 8px;
-}
 .refs {
     --color: var(--color-white);
     display: inline-block;
     color: var(--color);
-    padding-left: 8px;
 }
 [aria-type="click"] {
     --color: var(--color-dark);
@@ -2751,26 +2773,25 @@ log-list .list:last-child [aria-type="ready"] {
 log-list .list:last-child .function {
     --color: var(--color-white);
 }
-[aria-label="comfortable"] .info {
-    padding: 8px;
+[aria-label="comfortable"] .list[aria-expanded="false"] .log {
+    
 }
-[aria-label="comfortable"] [aria-expanded="false"] .info {
+[aria-label="comfortable"] .data {
+    display: block;
+    padding: 8px 8px 0px 8px;
+}
+[aria-label="comfortable"] .list[aria-expanded="false"] .data {
     white-space: nowrap;
     max-width: 100%;
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis; 
 }
-[aria-label="comfortable"] .data {
-    padding: 0 8px 0 0;
+[aria-label="comfortable"] .list[aria-expanded="false"] .refs {
+    display: none;
 }
-[aria-label="comfortable"] .refs {
-    padding-left: 0;
-}
-[aria-label="comfortable"] [aria-expanded="true"] .refs {
-    padding-top: 6px;
-}
-[aria-label="comfortable"] [aria-expanded="true"] .refs span:nth-child(1) {
-    padding-right: 5px;
+[aria-label="comfortable"] .list[aria-expanded="true"] .refs {
+    display: block;
+    padding-left: 8px;
 }
 `
 },{"bel":5,"generator-color":34,"message-maker":35,"support-style-sheet":36}],34:[function(require,module,exports){

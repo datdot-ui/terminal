@@ -13,7 +13,7 @@ function demo () {
     const recipients = []
     let is_checked = false
     let is_selected = false
-    const log_list = logs({mode: 'compact'}, protocol('logs'))
+    const log_list = logs({mode: 'compact', expanded: 'false'}, protocol('logs'))
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
     recipients['logs'](message)
@@ -137,7 +137,7 @@ function demo () {
         recipients['logs'](message)
     }
     function change_layout_event () {
-        const message = make({to: 'terminal', type: 'layout-mode', data: {mode: 'comfortable', expanded: 'true'}})
+        const message = make({to: 'terminal', type: 'layout-mode', data: {mode: 'comfortable', expanded: 'false'}})
         recipients['logs'](message)
     }
     function handle_click (from) {
@@ -234,10 +234,29 @@ const css = csjs`
     --size36: 3.6rem;
     --size40: 4rem;
     --define-primary: *---------------------------------------------*;
+    --primary-body-bg-color: var(--color-greyF2);
     --primary-color: var(--color-black);
-    --primary-bgColor: var(--color-greyF2);
+    --primary-color-hover: var(--color-white);
+    --primary-bg-color: var(--color-white);
+    --primary-bg-color-hover: var(--color-black);
     --primary-font: Arial, sens-serif;
-    --primary-font-size: var(--size16);
+    --primary-size: var(--size14);
+    --primary-size-hover: var(--primary-size);
+    --primary-border-width: 1px;
+    --primary-border-style: solid;
+    --primary-border-color: var(--color-black);
+    --primary-radius: 8px;
+    --primary-link-color: var(--color-heavy-blue);
+    --primary-link-color-hover: var(--color-dodger-blue);
+    --primary-disabled-color: var(--color-greyA2);
+    --primary-disabled-bg-color: var(--color-greyEB);
+    --primary-disabled-fill: var(--color-greyA2);
+    --primary-current-size: var(--primary-size);
+    --primary-current-color: var(--primary-bg-color);
+    --primary-current-bg-color: var(--primary-color);
+    --primary-selected-icon-fill: var(--primary-color);
+    --primary-selected-icon-fill-hover: var(--primary-color-hover);
+    --primary-current-icon-fill: var(--color-white);
 }
 * {
     box-sizing: border-box;
@@ -247,6 +266,7 @@ html {
     height: 100%;
 }
 body {
+    -webkit-text-size-adjust:100%;
     font-size: var(--primary-font-size);
     font-family: var(--primary-font);
     background-color: hsl( var(--primary-bgColor) );
