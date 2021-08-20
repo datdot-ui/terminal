@@ -21,6 +21,26 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
 
     function get (msg) {
         const {head, refs, type, data, meta} = msg
+        const from = head[0].split('/')[0].trim()
+        make_logs (msg)
+        if (type === 'layout-mode') return handle_change_layout(data)
+    }
+
+    function handle_change_layout (data) {
+        const {mode, expanded} = data
+        const { childNodes } = log_list
+        log_list.setAttribute('aria-label', mode)
+        
+        if (expanded) {
+            is_expanded = expanded
+            childNodes.forEach( list => {
+                list.setAttribute('aria-expanded', expanded)
+            })
+        }
+    }
+
+    function make_logs (msg) {
+        const {head, refs, type, data, meta} = msg
         // make an object for type, count, color
         const init = t => ({type: t, count: 0, color: type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|expanded|unexpanded|error|warning|toggled|changed/) ? null : int2hsla(str2hashint(t)) })
         // to check type is existing then do count++, else return new type
@@ -60,6 +80,7 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
             return false
         }
     }
+
     function generate_type_color (type, el) {
         for (let t in types) { 
             if (t === type && types[t].color) {

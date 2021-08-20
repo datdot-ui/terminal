@@ -14,7 +14,7 @@ function demo () {
     const recipients = []
     let is_checked = false
     let is_selected = false
-    const log_list = logs({mode: 'comfortable', expanded: false}, protocol('logs'))
+    const log_list = logs({mode: 'compact'}, protocol('logs'))
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
     recipients['logs'](message)
@@ -137,8 +137,13 @@ function demo () {
         const message = make({type})
         recipients['logs'](message)
     }
+    function change_layout_event () {
+        const message = make({to: 'terminal', type: 'layout-mode', data: {mode: 'comfortable', expanded: 'true'}})
+        recipients['logs'](message)
+    }
     function handle_click (from) {
         const [target, type, flow] = from.split(" ").join("").split("/")
+        if (target === 'click') return change_layout_event()
         if (target === 'select') return selected_event(target)
         if (target === 'open') return open_event(target)
         if (target === 'close') return close_event(target)
@@ -2475,6 +2480,26 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
 
     function get (msg) {
         const {head, refs, type, data, meta} = msg
+        const from = head[0].split('/')[0].trim()
+        make_logs (msg)
+        if (type === 'layout-mode') return handle_change_layout(data)
+    }
+
+    function handle_change_layout (data) {
+        const {mode, expanded} = data
+        const { childNodes } = log_list
+        log_list.setAttribute('aria-label', mode)
+        
+        if (expanded) {
+            is_expanded = expanded
+            childNodes.forEach( list => {
+                list.setAttribute('aria-expanded', expanded)
+            })
+        }
+    }
+
+    function make_logs (msg) {
+        const {head, refs, type, data, meta} = msg
         // make an object for type, count, color
         const init = t => ({type: t, count: 0, color: type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|expanded|unexpanded|error|warning|toggled|changed/) ? null : int2hsla(str2hashint(t)) })
         // to check type is existing then do count++, else return new type
@@ -2514,6 +2539,7 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
             return false
         }
     }
+
     function generate_type_color (type, el) {
         for (let t in types) { 
             if (t === type && types[t].color) {

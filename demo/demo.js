@@ -13,7 +13,7 @@ function demo () {
     const recipients = []
     let is_checked = false
     let is_selected = false
-    const log_list = logs({mode: 'comfortable', expanded: false}, protocol('logs'))
+    const log_list = logs({mode: 'compact'}, protocol('logs'))
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
     recipients['logs'](message)
@@ -136,8 +136,13 @@ function demo () {
         const message = make({type})
         recipients['logs'](message)
     }
+    function change_layout_event () {
+        const message = make({to: 'terminal', type: 'layout-mode', data: {mode: 'comfortable', expanded: 'true'}})
+        recipients['logs'](message)
+    }
     function handle_click (from) {
         const [target, type, flow] = from.split(" ").join("").split("/")
+        if (target === 'click') return change_layout_event()
         if (target === 'select') return selected_event(target)
         if (target === 'open') return open_event(target)
         if (target === 'close') return close_event(target)
