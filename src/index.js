@@ -29,8 +29,7 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
     function handle_change_layout (data) {
         const {mode, expanded} = data
         const { childNodes } = log_list
-        log_list.setAttribute('aria-label', mode)
-        
+        if (mode) log_list.setAttribute('aria-label', mode)
         if (expanded !== void 0) {
             is_expanded = expanded
             childNodes.forEach( list => {
