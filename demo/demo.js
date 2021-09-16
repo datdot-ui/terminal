@@ -32,7 +32,7 @@ function demo () {
     recipients['logs'](make({to: '*', type: 'attestor'}))
     recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
     recipients['logs'](make({to: '*', type: 'expanded'}))
-    recipients['logs'](make({to: '*', type: 'unexpanded'}))
+    recipients['logs'](make({to: '*', type: 'collapsed'}))
     const click = button({name: 'click', body: 'Click', 
     theme: {
         props: { 
@@ -202,6 +202,7 @@ const css = csjs`
     --color-bright-yellow-crayola: 35, 100%, 58%;
     --color-green-yellow-crayola: 51, 100%, 83%;
     --color-purple: 283, var(--r);
+    --color-heliotrope: 288, 100%, 73%;
     --color-medium-purple: 269, 100%, 70%;
     --color-electric-violet: 276, 98%, 48%;
     --color-grey33: var(--b), 20%;
@@ -237,11 +238,14 @@ const css = csjs`
     --primary-body-bg-color: var(--color-greyF2);
     --primary-color: var(--color-black);
     --primary-color-hover: var(--color-white);
+    --primary-current-color: var(--color-white);
     --primary-bg-color: var(--color-white);
     --primary-bg-color-hover: var(--color-black);
+    --primary-current-bg-color: var(--color-black);
     --primary-font: Arial, sens-serif;
     --primary-size: var(--size14);
     --primary-size-hover: var(--primary-size);
+    --primary-current-size: var(--primary-size);
     --primary-border-width: 1px;
     --primary-border-style: solid;
     --primary-border-color: var(--color-black);
@@ -251,9 +255,6 @@ const css = csjs`
     --primary-disabled-color: var(--color-greyA2);
     --primary-disabled-bg-color: var(--color-greyEB);
     --primary-disabled-fill: var(--color-greyA2);
-    --primary-current-size: var(--primary-size);
-    --primary-current-color: var(--primary-bg-color);
-    --primary-current-bg-color: var(--primary-color);
     --primary-selected-icon-fill: var(--primary-color);
     --primary-selected-icon-fill-hover: var(--primary-color-hover);
     --primary-current-icon-fill: var(--color-white);

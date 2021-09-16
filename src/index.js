@@ -41,7 +41,7 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
     function make_logs (msg) {
         const {head, refs, type, data, meta} = msg
         // make an object for type, count, color
-        const init = t => ({type: t, count: 0, color: type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|expanded|unexpanded|error|warning|toggled|changed/) ? null : int2hsla(str2hashint(t)) })
+        const init = t => ({type: t, count: 0, color: type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|expanded|collapsed|error|warning|toggled|changed/) ? null : int2hsla(str2hashint(t)) })
         // to check type is existing then do count++, else return new type
         const add = t => ((types[t] || (types[t] = init(t))).count++, types[t])
         add(type)
@@ -272,9 +272,9 @@ log-list .list:last-child {
     --bg-color: var(--color-electric-violet);
     --opacity: 1;
 }
-[aria-type="unexpanded"] {
-    --bg-color: var(--color-electric-violet);
-    --opacity: .6;
+[aria-type="collapsed"] {
+    --bg-color: var(--color-heliotrope);
+    --opacity: 1;
 }
 log-list .list:last-child .type {}
 log-list .list:last-child .arrow {
