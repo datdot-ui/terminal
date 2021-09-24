@@ -7,87 +7,138 @@ const head = require('head')()
 const fullScreen = require('fullScreen')()
 // modules
 const message_maker = require('../src/node_modules/message-maker')
+const make_grid = require('../src/node_modules/make-grid')
 const logs = require('..')
-const button = require('datdot-ui-button')
+const {i_button} = require('datdot-ui-button')
 
 function demo () {
     const recipients = []
     let is_checked = false
     let is_selected = false
-    const log_list = logs({mode: 'compact', expanded: 'false'}, protocol('logs'))
+    const log_list = logs({expanded: 'false'}, protocol('logs'))
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
-    recipients['logs'](message)
-    recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-    recipients['logs'](make({to: '*', type: 'extrinsic'}))
-    recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-    recipients['logs'](make({to: '*', type: 'register'}))
-    recipients['logs'](make({to: '*', type: 'current-block'}))
-    recipients['logs'](make({to: '*', type: 'eventpool'}))
-    recipients['logs'](make({to: '*', type: 'keep-alive'}))
-    recipients['logs'](make({to: '*', type: 'user'}))
-    recipients['logs'](make({to: '*', type: 'peer'}))
-    recipients['logs'](make({to: '*', type: '@todo'}))
-    recipients['logs'](make({to: '*', type: 'hoster'}))
-    recipients['logs'](make({to: '*', type: 'encoder'}))
-    recipients['logs'](make({to: '*', type: 'attestor'}))
-    recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
-    recipients['logs'](make({to: '*', type: 'expanded'}))
-    recipients['logs'](make({to: '*', type: 'collapsed'}))
-    const click = button({name: 'click', body: 'Click', 
+    setTimeout(()=> {
+        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'register'}))
+        recipients['logs'](make({to: '*', type: 'current-block'}))
+        recipients['logs'](make({to: '*', type: 'eventpool'}))
+        recipients['logs'](make({to: '*', type: 'keep-alive'}))
+        // todo: for testing only, after remove
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'attestor'}))
+        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
+        recipients['logs'](make({to: '*', type: 'expanded'}))
+        recipients['logs'](make({to: '*', type: 'collapsed'}))
+        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+    }, 500)
+    setTimeout(()=> { 
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'attestor'}))
+        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
+        recipients['logs'](make({to: '*', type: 'expanded'}))
+        recipients['logs'](make({to: '*', type: 'collapsed'}))
+        // todo: for testing only, after remove
+        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+    }, 1200)
+    const click = i_button({name: 'click', body: 'Click', 
     theme: {
         props: { 
             border_radius: '0'
         }
     }}, protocol('click'))
-    const open = button({name: 'open', body: 'Open', 
+    const open = i_button({name: 'open', body: 'Open', 
     theme: {
         props: { 
             border_radius: '0'
         }
     }}, protocol('open'))
-    const close = button({name: 'close', body: 'Close', 
+    const close = i_button({name: 'close', body: 'Close', 
     theme: {
         props: { 
             border_radius: '0'
         }
     }}, protocol('close'))
-    const error = button({name: 'error', body: 'Error', 
+    const error = i_button({name: 'error', body: 'Error', 
     theme: {
         props: { 
             border_radius: '0'
         }
     }}, protocol('error'))
-    const warning = button({name: 'warning', body: 'Warning', 
+    const warning = i_button({name: 'warning', body: 'Warning', 
     theme: {
         props: { 
             border_radius: '0'
         }
     }}, protocol('warning'))
-    const select = button({name: 'select', role: 'button', body: 'Select', selected: is_selected, 
+    const select = i_button({name: 'select', role: 'button', body: 'Select', selected: is_selected, 
     theme: {
         props: { 
             border_radius: '0'
         }
     }}, protocol('select'))
-    const toggle = button({name: 'toggle', role: 'switch', body: 'Toggle',
+    const toggle = i_button({name: 'toggle', role: 'switch', body: 'Toggle',
     theme: {
         props: { 
             border_radius: '0'
         }
     }}, protocol('toggle'))
             
-    const container = bel`
-    <div class="${css.container}">
-        <div class="${css.actions}">${click}${open}${close}${error}${warning}${toggle}${select}</div>
-    </div>`
+    const actions = bel`<div class="${css.actions}">${click}${open}${close}${error}${warning}${toggle}${select}</div>`
 
     const app = bel`
     <div class="${css.wrap}" data-state="debug">
-        ${container}${log_list}
+        ${actions}${log_list}
     </div>`
 
-    
+    const test = bel`
+        <div class=${css.test}>
+            <div class=${css.article}>
+                <section>
+                    <h2>What is Lorem Ipsum?</h2>
+                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                </section>
+                <section>
+                    <h2>Why do we use it?</h2>
+                    <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+                </section>
+                <section>
+                    <h2>Beautiy landscape</h2>
+                    <img src="https://cdn.pixabay.com/photo/2021/08/14/04/15/mountains-6544522_960_720.jpg" alt="Landscape">
+                </section>
+            </div>
+            <div class=${css.buttons}>
+                <button>Hello</button>
+                <button>WOW</button>
+                <button>Animals</button>
+            </div>
+        </div>
+    `
     return app
 
     function click_event (target) {
@@ -137,13 +188,8 @@ function demo () {
         const message = make({type})
         recipients['logs'](message)
     }
-    function change_layout_event () {
-        const message = make({to: 'terminal', type: 'layout-mode', data: {mode: 'comfortable', expanded: 'false'}})
-        recipients['logs'](message)
-    }
     function handle_click (from) {
         const [target, type, flow] = from.split(" ").join("").split("/")
-        if (target === 'click') return change_layout_event()
         if (target === 'select') return selected_event(target)
         if (target === 'open') return open_event(target)
         if (target === 'close') return close_event(target)
@@ -167,7 +213,22 @@ function demo () {
 }
 
 const css = csjs`
+/* 
+.test {
+    display: grid;
+    grid-template-areas: "actions" "article";
+    height: 100%;
+}
+.actions {
+    grid-area: actions;
+}
+.article {
+    grid-area: article;
+    height: 100%;
+    overflow: scroll;
+} */
 :root {
+    /* define colors ---------------------------------------------*/
     --b: 0, 0%;
     --r: 100%, 50%;
     --color-white: var(--b), 100%;
@@ -175,28 +236,28 @@ const css = csjs`
     --color-dark: 223, 13%, 20%;
     --color-deep-black: 222, 18%, 11%;
     --color-red: 358, 99%, 53%;
-    --color-amaranth-pink: 331, 86%, 78%;
-    --color-persian-rose: 323, 100%, 56%;
-    --color-orange: 35, 100%, 58%;
+    --color-amaranth-pink: 329, 100%, 65%;
+    --color-persian-rose: 323, 100%, 50%;
+    --color-orange: 32, var(--r);
+    --color-light-orange: 36, 100%, 55%;
     --color-safety-orange: 27, 100%, 50%;
     --color-deep-saffron: 31, 100%, 56%;
     --color-ultra-red: 348, 96%, 71%;
     --color-flame: 15, 80%, 50%;
     --color-verdigris: 180, 54%, 43%;
-    --color-blue: 214, var(--r);
+    --color-viridian-green: 180, 100%, 63%;
+    --color-blue: 214, 100%, 49%;
     --color-heavy-blue: 233, var(--r);
     --color-maya-blue: 205, 96%, 72%;
     --color-slate-blue: 248, 56%, 59%;
     --color-blue-jeans: 204, 96%, 61%;
     --color-dodger-blue: 213, 90%, 59%;
-    --color-viridian-green: 180, 100%, 63%;
-    --color-green: 136, 81%, 34%;
-    --color-light-green: 127, 86%, 77%;
+    --color-light-green: 97, 86%, 77%;
     --color-lime-green: 127, 100%, 40%;
     --color-slimy-green: 108, 100%, 28%;
     --color-maximum-blue-green: 180, 54%, 51%;
-    --color-green: 136, 81%, 34%;
-    --color-light-green: 97, 86%, 77%;
+    --color-deep-green: 136, 79%, 22%;
+    --color-green: 136, 82%, 38%;
     --color-lincoln-green: 97, 100%, 18%;
     --color-yellow: 44, 100%, 55%;
     --color-chrome-yellow: 39, var(--r);
@@ -221,9 +282,12 @@ const css = csjs`
     --color-greyEF: var(--b), 94%;
     --color-greyF2: var(--b), 95%;
     --transparent: transparent;
-    --define-font: *---------------------------------------------*;
+    /* define font ---------------------------------------------*/
+    --snippet-font: Segoe UI Mono, Monospace, Cascadia Mono, Courier New, ui-monospace, Liberation Mono, Menlo, Monaco, Consolas;
     --size12: 1.2rem;
+    --size13: 1.3rem;
     --size14: 1.4rem;
+    --size15: 1.5rem;
     --size16: 1.6rem;
     --size18: 1.8rem;
     --size20: 2rem;
@@ -233,34 +297,107 @@ const css = csjs`
     --size28: 2.8rem;
     --size30: 3rem;
     --size32: 3.2rem;
+    --size34: 3.4rem;
     --size36: 3.6rem;
+    --size38: 3.8rem;
     --size40: 4rem;
-    --define-primary: *---------------------------------------------*;
+    --size42: 4.2rem;
+    --size44: 4.4rem;
+    --size46: 4.6rem;
+    --size48: 4.8rem;
+    --size50: 5rem;
+    --size52: 5.2rem;
+    --size54: 5.4rem;
+    --size56: 5.6rem;
+    --size58: 5.8rem;
+    --size60: 6rem;
+    --weight100: 100;
+    --weight300: 300;
+    --weight400: 400;
+    --weight600: 600;
+    --weight800: 800;
+    /* define primary ---------------------------------------------*/
     --primary-body-bg-color: var(--color-greyF2);
+    --primary-font: Arial, sens-serif;
+    --primary-size: var(--size12);
+    --primary-size-hover: var(--primary-size);
+    --primary-weight: 300;
+    --primary-weight-hover: 300;
     --primary-color: var(--color-black);
     --primary-color-hover: var(--color-white);
-    --primary-current-color: var(--color-white);
     --primary-bg-color: var(--color-white);
     --primary-bg-color-hover: var(--color-black);
-    --primary-current-bg-color: var(--color-black);
-    --primary-font: Arial, sens-serif;
-    --primary-size: var(--size14);
-    --primary-size-hover: var(--primary-size);
-    --primary-current-size: var(--primary-size);
     --primary-border-width: 1px;
     --primary-border-style: solid;
     --primary-border-color: var(--color-black);
+    --primary-border-opacity: 1;
     --primary-radius: 8px;
-    --primary-link-color: var(--color-heavy-blue);
-    --primary-link-color-hover: var(--color-dodger-blue);
+    --primary-avatar-width: 100%;
+    --primary-avatar-height: auto;
+    --primary-avatar-radius: 0;
+    --primary-disabled-size: var(--primary-size);
     --primary-disabled-color: var(--color-greyA2);
     --primary-disabled-bg-color: var(--color-greyEB);
-    --primary-disabled-fill: var(--color-greyA2);
-    --primary-selected-icon-fill: var(--primary-color);
-    --primary-selected-icon-fill-hover: var(--primary-color-hover);
-    --primary-current-icon-fill: var(--color-white);
+    --primary-disabled-icon-size: var(--primary-icon-size);
+    --primary-disabled-icon-fill: var(--color-greyA2);
+    --primary-listbox-option-icon-size: 20px;
+    --primary-list-avatar-width: 30px;
+    --primary-list-avatar-height: auto;
+    --primary-list-avatar-radius: var(--primary-avatar-radius);
+    /* define icon settings ---------------------------------------------*/
+    --primary-icon-size: var(--size14);
+    --primary-icon-size-hover: var(--size14);
+    --primary-icon-fill: var(--primary-color);
+    --primary-icon-fill-hover: var(--primary-color-hover);
+    /* define current ---------------------------------------------*/
+    --current-size: var(--primary-size);
+    --current-weight: var(--primary-weight);
+    --current-color: var(--color-white);
+    --current-bg-color: var(--color-black);
+    --current-icon-size: var(--primary-icon-size);
+    --current-icon-fill: var(--color-white);
+    --current-list-selected-icon-size: var(--list-selected-icon-size);
+    --current-list-selected-icon-fill: var(--color-white);
+    --current-list-selected-icon-fill-hover: var(--color-white);
+    --current-list-size: var(--current-size);
+    --current-list-color: var(--current-color);
+    --current-list-bg-color: var(--current-bg-color);
+    /* role listbox settings ---------------------------------------------*/
+    /*-- collapsed --*/
+    --listbox-collapsed-bg-color: var(--primary-bg-color);
+    --listbox-collapsed-bg-color-hover: var(--primary-bg-color-hover);
+    --listbox-collapsed-icon-size: var(--size14);
+    --listbox-collapsed-icon-size-hover: var(--listbox-collapsed-icon-size);
+    --listbox-collapsed-icon-fill: var(--primary-icon-fill);
+    --listbox-collapsed-icon-fill-hover: var(--primary-icon-fill-hover);
+    --listbox-collapsed-listbox-size: var(--primary-size);
+    --listbox-collapsed-listbox-size-hover: var(--listbox-collapsed-listbox-size);
+    --listbox-collapsed-listbox-weight: var(--primary-weight);
+    --listbox-collapsed-listbox-weight-hover: var(--primary-weight);
+    --listbox-collapsed-listbox-color: var(--primary-color);
+    --listbox-collapsed-listbox-color-hover: var(-primary-color-hover);
+    --listbox-collapsed-listbox-icon-size: var(--primary-listbox-option-icon-size);
+    --listbox-collapsed-listbox-icon-size-hover: var(--primary-listbox-option-icon-size);
+    --listbox-collapsed-listbox-icon-fill: var(--color-blue);
+    --listbox-collapsed-listbox-icon-fill-hover: var(--color-yellow);
+    /*-- expanded ---*/
+    --listbox-expanded-bg-color: var(--current-bg-color);
+    --listbox-expanded-icon-size: var(--size14);
+    --listbox-expanded-icon-fill: var(--color-light-green);
+    --listbox-expanded-listbox-size: var(--listbox-collapsed-listbox-size);
+    --listbox-expanded-listbox-weight: var(--primary-weight);
+    --listbox-expanded-listbox-color: var(--current-color);
+    --listbox-expanded-listbox-icon-size: var(--primary-listbox-option-icon-size);
+    --listbox-expanded-listbox-icon-fill: var(--color-light-green);
+    /* role option settings ---------------------------------------------*/
+    --list-bg-color: var(--primary-bg-color);
+    --list-bg-color-hover: var(--primary-bg-color-hover);
+    --list-selected-icon-size: var(--size16);
+    --list-selected-icon-size-hover: var(--list-selected-icon-size);
+    --list-selected-icon-fill: var(--primary-icon-fill);
+    --list-selected-icon-fill-hover: var(--primary-icon-fill-hover);
 }
-* {
+*, *:before, *:after {
     box-sizing: border-box;
 }
 html {
@@ -268,12 +405,13 @@ html {
     height: 100%;
 }
 body {
-    -webkit-text-size-adjust:100%;
+    -webkit-text-size-adjust: 100%;
     font-size: var(--primary-font-size);
     font-family: var(--primary-font);
     background-color: hsl( var(--primary-bgColor) );
     margin: 0;
     padding: 0;
+    overflow: hidden;
     height: 100%;
 }
 button {
@@ -293,22 +431,18 @@ button:hover {
 }
 .wrap {
     display: grid;
-    height: 100%;
-}
-.container {
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "actions" "terminal";
 }
 [data-state="debug"] {
-    grid-template-rows: 40px 1fr;
-    grid-template-columns: auto;
+    height: 100%;
 }
 .actions {
+    grid-area: actions;
     display: grid;
     grid-template-rows: auto;
     grid-template-columns: repeat(auto-fit, minmax(60px, auto));
     gap: 2px;
-}
-[data-state="debug"] i-log {
-    height: 100%;
 }
 [aria-selected="true"] {
     color: hsl(var(--color-white));
@@ -317,13 +451,13 @@ button:hover {
 `
 
 document.body.append( demo() )
-},{"..":33,"../src/node_modules/message-maker":35,"bel":5,"csjs-inject":8,"datdot-ui-button":25,"fullScreen":2,"head":3}],2:[function(require,module,exports){
+},{"..":46,"../src/node_modules/make-grid":49,"../src/node_modules/message-maker":50,"bel":5,"csjs-inject":8,"datdot-ui-button":25,"fullScreen":2,"head":3}],2:[function(require,module,exports){
 module.exports = fullscreen
 
 function fullscreen () {
     document.body.addEventListener("keydown",  (e) => {
         const key = e.which || e.keyCode || e.charCode
-        if (key === 70) toggleFullScreen()
+        if (key === 70) return toggleFullScreen()
     })
 }
 
@@ -339,12 +473,18 @@ function toggleFullScreen () {
 },{}],3:[function(require,module,exports){
 module.exports = head
 
-function head (lang = 'utf8', title = 'Terminal - DatDot') {
+function head (lang = 'UTF-8', title = 'Terminal - DatDot') {
+    document.documentElement.lang = 'en'
     document.title = title
-    const meta = document.createElement('meta')
-    meta.setAttribute('name', 'viewport')
-    meta.setAttribute('content', 'width=device-width, initial-scale=1.0')
-    document.head.appendChild(meta)
+    const lan = document.createElement('meta')
+    const viewport = document.createElement('meta')
+    const description = document.createElement('meta')
+    lan.setAttribute('charset', lang)
+    viewport.setAttribute('name', 'viewport')
+    viewport.setAttribute('content', 'width=device-width, initial-scale=1, user-scalable=no')
+    description.setAttribute('name', 'description')
+    description.setAttribute('content', 'Datdot-UI is a web component and the widgets for datdot.org using.')
+    document.head.append(lan, viewport)
 }
 },{}],4:[function(require,module,exports){
 var trailingNewlineRegex = /\n[\s]+$/
@@ -580,7 +720,7 @@ module.exports = hyperx(belCreateElement, {comments: true})
 module.exports.default = module.exports
 module.exports.createElement = belCreateElement
 
-},{"./appendChild":4,"hyperx":29}],6:[function(require,module,exports){
+},{"./appendChild":4,"hyperx":44}],6:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
@@ -599,7 +739,7 @@ function csjsInserter() {
 module.exports = csjsInserter;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"csjs":11,"insert-css":30}],7:[function(require,module,exports){
+},{"csjs":11,"insert-css":45}],7:[function(require,module,exports){
 'use strict';
 
 module.exports = require('csjs/get-css');
@@ -1077,321 +1217,977 @@ function scopify(css, ignores) {
 }
 
 },{"./regex":21,"./replace-animations":22,"./scoped-name":23}],25:[function(require,module,exports){
-(function (__filename){(function (){
-const file = require('path').basename(__filename)
 const style_sheet = require('support-style-sheet')
-const message_maker = require('message_maker')
+const message_maker = require('message-maker')
+const make_img = require('make-image')
+const make_element = require('make-element')
+const {main_icon, select_icon, list_icon} = require('make-icon')
+const make_grid = require('make-grid')
 
-module.exports = i_button
+module.exports = {i_button, i_link}
+
+function i_link (option, protocol) {
+    const {page = '*', flow = 'ui-link', name, role='link', body, link = {}, icons = {}, classlist, cover, disabled = false, theme = {}} = option
+    const { icon } = icons
+    const make_icon = icons && icon ? main_icon(icon) : undefined
+    let {url = '#', target = '_self'} = link
+    let is_disabled = disabled
+
+    function widget () {
+        const send = protocol(get)
+        const make = message_maker(`${name} / ${role} / ${flow} / ${page}`)
+        const message = make({to: 'demo.js', type: 'ready'})
+        const el = make_element({name: 'i-link', role})
+        const shadow = el.attachShadow({mode: 'open'})
+        const text = make_element({name: 'span', classlist: 'text'})
+        const avatar = make_element({name: 'span', classlist: 'avatar'})
+        text.append(body)
+        el.setAttribute('aria-label', body)
+        el.setAttribute('href', url)
+        if (is_disabled) set_attr ({aria: 'disabled', prop: is_disabled})
+        if (!target.match(/self/)) el.setAttribute('target', target)
+        if (classlist) el.classList.add(classlist)
+        style_sheet(shadow, style)
+        // check icon, cover and body if has value
+        const add_cover = typeof cover === 'string' ? avatar : undefined
+        const add_icon = icon ? make_icon : undefined
+        const add_text = body ? typeof body === 'string' && (add_icon || add_cover ) ? text : body : typeof body === 'object' && body.localName === 'div' ? body : undefined
+        if (typeof cover === 'string') avatar.append(make_img({src: cover, alt: name}))
+        if (typeof cover === 'object') send(make({type: 'error', data: `cover[${typeof cover}] must to be a string`}))
+        if (add_icon) shadow.append(add_icon)
+        if (add_cover) shadow.append(add_cover)
+        if (add_text) shadow.append(add_text)
+        send(message)
+        if (!is_disabled) el.onclick = handle_open_link
+        return el
+
+        function set_attr ({aria, prop}) {
+            el.setAttribute(`aria-${aria}`, prop)
+        }
+    
+        function handle_open_link () {
+            if (target.match(/_/)) {
+                window.open(url, target)
+            }
+            if (target.match(/#/) && target.length > 1) {
+                const el = document.querySelector(target)
+                el.src = url
+            }
+            send(make({type: 'go to', data: {url, window: target}}))
+        }
+
+        // protocol get msg
+        function get (msg) {
+            const { head, refs, type, data } = msg
+        }
+
+    }
+
+    // insert CSS style
+    const custom_style = theme ? theme.style : ''
+    // set CSS variables
+    const {props = {}, grid = {}} = theme
+    const {
+        // default        
+        padding, margin, width, height, opacity,
+        // size
+        size, size_hover, disabled_size,
+        // weight
+        weight, weight_hover, disabled_weight,
+        // color
+        color, color_hover, disabled_color,
+        // background-color    
+        bg_color, bg_color_hover, disabled_bg_color,
+        // deco
+        deco, deco_hover, disabled_deco,
+        // border
+        border_width, border_style, border_opacity, 
+        border_color, border_color_hover, border_radius,
+        // shadowbox
+        shadow_color, shadow_color_hover,
+        offset_x, offset_y, offset_x_hover, offset_y_hover, 
+        blur, blur_hover, shadow_opacity, shadow_opacity_hover,
+        // icon
+        icon_size, icon_size_hover, disabled_icon_size,
+        icon_fill, icon_fill_hover, disabled_icon_fill,
+        // avatar
+        avatar_width, avatar_height, avatar_radius, 
+        avatar_width_hover, avatar_height_hover,
+        scale, scale_hover
+    } = props
+
+    const grid_link = grid.link ? grid.link : {auto: {auto_flow: 'column'}, align: 'items-center', gap: '4px'}
+    const style = `
+    :host(i-link) {
+        --size: ${size ? size : 'var(--link-size)'};
+        --weight: ${weight ? weight : 'var(--weight300)'};
+        --color: ${color ? color : 'var(--link-color)'};
+        --bg-color: ${bg_color ? bg_color : 'var(--link-bg-color)'};
+        --opacity: ${opacity ? opacity : '0'};
+        --deco: ${deco ? deco : 'none'};
+        --padding: ${padding ? padding : '0'};
+        --margin: ${margin ? margin : '0'};
+        --icon-size: ${icon_size ? icon_size : 'var(--link-icon-size)'};
+        display: inline-grid;
+        font-size: var(--size);
+        font-weight: var(--weight);
+        color: hsl(var(--color));
+        background-color: hsla(var(--bg-color), var(--opacity));
+        text-decoration: var(--deco);
+        padding: var(--padding);
+        margin: var(--margin);
+        transition: color .5s, background-color .5s, font-size .5s, font-weight .5s, opacity .5s ease-in-out;
+        cursor: pointer;
+        ${make_grid(grid_link)}
+    }
+    :host(i-link:hover) {
+        --color: ${color_hover ? color_hover : 'var(--link-color-hover)'};
+        --size: ${size_hover ? size_hover : 'var(--link-size-hover)'};
+        --deco: ${deco_hover ? deco_hover : 'underline'};
+        --bg-color: ${bg_color_hover ? bg_color_hover : 'var(--color-white)'};
+        --opacity: ${opacity ? opacity : '0'};
+        text-decoration: var(--deco);
+    }
+    :host(i-link) img {
+        --scale: ${scale ? scale : '1'};
+        width: 100%;
+        height: 100%;
+        transform: scale(var(--scale));
+        transition: transform 0.3s linear;
+        object-fit: cover;
+        border-radius: var(--avatar-radius);
+    }
+    :host(i-link:hover) img {
+        --scale: ${scale_hover ? scale_hover : '1.2'};
+    }
+    :host(i-link) svg {
+        width: 100%;
+        height: auto;
+    }
+    :host(i-link) g {
+        --icon-fill: ${icon_fill ? icon_fill : 'var(--link-icon-fill)'};
+        fill: hsl(var(--icon-fill));
+        transition: fill 0.05s ease-in-out;
+    }
+    :host(i-link:hover) g, :host(i-link:hover) path{
+        --icon-fill: ${icon_fill_hover ? icon_fill_hover : 'var(--link-icon-fill-hover)'};
+    }
+    :host(i-link) .text {
+        ${make_grid(grid.text)}
+    }
+    :host(i-link) .icon {
+        width: var(--icon-size);
+        max-width: 100%;
+        ${make_grid(grid.icon)}
+    }
+    :host(i-link:hover) .icon {
+        --icon-size: ${icon_size_hover ? icon_size_hover : 'var(--link-icon-size)'};
+    }
+    :host(i-link) .avatar {
+        --avatar-width: ${avatar_width ? avatar_width : 'var(--link-avatar-width)'};
+        --avatar-height: ${avatar_height ? avatar_height : 'var(--link-avatar-height)'};
+        --avatar-radius: ${avatar_radius ? avatar_radius : 'var(--link-avatar-radius)'};
+        display: block;
+        width: var(--avatar-width);
+        height: var(--avatar-height);
+        border-radius: var(--avatar-radius);
+        -webkit-mask-image: -webkit-radial-gradient(center, white, black);
+        max-width: 100%;
+        max-height: 100%;
+        ${make_grid(grid.avatar)}
+        transition: width 0.2s, height 0.2s linear;
+    }
+    :host(i-link:hover) .avatar {
+        --avatar-width: ${avatar_width_hover ? avatar_width_hover : 'var(--link-avatar-width-hover)'};
+        --avatar-height: ${avatar_height_hover ? avatar_height_hover : 'var(--link-avatar-height-hover)'};
+    }
+    :host(i-link[role="menuitem"]) {
+        --size: ${size ? size : 'var(--menu-size)'};
+        --color: ${color ? color : 'var(--menu-color)'};
+        --weight: ${weight ? weight : 'var(--menu-weight)'};
+        background-color: transparent;
+    }
+    :host(i-link[role="menuitem"]:hover) {
+        --size: ${size ? size : 'var(--menu-size-hover)'};
+        --color: ${color_hover ? color_hover : 'var(--menu-color-hover)'};
+        --weight: ${weight ? weight : 'var(--menu-weight-hover)'};
+        text-decoration: none;
+        background-color: transparent;
+    }
+    :host(i-link[role="menuitem"]) .icon {
+        --icon-size: ${icon_size ? icon_size : 'var(--menu-icon-size)'};
+    }
+    :host(i-link[role="menuitem"]) g {
+        --icon-fill: ${icon_fill ? icon_fill : 'var(--menu-icon-fill)'};
+    }
+    :host(i-link[role="menuitem"]:hover) g {
+        --icon-fill: ${icon_fill_hover ? icon_fill_hover : 'var(--menu-icon-fill-hover)'};
+    }
+    :host(i-link[aria-disabled="true"]), :host(i-link[aria-disabled="true"]:hover) {
+        --size: ${disabled_size ? disabled_size : 'var(--link-disabled-size)'};
+        --color: ${disabled_color ? disabled_color : 'var(--link-disabled-color)'};
+        text-decoration: none;
+        cursor: not-allowed;
+    }
+    :host(i-link[disabled]) g,
+    :host(i-link[disabled]) path,
+    :host(i-link[disabled]:hover) g,
+    :host(i-link[disabled]:hover) path,
+    :host(i-link[role][disabled]) g,
+    :host(i-link[role][disabled]) path,
+    :host(i-link[role][disabled]:hover) g,
+    :host(i-link[role][disabled]:hover) path
+    {
+        --icon-fill: ${disabled_icon_fill ? disabled_icon_fill : 'var(--link-disabled-icon-fill)'};
+    }
+    :host(i-link[disabled]) .avatar {
+        opacity: 0.6;
+    }
+    :host(i-link.right) {
+        flex-direction: row-reverse;
+    }
+    ${custom_style}
+    `
+    return widget()
+}
 
 function i_button (option, protocol) {
-    const {page, flow = 'ui-button', name, body, icon, role = 'button', state, expanded = false, current = false, selected = false, checked = false, disabled = false, theme} = option
+    const {page = "*", flow = 'ui-button', name, role = 'button', controls, body = '', icons = {}, cover, classlist = null, mode = '', state, expanded = false, current = false, selected = false, checked = false, disabled = false, theme = {}} = option
+    const {icon, select = {}, list = {}} = icons
+    const make_icon = icon ? main_icon(icon) : undefined
+    if (role === 'listbox') var make_select_icon = select_icon(select)
+    if (role === 'option') var make_list_icon = list_icon(list)
     let is_current = current
     let is_checked = checked
     let is_disabled = disabled
     let is_selected = selected
     let is_expanded = expanded
 
+    document.body.addEventListener("touchstart",function(){ });
+    
     function widget () {
         const send = protocol(get)
-        const make = message_maker(`${name} / ${role} / ${flow}`)
-        let data = role === 'tab' ?  {selected: is_current ? 'true' : is_selected, current: is_current} : role === 'switch' ? {checked: is_checked} : role === 'listbox' ? {selected: is_selected} :  disabled ? {disabled} : null
+        const make = message_maker(`${name} / ${role} / ${flow} / ${page}`)
+        const data = role === 'tab' ?  {selected: is_current ? 'true' : is_selected, current: is_current} : role === 'switch' ? {checked: is_checked} : role === 'listbox' ? {expanded: is_expanded} : disabled ? {disabled} : role === 'option' ? {selected: is_selected, current: is_current} : null
         const message = make({to: 'demo.js', type: 'ready', data})
         send(message)
-        const el = document.createElement('i-button')
-        const text = document.createElement('span')
-        el.dataset.name = name
-        el.dataset.ui = role
-        el.setAttribute('role', role)
-        el.setAttribute('aria-label', name)
-        el.setAttribute('tabindex', 0)
-        el.onclick = handle_click
-        text.classList.add('text')
-        text.append(body)
+        const el = make_element({name: 'i-button', classlist, role })
         const shadow = el.attachShadow({mode: 'open'})
+        const text = make_element({name: 'span', classlist: 'text'})
+        const avatar = make_element({name: 'span', classlist: 'avatar'})
+        const listbox = make_element({name: 'span', classlist: 'listbox'})
+        const option = make_element({name: 'span', classlist: 'option'})
+        // check icon, img and body if has value
+        const add_cover = typeof cover === 'string' ? avatar : undefined
+        const add_text = body ? typeof body === 'object' ? 'undefined' : text : undefined
+        if (typeof cover === 'string') avatar.append(make_img({src: cover, alt: name}))
+        if (typeof cover === 'object') send(make({type: 'error', data: `cover[${typeof cover}] must to be a string`}))
+        if (typeof body === 'object') send(make({type: 'error', data: {body: `content is an ${typeof body}`, content: body }}))
+        if (!is_disabled) el.onclick = handle_click
+        el.setAttribute('aria-label', name)
+        text.append(body)
         style_sheet(shadow, style)
-        if (icon || role === 'option') shadow.append(icon, text)
-        else shadow.append(body)
-
-        // define conditions
-        if (state) {
-            el.dataset.state = state
-            el.setAttribute('aria-live', 'assertive')
-        }
-        if (role === 'tab') {
-            el.dataset.current = is_current
-            el.setAttribute('aria-selected', false)
-        }
-        if (role === 'switch') {
-            el.setAttribute('aria-checked', is_checked)
-        }
-        if (role === 'listbox') {
-            el.setAttribute('aria-haspopup', role)
-        }
-        if (disabled) {
-            el.setAttribute('aria-disabled', is_disabled)
-            el.setAttribute('disabled', is_disabled)
-        } else {
-            el.removeAttribute('aria-disabled')
-            el.removeAttribute('disabled')
-        }
-        if (is_checked) {
-            el.setAttribute('aria-checked', is_checked)
-        }
-        if (current) {
-            is_selected = current
-            el.setAttribute('aria-current', is_current)
-
-        }
-        if (is_selected) {
-            el.setAttribute('aria-selected', is_selected)
-        }
-        if (is_expanded) {
-            el.setAttribute('aria-expanded', is_expanded)
-        }
+        append_items()
+        init_attr()
         return el
+
+        function init_attr () {
+            // define conditions
+            if (state) set_attr({aria: 'aria-live', prop: 'assertive'})
+            if (role === 'tab') {
+                set_attr({aria: 'selected', prop: is_selected})
+                set_attr({aria: 'controls', prop: controls})
+                el.setAttribute('tabindex', is_current ? 0 : -1)
+            }
+            if (role === 'switch') set_attr({aria: 'checked', prop: is_checked})
+            if (role === 'listbox') {
+                set_attr({aria: 'haspopup', prop: role})
+            }
+            if (disabled) {
+                set_attr({aria: 'disabled', prop: is_disabled})
+                el.setAttribute('disabled', is_disabled)
+            } 
+            if (is_checked) set_attr({aria: 'checked', prop: is_checked})
+            if (is_current) {
+                is_selected = is_current
+                set_attr({aria: 'current', prop: is_current})
+            }
+            if (is_selected || !is_selected && role.match(/option/)) {
+                set_attr({aria: 'selected', prop: is_selected})
+            } 
+            if (is_expanded) {
+                set_attr({aria: 'selected', prop: is_expanded})
+            }
+        }
+
+        function set_attr ({aria, prop}) {
+            el.setAttribute(`aria-${aria}`, prop)
+        }
+
+        // make element to append into shadowDOM
+        function append_items() {
+            const items = [make_icon, add_cover, add_text]
+            const target = role === 'listbox' ? listbox : role === 'option' ?  option : shadow
+            // list of listbox or dropdown menu
+            if (role.match(/option/)) shadow.append(make_list_icon, option)
+            // listbox or dropdown button
+            if (role.match(/listbox/)) shadow.append(make_select_icon, listbox)
+            items.forEach( item => {
+                if (item === undefined) return
+                target.append(item)
+            })
+        }
 
         // toggle
         function switched_event (data) {
             is_checked = data
             if (!is_checked) return el.removeAttribute('aria-checked')
-            el.setAttribute('aria-checked', is_checked)
+            set_attr({aria: 'checked', prop: is_checked})
         }
         // dropdown menu
         function expanded_event (data) {
-            is_expanded = data
-            el.setAttribute('aria-expanded', is_expanded)
+            is_expanded = !data
+            set_attr({aria: 'expanded', prop: is_expanded})
         }
         // tab checked
         function checked_event (data) {
             is_checked = data
             is_current = is_checked
-            el.setAttribute('aria-selected', is_checked)
-            el.setAttribute('aria-current', is_checked)
-            el.dataset.current = is_current
+            set_attr({aria: 'selected', prop: is_checked})
+            set_attr({aria: 'current', prop: is_current})
+            el.setAttribute('tabindex', is_current ? 0 : -1)
         }
-        function selected_event (body) {
-            is_selected = body
-            el.setAttribute('aria-selected', is_selected)
+        function list_selected_event (state) {
+            is_selected = state
+            set_attr({aria: 'selected', prop: is_selected})
+            if (mode === 'single-select') {
+                is_current = is_selected
+                set_attr({aria: 'current', prop: is_current})
+            }
+            // option is selected then send selected items to listbox button
+            if (is_selected) send(make({to: 'listbox', type: 'changed', data: {text: body, cover, icon} }))
+        }
+
+        function changed_event (data) {
+            const {text, cover, icon} = data
+            const new_text = make_element({name: 'span', classlist: 'text'})
+            const new_avatar = make_element({name: 'span', classlist: 'avatar'})
+            // change content for button or switch or tab
+            if (role.match(/button|switch|tab/)) {
+                const old_icon = shadow.querySelector('.icon')
+                const old_avatar = shadow.querySelector('.avatar')
+                const old_text = shadow.querySelector('.text')
+                if (old_text) {
+                    if (text) old_text.textContent = text
+                }
+                if (cover) {
+                    if (old_avatar) {
+                        const img = old_avatar.querySelector('img')
+                        img.alt = text
+                        img.src = cover
+                    } else {
+                        new_avatar.append(make_img({src: cover, alt: text}))
+                        shadow.insertBefore(new_avatar, shadow.firstChild)
+                    }
+                }
+                if (icon) {
+                    const new_icon = main_icon(icon)
+                    if (old_icon) old_icon.parentNode.replaceChild(new_icon, old_icon)
+                    else shadow.insertBefore(new_icon, shadow.firstChild)
+                } 
+                
+            }
+            // change content for listbox
+            if (role.match(/listbox/)) {
+                listbox.innerHTML = ''
+                if (icon) {
+                    const new_icon = main_icon(icon)
+                    if (role.match(/listbox/)) listbox.append(new_icon)
+                }
+                if (cover) {
+                    new_avatar.append(make_img({src: cover, alt: text}))
+                    if (role.match(/listbox/)) listbox.append(new_avatar)
+                }
+                if (text) {
+                    new_text.append(text)
+                    if (role.match(/listbox/)) listbox.append(new_text)
+                }
+            } 
         }
         // button click
         function handle_click () {
             if (is_current) return
-            // if (role.match(/tab/)) return send({page, from: name, flow: `ui-${role}`, type: 'click', body: is_checked, fn: fn_name, file, line: code_line+1})
-            // if (role.match(/switch/)) return send({page, from: name, flow: `ui-${role}`, type: 'click', body: is_checked, fn: fn_name, file, line: code_line+1})
-            // if (role === 'listbox') return send({page, from: name, flow: `ui-${role}`, type: 'click', body: is_expanded, fn: fn_name, file, line: code_line+2})
-            // if (role === 'option') return send({page, from: name, flow: `ui-${role}`, type: 'click', body: is_selected, fn: fn_name, file, line: code_line+3})
-            // new message
             const type = 'click'
             if (role === 'tab') return send( make({type, data: is_checked}) )
             if (role === 'switch') return send( make({type, data: is_checked}) )
-            if (role === 'listbox') return send( make({type, data: is_expanded}) )
-            if (role === 'option') return send( make({type, data: is_selected}) )
-            // send({page, from: name, flow: `ui-${role}`, type: 'click', fn: fn_name, file, line: code_line+4})
+            if (role === 'listbox') {
+                is_expanded = !is_expanded
+                return send( make({type, data: {expanded: is_expanded}}) )
+            }
+            if (role === 'option') {
+                is_selected = !is_selected
+                return send( make({type, data: {selected: is_selected, content: is_selected ? {text: body, cover, icon} : '' }}) )
+            }
             send( make({type}) )
         }
         // protocol get msg
         function get (msg) {
             const { head, refs, type, data } = msg
             // toggle
-            if (type === 'switched') return switched_event(data)
+            if (type.match(/switched/)) return switched_event(data)
             // dropdown
-            if (type === 'expanded') return expanded_event(data)
+            if (type.match(/expanded|collapsed/)) return expanded_event(!data)
             // tab, checkbox
             if (type.match(/checked|unchecked/)) return checked_event(data)
             // option
-            if (type.match(/selected|unselected/)) return selected_event(data)
+            if (type.match(/selected|unselected/)) return list_selected_event(data)
+            if (type.match(/changed/)) return changed_event(data)
         }
     }
    
-     // insert CSS style
-     const custom_style = theme ? theme.style : ''
-     // set CSS variables
-     if (theme && theme.props) {
-        var {size, size_hover, current_size,
-            weight, weight_hover, current_weight,
-            color, color_hover, current_color, current_bg_color, 
-            bg_color, bg_color_hover, border_color_hover,
-            border_width, border_style, border_opacity, border_color, border_radius, 
-            padding, width, height, opacity,
-            fill, fill_hover, icon_size, current_fill,
-            shadow_color, offset_x, offset_y, blur, shadow_opacity,
-            shadow_color_hover, offset_x_hover, offset_y_hover, blur_hover, shadow_opacity_hover
-        } = theme.props
-     }
+    // insert CSS style
+    const custom_style = theme ? theme.style : ''
+    // set CSS variables
+    const {props = {}, grid = {}} = theme
+    const {
+        // default -----------------------------------------//
+        padding, margin, width, height, opacity, 
+        // size
+        size, size_hover, 
+        // weight
+        weight, weight_hover, 
+        // color
+        color, color_hover,
+        // background-color
+        bg_color, bg_color_hover,
+        // border
+        border_color, border_color_hover,
+        border_width, border_style, border_opacity, border_radius, 
+        // icon
+        icon_fill, icon_fill_hover, icon_size, icon_size_hover,
+        // avatar
+        avatar_width, avatar_height, avatar_radius,
+        avatar_width_hover, avatar_height_hover,
+        // shadow
+        shadow_color, shadow_color_hover, 
+        offset_x, offset_x_hover,
+        offset_y, offset_y_hover, 
+        blur, blur_hover,
+        shadow_opacity, shadow_opacity_hover,
+        // scale
+        scale, scale_hover,
+        // current -----------------------------------------//
+        current_size, 
+        current_weight, 
+        current_color, 
+        current_bg_color,
+        current_icon_size,
+        current_icon_fill,
+        current_list_selected_icon_size,
+        current_list_selected_icon_fill,
+        current_avatar_width, 
+        current_avatar_height,
+        // disabled -----------------------------------------//
+        disabled_size, disabled_weight, disabled_color,
+        disabled_bg_color, disabled_icon_fill, disabled_icon_size,
+        // role === option ----------------------------------//
+        list_selected_icon_size, list_selected_icon_size_hover,
+        list_selected_icon_fill, list_selected_icon_fill_hover,
+        // role === listbox ----------------------------------//
+        // collapsed settings
+        listbox_collapsed_bg_color, listbox_collapsed_bg_color_hover,
+        listbox_collapsed_icon_size, listbox_collapsed_icon_size_hover,
+        listbox_collapsed_icon_fill, listbox_collapsed_icon_fill_hover, 
+        listbox_collapsed_listbox_color, listbox_collapsed_listbox_color_hover,
+        listbox_collapsed_listbox_size, listbox_collapsed_listbox_size_hover,
+        listbox_collapsed_listbox_weight, listbox_collapsed_listbox_weight_hover,
+        listbox_collapsed_listbox_icon_size, listbox_collapsed_listbox_icon_size_hover,
+        listbox_collapsed_listbox_icon_fill, listbox_collapsed_listbox_icon_fill_hover,
+        listbox_collapsed_listbox_avatar_width, listbox_collapsed_listbox_avatar_height,
+        // expanded settings
+        listbox_expanded_bg_color,
+        listbox_expanded_icon_size, 
+        listbox_expanded_icon_fill,
+        listbox_expanded_listbox_color,
+        listbox_expanded_listbox_size, 
+        listbox_expanded_listbox_weight,
+        listbox_expanded_listbox_avatar_width, 
+        listbox_expanded_listbox_avatar_height,
+        listbox_expanded_listbox_icon_size, 
+        listbox_expanded_listbox_icon_fill, 
+    } = props
 
+    const grid_init = {auto: {auto_flow: 'column'}, align: 'items-center', gap: '5px', justify: 'items-center'}
+    const grid_option = grid.option ? grid.option : grid_init
+    const grid_listbox = grid.listbox ? grid.listbox : grid_init
     const style = `
     :host(i-button) {
-        --size: ${size ? size : 'var(--size14)'};
-        --size-hover: ${size_hover ? size_hover : 'var(--size)'};
-        --curren-size: ${current_size ? current_size : 'var(--size14)'};
-        --bold: ${weight ? weight : 'normal'};
+        --size: ${size ? size : 'var(--primary-size)'};
+        --weight: ${weight ? weight : 'var(--weight300)'};
         --color: ${color ? color : 'var(--primary-color)'};
-        --bg-color: ${bg_color ? bg_color : 'var(--color-white)'};
-        --width: ${width ? width : 'unset'};
-        --height: ${height ? height : 'unset'};
+        --bg-color: ${bg_color ? bg_color : 'var(--primary-bg-color)'};
+        ${width && `--width: ${width}`};
+        ${height && `--height: ${height}`};
         --opacity: ${opacity ? opacity : '1'};
         --padding: ${padding ? padding : '12px'};
+        --margin: ${margin ? margin : '0'};
         --border-width: ${border_width ? border_width : '0px'};
         --border-style: ${border_style ? border_style : 'solid'};
         --border-color: ${border_color ? border_color : 'var(--primary-color)'};
         --border-opacity: ${border_opacity ? border_opacity : '1'};
         --border: var(--border-width) var(--border-style) hsla( var(--border-color), var(--border-opacity) );
-        --border-radius: ${border_radius ? border_radius : 'var(--primary-button-radius)'};
-        --fill: ${fill ? fill : 'var(--primary-color)'};
-        --fill-hover: ${fill_hover ? fill_hover : 'var(--color-white)'};
-        ---icon-size: ${icon_size ? icon_size : '16px'};
+        --border-radius: ${border_radius ? border_radius : 'var(--primary-radius)'};
         --offset_x: ${offset_x ? offset_x : '0px'};
         --offset-y: ${offset_y ? offset_y : '6px'};
         --blur: ${blur ? blur : '30px'};
-        --shadow-color: ${shadow_color ? shadow_color : 'var(--pimary-color)'};
-        --shadow-opacity: ${shadow_opacity ? shadow_opacity : '1'};
+        --shadow-color: ${shadow_color ? shadow_color : 'var(--primary-color)'};
+        --shadow-opacity: ${shadow_opacity ? shadow_opacity : '0'};
         --box-shadow: var(--offset_x) var(--offset-y) var(--blur) hsla( var(--shadow-color), var(--shadow-opacity) );
+        --avatar-width: ${avatar_width ? avatar_width : 'var(--primary-avatar-width)'};
+        --avatar-height: ${avatar_height ? avatar_height : 'var(--primary-avatar-height)'};
+        --avatar-radius: ${avatar_radius ? avatar_radius : 'var(--primary-avatar-radius)'};
         display: inline-grid;
-        grid-auto-flow: column;
-        grid-column-gap: 5px;
-        justify-content: center;
-        align-items: center;
-        ${width && 'width: var(--width)'};
-        ${height && 'height: var(--height)'};
+        ${grid.button ? make_grid(grid.button) : make_grid({auto: {auto_flow: 'column'}, gap: '5px', justify: 'content-center', align: 'items-center'})}
+        ${width && 'width: var(--width);'};
+        ${height && 'height: var(--height);'};
+        max-width: 100%;
         font-size: var(--size);
-        font-weight: var(--bold);
+        font-weight: var(--weight);
         color: hsl( var(--color) );
         background-color: hsla( var(--bg-color), var(--opacity) );
         border: var(--border);
         border-radius: var(--border-radius);
         box-shadow: var(--box-shadow);
         padding: var(--padding);
-        transition: font-size .3s, color .3s, background-color .3s ease-in-out;
+        transition: font-size .3s, font-weight .15s, color .3s, background-color .3s, opacity .3s, border .3s, box-shadow .3s ease-in-out;
         cursor: pointer;
+        -webkit-mask-image: -webkit-radial-gradient(white, black);
     }
-    :host(i-button:hover), :host(i-button[role]:hover) {
-        --weight: ${weight_hover ? weight_hover : 'initial'};
-        --color: ${color_hover ? color_hover : 'var(--color-white)'};
-        --bg-color: ${bg_color_hover ? bg_color_hover : 'var(--primary-color)'};
-        --border-color: ${border_color_hover ? border_color_hover : 'var(--primary-color)'};
+    :host(i-button:hover) {
+        --size: ${size_hover ? size_hover : 'var(--primary-size-hover)'};
+        --weight: ${weight_hover ? weight_hover : 'var(--primary-weight-hover)'};
+        --color: ${color_hover ? color_hover : 'var(--primary-color-hover)'};
+        --bg-color: ${bg_color_hover ? bg_color_hover : 'var(--primary-bg-color-hover)'};
+        --border-color: ${border_color_hover ? border_color_hover : 'var(--primary-color-hover)'};
         --offset-x: ${offset_x_hover ? offset_x_hover : '0'};
         --offset-y: ${offset_y_hover ? offset_y_hover : '0'};
         --blur: ${blur_hover ? blur_hover : '50px'};
-        --shadow-color: ${shadow_color_hover ? shadow_color_hover : 'var(--pimary-color)'};
-        --shadow-opacity: ${shadow_opacity_hover ? shadow_opacity_hover : '.25'};
-        font-size: var(--size-hover);
+        --shadow-color: ${shadow_color_hover ? shadow_color_hover : 'var(--primary-color-hover)'};
+        --shadow-opacity: ${shadow_opacity_hover ? shadow_opacity_hover : '0'};
+    }
+    :host(i-button:hover:foucs:active) {
+        --bg-color: ${bg_color ? bg_color : 'var(--primary-bg-color)'};
     }
     :host(i-button) g {
-        fill: hsl(var(--fill));
-        transition: fill 0.3s ease-in-out;
+        --icon-fill: ${icon_fill ? icon_fill : 'var(--primary-icon-fill)'};
+        fill: hsl(var(--icon-fill));
+        transition: fill 0.05s ease-in-out;
     }
     :host(i-button:hover) g {
-        --fill-hover: ${fill_hover ? fill_hover : 'var(--color-white)'};
-        fill: hsl(var(--fill-hover));
+        --icon-fill: ${icon_fill_hover ? icon_fill_hover : 'var(--primary-icon-fill-hover)'};
     }
-    :host(i-button[role="button"])  {
-
-    }
-    :host(i-button) .col2 {
-        display: grid;
-        grid-auto-flow: column;
-        justify-content: center;
-        align-items: center;
-        column-gap: 8px;
-    }
-    :host(i-button) .icon {
+    :host(i-button) .avatar {
         display: block;
-        width: var(---icon-size);
-        height: var(---icon-size);
+        width: var(--avatar-width);
+        height: var(--avatar-height);
+        max-width: 100%;
+        border-radius: var(--avatar-radius);
+        -webkit-mask-image: -webkit-radial-gradient(white, black);
+        overflow: hidden;
+        transition: width .3s, height .3s ease-in-out;
+        ${make_grid(grid.avatar)}
     }
-    :host(i-button) .right .icon {
-        grid-column-start: 2;
+    :host(i-button) img {
+        --scale: ${scale ? scale : '1'};
+        width: 100%;
+        height: 100%;
+        transform: scale(var(--scale));
+        transition: transform 0.3s, scale 0.3s linear;
+        object-fit: cover;
+        border-radius: var(--avatar-radius);
     }
-    :host(i-button) .left .icon {
-        grid-column-start: 1;
+    :host(i-button:hover) img {
+        --scale: ${scale_hover ? scale_hover : '1.2'};
+        transform: scale(var(--scale));
     }
     :host(i-button) svg {
         width: 100%;
         height: auto;
     }
-    :host(i-button[role="tab"])  {
-        --size: ${size ? size : 'initial'};
+    :host(i-button[role="tab"]) {
         --width: ${width ? width : '100%'};
-        --color: ${color ? color : 'var(--primary-color)'};
-        --bg-color: ${bg_color ? bg_color : 'var(--color-white)'};
         --border-radius: ${border_radius ? border_radius : '0'};
-        --border-width: ${border_width ? border_width : '0'};
-        --border-style: ${border_style ? border_style : 'solid'};
-        --border-color: ${border_color ? border_color : 'var(--primary-color)'};
-        width: var(--width);
     }
     :host(i-button[role="switch"]) {
-        --width: ${width ? width : 'unset'};
-        --color: ${color ? color : 'var(--primary-color)'};
-        --bg-color: ${bg_color ? bg_color : 'var(--color-white)'};
-        --border-radius: ${border_radius ? border_radius : '8px'};
-        --border-width: ${border_width ? border_width : '0'};
-        --border-style: ${border_style ? border_style : 'solid'};
-        --border-color: ${border_color ? border_color : 'var(--primary-color)'};
-        width: var(--width);
+        --size: ${size ? size : 'var(--primary-size)'};
+    }
+    :host(i-button[role="switch"]:hover) {
+        --size: ${size_hover ? size_hover : 'var(--primary-size-hover)'};
     }
     :host(i-button[role="listbox"]) {
-        --width: ${width ? width : 'unset'};
-        --color: ${color ? color : 'var(--primary-color)'};
-        --bg-color: ${bg_color ? bg_color : 'var(--color-white)'};
-        --border-radius: ${border_radius ? border_radius : '8px'};
-        --border-width: ${border_width ? border_width : '0'};
-        --border-style: ${border_style ? border_style : 'solid'};
-        --border-color: ${border_color ? border_color : 'var(--primary-color)'};
-        width: var(--width);
+        --color: ${listbox_collapsed_listbox_color ? listbox_collapsed_listbox_color : 'var(--listbox-collapsed-listbox-color)'};
+        --size: ${listbox_collapsed_listbox_size ? listbox_collapsed_listbox_size : 'var(--listbox-collapsed-listbox-size)'};
+        --weight: ${listbox_collapsed_listbox_weight ? listbox_collapsed_listbox_weight : 'var(--listbox-collapsed-listbox-weight)'};
+        --bg-color: ${listbox_collapsed_bg_color ? listbox_collapsed_bg_color : 'var(--listbox-collapsed-bg-color)'};
+    }
+    :host(i-button[role="listbox"]:hover) {
+        --color: ${listbox_collapsed_listbox_color_hover ? listbox_collapsed_listbox_color_hover : 'var(--listbox-collapsed-listbox-color-hover)'};
+        --size: ${listbox_collapsed_listbox_size_hover ? listbox_collapsed_listbox_size_hover : 'var(--listbox-collapsed-listbox-size-hover)'};
+        --weight: ${listbox_collapsed_listbox_weight_hover ? listbox_collapsed_listbox_weight_hover : 'var(--listbox-collapsed-listbox-weight-hover)'};
+        --bg-color: ${listbox_collapsed_bg_color_hover ? listbox_collapsed_bg_color_hover : 'var(--listbox-collapsed-bg-color-hover)'};
+    }
+    :host(i-button[role="listbox"]) > .icon {
+        ${grid.icon ? make_grid(grid.icon) : make_grid({column: '2'})}
+    }
+    :host(i-button[role="listbox"]) .text {}
+    :host(i-button[role="listbox"]) .avatar {
+        --avatar-width: ${listbox_collapsed_listbox_avatar_width ? listbox_collapsed_listbox_avatar_width : 'var(--listbox-collapsed-listbox-avatar-width)'};
+        --avatar-height: ${listbox_collapsed_listbox_avatar_height ? listbox_collapsed_listbox_avatar_height : 'var(--listbox-collapsed-listbox-avatar-height)'}
+    }
+    :host(i-button[role="listbox"][aria-expanded="true"]),
+    :host(i-button[role="listbox"][aria-expanded="true"]:hover) {
+        --size: ${listbox_expanded_listbox_size ? listbox_expanded_listbox_size : 'var(--listbox-expanded-listbox-size)'};
+        --color: ${listbox_expanded_listbox_color ? listbox_expanded_listbox_color : 'var(--listbox-expanded-listbox-color)'};
+        --weight: ${listbox_expanded_listbox_weight ? listbox_expanded_listbox_weight : 'var(--listbox-expanded-listbox-weight)'};
+        --bg-color: ${listbox_expanded_bg_color ? listbox_expanded_bg_color : 'var(--listbox-expanded-bg-color)'}
+    }
+    :host(i-button[role="listbox"][aria-expanded="true"]) .avatar {
+        --avatar-width: ${listbox_expanded_listbox_avatar_width ? listbox_expanded_listbox_avatar_width : 'var(--listbox-expanded-listbox-avatar-width)'};
+        --avatar-height: ${listbox_expanded_listbox_avatar_height ? listbox_expanded_listbox_avatar_height : 'var(--listbox-expanded-listbox-avatar-height)'};
+    }
+    :host(i-button[role="option"]) {
+        --border-radius: ${border_radius ? border_radius : '0'};
+        --opacity: ${opacity ? opacity : '0'};
+    }
+    :host(i-button[role="option"][aria-current="true"]), :host(i-button[role="option"][aria-current="true"]:hover) {
+        --size: ${current_size ? current_size : 'var(--current-list-size)'};
+        --color: ${current_color ? current_color : 'var(--current-list-color)'};
+        --bg-color: ${current_bg_color ? current_bg_color : 'var(--current-list-bg-color)'};
+        --opacity: ${opacity ? opacity : '0'}
+    }
+    :host(i-button[role="option"][disabled]), :host(i-button[role="option"][disabled]:hover) {
+        --size: ${disabled_size ? disabled_size : 'var(--primary-disabled-size)'};
+        --color: ${disabled_color ? disabled_color : 'var(--primary-disabled-color)'};
+        --bg-color: ${disabled_bg_color ? disabled_bg_color : 'var(--primary-disabled-bg-color)'};
+        --opacity: ${opacity ? opacity : '0'}
+    }
+    :host(i-button[aria-disabled="true"]) .icon, 
+    :host(i-button[aria-disabled="true"]:hover) .icon,
+    :host(i-button[role="option"][aria-disabled="true"]) .icon, 
+    :host(i-button[role="option"][aria-disabled="true"]:hover) .icon,
+    :host(i-button[role="listbox"][aria-disabled="true"]) .icon, 
+    :host(i-button[role="listbox"][aria-disabled="true"]:hover) .icon {
+        --icon-size: ${disabled_icon_size ? disabled_icon_size : 'var(--primary-disabled-icon-size)'};
+    }
+    :host(i-button[disabled]:hover) img {
+        transform: scale(1);
     }
     :host(i-button[aria-current="true"]), :host(i-button[aria-current="true"]:hover) {
-        --bold: ${current_weight ? current_weight : 'initial'};
-        --color: ${current_color ? current_color : 'var(--color-white)'};
-        --bg-color: ${current_bg_color ? current_bg_color : 'var(--primary-color)'};
-        font-size: var(--current_size);
+        --size: ${current_size ? current_size : 'var(--current-size)'};
+        --weight: ${current_weight ? current_weight : 'var(--current-weight)'};
+        --color: ${current_color ? current_color : 'var(--current-color)'};
+        --bg-color: ${current_bg_color ? current_bg_color : 'var(--current-bg-color)'};
     }
-    :host(i-button[aria-current="true"]) g {
-        --fill: ${fill ? fill : 'var(--color-white)'};
+    :host(i-button[role="option"][aria-current="true"][aria-selected="true"]) .option > .icon, 
+    :host(i-button[role="option"][aria-current="true"][aria-selected="true"]:hover) .option > .icon {
+        --icon-size: ${current_icon_size ? current_icon_size : 'var(--current-icon-size)'};
+    }
+    :host(i-button[role="option"][aria-current="true"][aria-selected="true"]) .option > .icon g,
+    :host(i-button[role="option"][aria-current="true"][aria-selected="true"]:hover) .option > .icon g {
+        --icon-fill: ${current_icon_fill ? current_icon_fill : 'var(--current-icon-fill)'};
     }
     :host(i-button[aria-checked="true"]), :host(i-button[aria-expanded="true"]),
     :host(i-button[aria-checked="true"]:hover), :host(i-button[aria-expanded="true"]:hover) {
-        --bold: ${current_weight ? current_weight : 'initial'};
-        --color: ${current_color ? current_color : 'var(--color-white)'};
-        --bg-color: ${current_bg_color ? current_bg_color : 'var(--primary-color)'};
+        --size: ${current_size ? current_size : 'var(--current-size)'};
+        --weight: ${current_weight ? current_weight : 'var(--current-weight)'};
+        --color: ${current_color ? current_color : 'var(--current-color)'};
+        --bg-color: ${current_bg_color ? current_bg_color : 'var(--current-bg-color)'};
     }
-    :host(i-button[aria-checked="true"]) g {
-        --fill: ${current_fill ? current_fill : 'var(--color-white)' };
+    /* listbox collapsed */
+    :host(i-button[role="listbox"]) > .icon {
+        --icon-size: ${listbox_collapsed_icon_size ? listbox_collapsed_icon_size : 'var(--listbox-collapsed-icon-size)'};
+    }
+    :host(i-button[role="listbox"]:hover) > .icon {
+        --icon-size: ${listbox_collapsed_icon_size_hover ? listbox_collapsed_icon_size_hover : 'var(--listbox-collapsed-icon-size-hover)'};
+    }
+    :host(i-button[role="listbox"]) .listbox > .icon {
+        --icon-size: ${listbox_collapsed_listbox_icon_size ? listbox_collapsed_listbox_icon_size : 'var(--listbox-collapsed-listbox-icon-size)'};
+    }
+    :host(i-button[role="listbox"]:hover) .listbox > .icon {
+        --icon-size: ${listbox_collapsed_listbox_icon_size_hover ? listbox_collapsed_listbox_icon_size_hover : 'var(--listbox-collapsed-listbox-icon-size-hover)'};
+    }
+    :host(i-button[role="listbox"]) > .icon g {
+        --icon-fill: ${listbox_collapsed_icon_fill ? listbox_collapsed_icon_fill : 'var(--listbox-collapsed-icon-fill)'};
+    }
+    :host(i-button[role="listbox"]:hover) > .icon g {
+        --icon-fill: ${listbox_collapsed_icon_fill_hover ? listbox_collapsed_icon_fill_hover : 'var(--listbox-collapsed-icon-fill-hover)'};
+    }
+    :host(i-button[role="listbox"]) .listbox > .icon g {
+        --icon-fill: ${listbox_collapsed_listbox_icon_fill ? listbox_collapsed_listbox_icon_fill : 'var(--listbox-collaps-listbox-icon-fill)'};
+    }
+    :host(i-button[role="listbox"]:hover) .listbox > .icon g {
+        --icon-fill: ${listbox_collapsed_listbox_icon_fill_hover ? listbox_collapsed_listbox_icon_fill_hover : 'var(--listbox-collapsed-listbox-icon-fill-hover)'};
+    }
+    /* listbox expanded */
+    :host(i-button[role="listbox"][aria-expanded="true"]) > .icon,
+    :host(i-button[role="listbox"][aria-expanded="true"]:hover) > .icon {
+        --icon-size: ${listbox_expanded_icon_size ? listbox_expanded_icon_size : 'var(--listbox-expanded-icon-size)'};
+    }
+    :host(i-button[role="listbox"][aria-expanded="true"]) > .icon g, 
+    :host(i-button[role="listbox"][aria-expanded="true"]:hover) > .icon g {
+        --icon-fill: ${listbox_expanded_icon_fill ? listbox_expanded_icon_fill : 'var(--listbox-expanded-icon-fill)'}
+    }
+    :host(i-button[role="listbox"][aria-expanded="true"]) .listbox > .icon, 
+    :host(i-button[role="listbox"][aria-expanded="true"]:hover) .listbox > .icon {
+        --icon-fill: ${listbox_expanded_listbox_icon_size ? listbox_expanded_listbox_icon_size : 'var(--listbox-expanded-listbox-icon-size)'};
+    }
+    :host(i-button[role="listbox"][aria-expanded="true"]) .listbox > .icon g,
+    :host(i-button[role="listbox"][aria-expanded="true"]:hover) .listbox > .icon g {
+        --icon-fill: ${listbox_expanded_listbox_icon_fill ? listbox_expanded_listbox_icon_fill : 'var(--listbox-expanded-listbox-icon-fill)'};
+    }
+    :host(i-button[aria-checked="true"]) > .icon g {
+        --icon-fill: ${current_icon_fill ? current_icon_fill : 'var(--color-white)' };
     }
     :host(i-button[disabled]), :host(i-button[disabled]:hover) {
-        --color: ${color ? color : 'var(--color-dark)'};
-        --bg-color: ${bg_color ? bg_color : 'var(--color-white)'};
-        --color-opacity: .6;
-        --bg-color-opacity: .3;
-        color: hsla(var(--color), var(--color-opacity));
-        background-color: hsla(var(--bg-color), var(--bg-color-opacity));
-        pointer-events: none;
+        --size: ${disabled_size ? disabled_size : 'var(--primary-disabled-size)'};
+        --color: ${disabled_color ? disabled_color : 'var(--primary-disabled-color)'};
+        --bg-color: ${disabled_bg_color ? disabled_bg_color : 'var(--primary-disabled-bg-color)'};
         cursor: not-allowed;
     }
-    :host(i-button[role="option"]) {
-        display: grid;
-        grid-template-rows: 24px;
-        grid-template-columns: 20px auto;
-        justify-content: left;
+    :host(i-button[disabled]) g, 
+    :host(i-button[disabled]:hover) g, 
+    :host(i-button[role="option"][disabled]) > .icon g, 
+    :host(i-button[role="option"][disabled]) .option > .icon g,
+    :host(i-button[role="listbox"][disabled]) .option > .icon g, 
+    :host(i-button[role="option"][disabled]:hover) > .icon g,
+    :host(i-button[role="listbox"][disabled]:hover) .option > .icon g, 
+    :host(i-button[role="option"][disabled]:hover) .option > .icon g {
+        --icon-fill: ${disabled_color ? disabled_color : 'var(--primary-disabled-icon-fill)'};
     }
-    :host(i-button[role="option"]) .text {
+    :host(i-button[role="menuitem"]) {
+        --size: ${size ? size : 'var(--menu-size)'};
+        --weight: ${weight ? weight : 'var(--menu-weight)'};
+        --color: ${color ? color : 'var(--menu-color)'};
+        --border-radius: 0;
+        background-color: transparent;
+    }
+    :host(i-button[role="menuitem"]:hover) {
+        --size: ${size_hover ? size_hover : 'var(--menu-size-hover)'};
+        --weight: ${weight_hover ? weight_hover : 'var(--menu-weight-hover)'};
+        --color: ${color_hover ? color_hover : 'var(--menu-color-hover)'};
+    }
+    :host(i-button[role="menuitem"]) .avatar {
+        --avatar-width: ${avatar_width ? avatar_width : 'var(--menu-avatar-width)'};
+        --avatar-height: ${avatar_height ? avatar_height : 'var(--menu-avatar-height)'};
+        --avatar-radius: ${avatar_radius ? avatar_radius : 'var(--menu-avatar-radius)'};
+    }
+    :host(i-button[role="menuitem"]:hover) .avatar {
+        --avatar-width: ${avatar_width_hover ? avatar_width_hover : 'var(--menu-avatar-width-hover)'};
+        --avatar-height: ${avatar_height_hover ? avatar_height_hover : 'var(--menu-avatar-height-hover)'};
+    }
+    :host(i-button[role="menuitem"][disabled]), :host(i-button[role="menuitem"][disabled]):hover {
+        --size: ${disabled_size ? disabled_size : 'var(--menu-disabled-size)'};
+        --color: ${disabled_color ? disabled_color : 'var(--menu-disabled-color)'};
+        --weight: ${disabled_weight ? disabled_weight : 'var(--menu-disabled-weight)'};
+    }
+    :host(i-button[role="menuitem"][disabled]) g ,
+    :host(i-button[role="menuitem"][disabled]:hover) g {
+        --icon-fill: ${disabled_icon_fill ? disabled_icon_fill : 'var(--primary-disabled-icon-fill)'};
+    }
+    :host(i-button[role="option"]) > .icon {
+        --icon-size: ${list_selected_icon_size ? list_selected_icon_size : 'var(--list-selected-icon-size)'};
+    }
+    :host(i-button[role="option"]:hover) > .icon {
+        --icon-size: ${list_selected_icon_size_hover ? list_selected_icon_size_hover : 'var(--list-selected-icon-size-hover)'};
+    }
+    :host(i-button[role="option"]) > .icon g {
+        --icon-fill: ${list_selected_icon_fill ? list_selected_icon_fill : 'var(--list-selected-icon-fill)'};
+    }
+    :host(i-button[role="option"]:hover) > .icon g {
+        --icon-fill: ${list_selected_icon_fill_hover ? list_selected_icon_fill_hover : 'var(--list-selected-icon-fill-hover)'};
+    }
+    :host(i-button[role="option"][aria-current="true"]) > .icon, 
+    :host(i-button[role="option"][aria-current="true"]:hover) > .icon {
+        --icon-size: ${current_list_selected_icon_size ? current_list_selected_icon_size : 'var(--current-list-selected-icon-size)'};
+    }
+    :host(i-button[role="option"][aria-current="true"]) > .icon g, 
+    :host(i-button[role="option"][aria-current="true"]:hover) > .icon g { 
+        --icon-fill: ${current_list_selected_icon_fill ? current_list_selected_icon_fill : 'var(--current-list-selected-icon-fill)'};
+    }
+    :host(i-button[role="option"][aria-selected="false"]) > .icon {
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+    :host(i-button[role="option"][aria-selected="true"]) > .icon {
+        opacity: 1;
+    }
+    /* define grid */
+    :host(i-button) .text {
+        ${make_grid(grid.text)}
+    }
+    :host(i-button) .icon {
+        --icon-size: ${icon_size ? icon_size : 'var(--primary-icon-size)'};
         display: block;
-        grid-column-start: 2;
+        width: var(--icon-size);
+        transition: width 0.25s ease-in-out;
+        ${make_grid(grid.icon)}
     }
-    :host(i-button[role="option"]:hover) g {
-        --fill-hover: ${fill_hover ? fill_hover : 'var(--primary-color)'};
+    :host(i-button:hover) .icon {
+        --icon-size: ${icon_size_hover ? icon_size_hover : 'var(--primary-icon-size-hover)'};
     }
-    :host(i-button[role="option"][aria-selected="false"]) .icon {
-        display: none;
+    :host(i-button) .listbox {
+        display: grid;
+        max-width: 100%;
+        ${make_grid(grid_listbox)}
+    }
+    :host(i-button) .option {
+        display: grid;
+        max-width: 100%;
+        ${make_grid(grid_option)}
+    }
+    :host(i-button) .option > .icon {
+        ${make_grid(grid.option_icon)}
+    }
+    :host(i-button) .option > .avatar {
+        ${make_grid(grid.option_avatar)}
+    }
+    :host(i-button) .option > .text {
+        ${make_grid(grid.option_text)}
     }
     ${custom_style}
     `
 
     return widget()
 }
-}).call(this)}).call(this,"/node_modules/datdot-ui-button/src/index.js")
-},{"message_maker":26,"path":31,"support-style-sheet":27}],26:[function(require,module,exports){
+},{"make-element":26,"make-grid":27,"make-icon":28,"make-image":29,"message-maker":30,"support-style-sheet":31}],26:[function(require,module,exports){
+module.exports = make_element
+
+function make_element({name = '', classlist = null, role }) {
+    const el = document.createElement(name)
+    if (classlist) ste_class()
+    if (role) set_role()
+    return el
+
+    function ste_class () {
+        el.className = classlist
+    }
+    
+    function set_role () {
+        const tabindex = role.match(/button|switch/) ? 0 : -1
+        el.setAttribute('role', role)
+        el.setAttribute('tabindex',  tabindex)
+    }
+}
+
+
+},{}],27:[function(require,module,exports){
+module.exports = make_grid
+
+function make_grid (opts = {}) {
+    const {areas, area, rows, columns, row, auto = {}, column, gap, justify, align} = opts
+    let style = ''
+    grid_init ()
+    return style
+
+    function grid_init () {
+        make_rows()
+        make_columns()
+        make_auto()
+        make_row()
+        make_column()
+        make_justify()
+        make_align()
+        make_gap()
+        make_area()
+        make_areas()
+    }
+     
+    function make_areas () {
+        if (typeof areas === 'object') {
+            let template = `grid-template-areas:`
+            areas.map( a => template += `"${a}"`)
+            return style += template + ';'
+        }
+        if (typeof areas === 'string') return areas ? style +=`grid-template-areas: "${areas}";` : ''
+    }
+    function make_area () {
+        return area ? style += `grid-area: ${area};` : ''
+    }
+
+    function make_rows () { 
+        return rows ? style +=  `grid-template-rows: ${rows};` : ''
+    }
+
+    function make_columns () {
+        return columns ? style += `grid-template-columns: ${columns};` : ''
+    }
+
+    function make_row () {
+        return row ? style += `grid-row: ${row};` : ''
+    }
+
+    function make_column () {
+        return column ? style += `grid-column: ${column};` : ''
+    }
+
+    function make_justify () {
+        if (justify === void 0) return
+        const result = justify.split('-')
+        const [type, method] = result
+        return style += `justify-${type}: ${method};`
+    }
+
+    function make_align () {
+        if (align === void 0) return
+        const result = align.split('-')
+        const [type, method] = result
+        return style += `align-${type}: ${method};`
+    }
+
+    function make_gap () {
+        if (gap === void 0) return ''
+        return style += `gap: ${gap};`
+    }
+
+    function make_auto () {
+        const {auto_flow = null, auto_rows = null, auto_columns = null} = auto
+        const grid_auto_flow = auto_flow ? `grid-auto-flow: ${auto_flow};` : ''
+        const grid_auto_rows = auto_rows ? `grid-auto-rows: ${auto_rows};` : ''
+        const grid_auto_columns = auto_columns ? `grid-auto-columns: ${auto_columns};` : ''
+        return style += `${grid_auto_flow}${grid_auto_rows}${grid_auto_columns}`
+    }
+}
+},{}],28:[function(require,module,exports){
+const i_icon = require('datdot-ui-icon')
+
+module.exports = {main_icon, select_icon, list_icon}
+
+function main_icon ({name, path}) {
+    const el = i_icon({name, path})
+    return el
+}
+
+function select_icon ({name = 'arrow-down', path}) {
+    const el =  i_icon({name, path})
+    return el
+}
+
+function list_icon ({name = 'check', path} ) {
+    const el =  i_icon({name, path})
+    return el
+}
+
+
+},{"datdot-ui-icon":37}],29:[function(require,module,exports){
+module.exports = img
+
+function img ({src, alt}) {
+    const img = document.createElement('img')
+    img.setAttribute('src', src)
+    img.setAttribute('alt', alt)
+    return img
+}
+},{}],30:[function(require,module,exports){
 module.exports = function message_maker (from) {
     let msg_id = 0
     return function make ({to, type, data = null, refs = []}) {
@@ -1400,7 +2196,7 @@ module.exports = function message_maker (from) {
         return message
     }
 }
-},{}],27:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 module.exports = support_style_sheet
 function support_style_sheet (root, style) {
     return (() => {
@@ -1416,7 +2212,827 @@ function support_style_sheet (root, style) {
         }
     })()
 }
-},{}],28:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
+const style_sheet = require('support-style-sheet')
+const message_maker = require('message-maker')
+const make_button = require('make-button')
+const make_list = require('make-list')
+
+module.exports = i_dropdown
+
+function i_dropdown ({page = '*', flow = 'ui-dropdown', name, options = {}, expanded = false, disabled = false, mode = 'single-select', theme}, protocol) {
+    const {button = {}, list = {}} = options
+    const recipients = []
+    const make = message_maker(`${name} / ${flow} / ${page}`)
+    const message = make({type: 'ready'})
+    const list_name = `${name}-list`
+
+    let is_expanded = expanded
+    let is_disabled = disabled
+    let store_data = []
+    if (mode === 'single-select') {
+        var init_selected = {...button}
+        list.array.map( item => {
+            const obj = item.current || item.selected ?  item : list.array[0]
+            init_selected = {
+                name,
+                body: obj.text,
+                icons: {
+                    select: button.select ? button.select : undefined,
+                    icon: obj.icon,
+                },
+                cover: obj.cover,
+            }
+        })
+        store_data.push(init_selected)
+    }
+    if (mode === 'multiple-select') {
+        list.array.map( item => {
+            if (item.selected) store_data.push(item)
+        })
+    }
+    function widget () {
+        const send = protocol(get)
+        const dropdown = document.createElement('i-dropdown')
+        const shadow = dropdown.attachShadow({mode: 'closed'})
+        const i_button = make_button({page, name, option: mode === 'single-select' ? init_selected : button, mode, expanded: is_expanded, theme: button.theme}, dropdown_protocol)
+        const i_list = make_list({page, name: list_name, option: list, mode, hidden: is_expanded}, dropdown_protocol)
+        send(message)
+        dropdown.setAttribute('aria-label', name)
+        if (is_disabled) dropdown.setAttribute('disabled', is_disabled)
+        style_sheet(shadow, style)
+        handle_collapsed()
+        shadow.append(i_button)
+        // need to add this to avoid document.body.addEventListener('click)
+        dropdown.onclick = event => event.stopPropagation()
+        return dropdown
+
+        function handle_collapsed () {
+            // trigger expanded event via document.body
+            document.body.addEventListener('click', (e)=> {
+                const make = message_maker(`All`)
+                const to = `${name} / ${flow} / ${page}`
+                const type = 'collapsed'
+                if (is_expanded) {
+                    is_expanded = false
+                    recipients[name]( make({type, data: is_expanded}) )
+                    recipients[list_name]( make({type, data: !is_expanded}) )
+                    send( make({to, type, data: {selected: store_data}}) )
+                }
+            })
+        }
+        function handle_change_event (content) {
+            const msg = make({type: 'changed', data: content})
+            recipients[name](msg)
+            send(msg)
+        }
+        function handle_select_event (data) {
+            const {mode, selected} = data
+            let new_data = []
+            if (mode === 'dropdown') return
+            if (mode === 'single-select') {
+                selected.map( obj => {
+                    if (obj.selected) {
+                        const content = {text: obj.text, cover: obj.cover, icon: obj.icon}
+                        new_data.push(obj)
+                        return handle_change_event (content)
+                    }
+                })
+            }
+            if (mode === 'multiple-select') {
+                new_data = selected.filter( obj => obj.selected )
+            }
+            store_data = new_data
+        }
+        function handle_expanded_event (data) {
+            const {from, expanded} = data
+            is_expanded = expanded
+            const type = is_expanded ? 'expanded' : 'collapsed'
+            // check which one dropdown is not using then do collapsed
+            if (from !== name) {
+                recipients[name](make({type: 'collapsed', data: is_expanded}))
+                recipients[list_name](make({type, data: !is_expanded}))
+            }
+            // check which dropdown is currently using then do expanded
+            recipients[name](make({type, data: is_expanded}))
+            recipients[list_name](make({type, data: !is_expanded}))
+            if (is_expanded && from == name) shadow.append(i_list)
+        }
+        function dropdown_protocol (name) {
+            return send => {
+                recipients[name] = send
+                return get
+            }
+        }
+        function get (msg) {
+            const {head, refs, type, data} = msg 
+            send(msg)
+            if (type.match(/expanded|collapsed/)) return handle_expanded_event( data)
+            if (type.match(/selected/)) return handle_select_event(data)
+        }
+    }
+
+    
+    // insert CSS style
+    const custom_style = theme ? theme.style : ''
+    // set CSS variables
+    if (theme && theme.props) {
+        var {size, size_hover, current_size, disabled_size,
+            weight, weight_hover, current_weight, current_hover_weight,
+            color, color_hover, current_color, current_bg_color, disabled_color, disabled_bg_color,
+            current_hover_color, current_hover_bg_color,
+            bg_color, bg_color_hover, border_color_hover,
+            border_width, border_style, border_opacity, border_color, border_radius, 
+            padding, margin, width, height, opacity,
+            shadow_color, offset_x, offset_y, blur, shadow_opacity,
+            shadow_color_hover, offset_x_hover, offset_y_hover, blur_hover, shadow_opacity_hover,
+            margin_top = '5px'
+        } = theme.props
+    }
+
+    const {direction = 'down', start = '0', end = '40px'} = list
+
+    const style = `
+    :host(i-dropdown) {
+        position: relative;
+        display: grid;
+        max-width: 100%;
+    }
+    :host(i-dropdown[disabled]) {
+        cursor: not-allowed;
+    }
+    i-button {
+        position: relative;
+        z-index: 2;
+    }
+    i-list {
+        position: absolute;
+        left: 0;
+        margin-top: ${margin_top};
+        z-index: 1;
+        width: 100%;
+        ${direction === 'down' ? `top: ${end}` : `bottom: ${end};`}
+    }
+    i-list[aria-hidden="false"] {
+        animation: down 0.3s ease-in;
+    }
+    i-list[aria-hidden="true"] {
+        animation: up 0.3s ease-out;
+    } 
+    
+    @keyframes down {
+        0% {
+            opacity: 0;
+            ${direction === 'down' ? `top: ${start};` : `bottom: ${start};`}
+        }
+        50% {
+            opacity: 0.5;
+            ${direction === 'down' ? `top: 20px;` : `bottom: 20px;`}
+        }
+        100%: {
+            opacity: 1;
+            ${direction === 'down' ? `top: ${end}` : `bottom: ${end};`}
+        }
+    }
+    
+    @keyframes up {
+        0% {
+            opacity: 1;
+            ${direction === 'down' ? `top: ${end}` : `bottom: ${end};`}
+        }
+        50% {
+            ${direction === 'down' ? `top: 20px;` : `bottom: 20px;`}
+        }
+        75% {
+            opacity: 0.5;
+        }
+        100%: {
+            opacity: 0;
+            ${direction === 'down' ? `top: ${start};` : `bottom: ${start};`}
+        }
+    } 
+    ${custom_style}
+    `
+
+    return widget()
+}
+
+
+},{"make-button":33,"make-list":34,"message-maker":35,"support-style-sheet":36}],33:[function(require,module,exports){
+const {i_button} = require('datdot-ui-button')
+module.exports = make_button
+function make_button ({page, name, option = {}, mode, expanded, theme = {}}, protocol) {
+    const {flow = 'ui-dropdown', role = 'listbox', body, icons, cover, disabled = false} = option
+    const match = mode.match(/single|multiple/)
+    const button_mode = match ? 'selector' : 'menu'
+    const {style = ``, props = {}, grid = {}} = theme
+    return i_button({
+        page,
+        flow, 
+        name, 
+        role,
+        body,
+        icons,
+        cover, 
+        mode: button_mode, 
+        expanded, disabled, 
+        theme: {
+            style: `
+                :host(i-button) > .icon {
+                    transform: rotate(0deg);
+                    transition: transform 0.4s ease-in-out;
+                }
+                :host(i-button[aria-expanded="true"]) > .icon {
+                    transform: rotate(${mode === 'single-select' ? '-180' : '0' }deg);
+                }
+                ${style}
+            `,
+            props,
+            grid
+        }
+    }, protocol(name))
+}
+
+},{"datdot-ui-button":25}],34:[function(require,module,exports){
+const i_list = require('datdot-ui-list')
+module.exports = make_list
+function make_list ({page, name, option = {}, mode, hidden}, protocol) {
+    const {flow = 'ui-dropdown-list', role = 'option', array, theme} = option
+    let store_selected = []
+    let render_list = []
+    const check_current_undefined = (args) => args.current === undefined 
+    const check_selected_undefined = (args) => args.selected === undefined 
+    if (mode === 'single-select') render_list = make_single_select(array) 
+    if (mode === 'multiple-select') render_list = make_multiple_select(array) 
+    render_list.filter( item => {
+        if (item.selected) return store_selected.push(item.text)
+    })
+    return i_list({page, flow, name, role, body: render_list, mode, hidden, expanded: !hidden, theme}, protocol(name))
+
+    function make_single_select (args) {
+        return args.map((opt, index) => {
+            const check_options_current = args.every(check_current_undefined)
+            const check_options_selected = args.every(check_selected_undefined)
+            const obj = {...opt}
+            // console.log('current undefined:', check_options_current);
+            // console.log('selected undefined:', check_options_selected);
+            // if current and selected are undefined, then find first element to be current and selected, others would be false
+            if (check_options_current && check_options_selected && index === 0) {
+                obj.current = check_options_current
+                obj.selected = check_options_current
+            } 
+            // if current is true and selected is undefined, then make selected is true, others would be false
+            if (opt.current && check_options_selected) {
+                obj.current = opt.current
+                obj.selected = opt.current
+            }
+            // if selected is true and current is undefined, then make current is true, others would be false
+            if (check_options_current && opt.selected) {
+                obj.current = opt.selected
+                obj.selected = opt.selected
+            }
+            // if find current, then content would be shown text in current
+            if (obj.current) content = obj.text
+            /* 
+            if selected is undefined but current is false, 
+            or current is undefined but selected is false, 
+            content would be replaced 'Select' into as selector tip on button by default
+            */
+            if (check_options_selected && opt.current === false || check_options_current && opt.selected === false ) content = 'Select'
+            return obj
+        })
+    }
+
+    function make_multiple_select (args) {
+        const check_options_selected = args.every(check_selected_undefined)
+        return args.map((opt, index) => {
+            const obj = {...opt}
+            // console.log('selected undefined:', check_options_selected);
+            if (check_options_selected) obj.selected = check_options_selected
+            obj.selected = opt.selected === undefined ? true : opt.selected 
+            return obj
+        })
+    }
+}
+},{"datdot-ui-list":40}],35:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"dup":30}],36:[function(require,module,exports){
+arguments[4][31][0].apply(exports,arguments)
+},{"dup":31}],37:[function(require,module,exports){
+const style_sheet = require('support-style-sheet')
+const svg = require('svg')
+
+module.exports = ({name, path, is_shadow = false, theme}) => {
+    const url = path ? path : './src/svg'
+    const symbol = svg(`${url}/${name}.svg`)
+    if (is_shadow) {
+        function layout (style) {
+            const icon = document.createElement('i-icon')
+            const shadow = icon.attachShadow({mode: 'closed'})
+            const slot = document.createElement('slot')
+            slot.name = 'icon'
+            style_sheet(shadow, style)
+            slot.append(symbol)
+            shadow.append(slot)
+            return icon
+        }
+        // insert CSS style
+        const custom_style = theme ? theme.style : ''
+        // set CSS variables
+        if (theme && theme.props) {
+            var { fill, size } = theme.props
+        }
+        const style = `
+        :host(i-icon) {
+            --size: ${size ? size : '24px'};
+            --fill: ${fill ? fill : 'var(--primary-color)'};
+            display: block;
+        }
+        slot[name='icon'] {
+            display: grid;
+            justify-content: center;
+            align-items: center;
+        }
+        slot[name='icon'] span {
+            display: block;
+            width: var(--size);
+            height: var(--size);
+        }
+        slot[name='icon'] svg {
+            width: 100%;
+            height: auto;
+        }
+        slot[name='icon'] g {
+            fill: hsl(var(--fill));
+            transition: fill .3s ease-in-out;
+        }
+        ${custom_style}
+        `
+        return layout(style)
+    }
+
+    return symbol
+}
+
+},{"support-style-sheet":38,"svg":39}],38:[function(require,module,exports){
+arguments[4][31][0].apply(exports,arguments)
+},{"dup":31}],39:[function(require,module,exports){
+module.exports = svg
+function svg (path) {
+    const span = document.createElement('span')
+    span.classList.add('icon')
+    get_svg()
+    async function get_svg () {
+        const res = await fetch(path)
+        if (res.status !== 200) throw new Error(res.status)
+        let data = await res.text()
+        span.innerHTML = data
+    }
+    return span
+}   
+},{}],40:[function(require,module,exports){
+const bel = require('bel')
+const style_sheet = require('support-style-sheet')
+const {i_button, i_link} = require('datdot-ui-button')
+const button = i_button
+const message_maker = require('message-maker')
+module.exports = i_list
+
+function i_list (opts = {}, protocol) {
+    const {page = '*', flow = 'ui-list', name, body = [{text: 'no items'}], mode = 'multiple-select', expanded = false, hidden = true, theme = {} } = opts
+    const recipients = []
+    const make = message_maker(`${name} / ${flow} / i_list`)
+    const message = make({type: 'ready'})
+    let is_hidden = hidden
+    let is_expanded = !is_hidden ? !is_hidden : expanded
+    const store_selected = []
+    const {grid} = theme
+
+    function widget () {
+        const send = protocol( get )
+        send(message)
+        const list = document.createElement('i-list')
+        const shadow = list.attachShadow({mode: 'open'})
+        list.ariaHidden = is_hidden
+        list.ariaLabel = name
+        list.tabIndex = -1
+        list.ariaExpanded = is_expanded
+        list.dataset.mode = mode
+        style_sheet(shadow, style)
+        try {
+            if (mode.match(/single|multiple/)) {
+                list.setAttribute('role', 'listbox')
+                make_select_list()
+            }   
+            if (mode.match(/dropdown/)) {
+                list.setAttribute('role', 'menubar')
+                make_list()
+            }
+            if (body.length === 0) send(make({type: 'error', data: 'body no items'}))
+        } catch(e) {
+            send(make({type: 'error', data: {message: 'something went wrong', opts }}))
+        }
+        
+        return list
+
+        function make_list () {
+            return body.map( (list, i) => {
+                const {text = undefined, role = 'link', url = '#', target, icon, cover, disabled = false, theme = {}} = list
+                const {style = ``, props = {}} = theme
+                const {
+                    size = `var(--primary-size)`, 
+                    size_hover = `var(--primary-size)`, 
+                    color = `var(--primary-color)`, 
+                    color_hover = `var(--primary-color-hover)`,     
+                    bg_color = 'var(--primary-bg-color)', 
+                    bg_color_hover = 'var(--primary-bg-color-hover)', 
+                    icon_fill = 'var(--primary-color)', 
+                    icon_fill_hover = 'var(--primary-color-hover)', 
+                    icon_size = 'var(--primary-icon-size)', 
+                    avatar_width = 'var(--primary-avatar-width)', 
+                    avatar_height = 'var(--primary-avatar-height)', 
+                    avatar_radius = 'var(--primary-avatar-radius)',
+                    disabled_color = 'var(--primary-disabled-color)',
+                    disabled_bg_color = 'var(--primary-disabled-bg-color)',
+                    disabled_icon_fill = 'var(--primary-disabled-icon-fill)',
+                } = props
+                var item = text
+                if (role === 'link' ) {
+                    var item = i_link({
+                        page,
+                        name: text,
+                        body: text,
+                        role: 'menuitem',
+                        link: {
+                            url,
+                            target
+                        },
+                        icons: {
+                            icon
+                        },
+                        cover,
+                        disabled,
+                        theme: {
+                            style,
+                            props: {
+                                size,
+                                size_hover,
+                                color,
+                                color_hover,
+                                bg_color,
+                                bg_color_hover,
+                                icon_fill,
+                                icon_fill_hover,
+                                icon_size,
+                                avatar_width,
+                                avatar_height,
+                                avatar_radius,
+                                disabled_color,
+                                disabled_bg_color,
+                                disabled_icon_fill,
+                            },
+                            grid
+                        }
+                    }, button_protocol(text))
+                }
+                if (role === 'menuitem') {
+                    var item = i_button({
+                        name: text,
+                        body: text,
+                        role,
+                        icons: {
+                            icon
+                        },
+                        cover,
+                        disabled,
+                        theme: {
+                            style,
+                            props: {
+                                size,
+                                size_hover,
+                                color,
+                                color_hover,
+                                icon_fill,
+                                icon_fill_hover,
+                                icon_size,
+                                avatar_width,
+                                avatar_height,
+                                avatar_radius,
+                                disabled_color,
+                                disabled_icon_fill,
+                            },
+                            grid
+                        }
+                    }, button_protocol(text))
+                }
+                
+                const li = bel`<li role="none">${item}</li>`
+                if (disabled) li.setAttribute('disabled', disabled)
+                shadow.append(li)
+            })
+            
+        }
+        function make_select_list () {
+            return body.map( (option, i) => {
+                const {text, icon, list, cover, current = false, selected = false, disabled = false, theme = {}} = option
+                const is_current = mode === 'single-select' ? current : false
+                const {style = ``, props = {}} = theme
+                const {
+                    size = 'var(--primary-size)', 
+                    size_hover = 'var(--primary-size)',
+                    weight = '300', 
+                    color = 'var(--primary-color)', 
+                    color_hover = 'var(--primary-color-hover)', 
+                    bg_color = 'var(--primary-bg-color)', 
+                    bg_color_hover = 'var(--primary-bg-color-hover)', 
+                    icon_size = 'var(--primary-icon-size)',
+                    icon_fill = 'var(--primary-icon-fill)',
+                    icon_fill_hover = 'var(--primary-icon-fill-hover)',
+                    avatar_width = 'var(--primary-avatar-width)', 
+                    avatar_height = 'var(--primary-avatar-height)', 
+                    avatar_radius = 'var(--primary-avatar-radius)',
+                    current_size = 'var(--current-list-size)',
+                    current_color = 'var(--current-list-color)',
+                    current_weight = 'var(--current-list-weight)',
+                    current_icon_size = 'var(--current-icon-size)',
+                    current_icon_fill = 'var(--current-icon-fill)',
+                    current_list_selected_icon_size = 'var(--current-list-selected-icon-size)',
+                    current_list_selected_icon_fill = 'var(--current-list-selected-icon-fill)',
+                    list_selected_icon_size = 'var(--list-selected-icon-size)',
+                    list_selected_icon_fill = 'var(--list-selected-icon-fill)',
+                    list_selected_icon_fill_hover = 'var(--list-selected-icon-fill-hover)',
+                    disabled_color = 'var(--primary-disabled-color)',
+                    disabled_bg_color = 'var(--primary-disabled-bg-color)',
+                    disabled_icon_fill = 'var(--primary-disabled-fill)',
+                    opacity = '0'
+                } = props
+
+                const item = button(
+                {
+                    page, 
+                    name: text, 
+                    body: text,
+                    cover,
+                    role: 'option',
+                    mode,
+                    icons: {
+                        icon,
+                        list
+                    },
+                    current: is_current, 
+                    selected,
+                    disabled,
+                    theme: {
+                        style,
+                        props: {
+                            size,
+                            size_hover,
+                            weight,
+                            color,
+                            color_hover,
+                            bg_color,
+                            bg_color_hover,
+                            icon_size,
+                            icon_fill,
+                            icon_fill_hover,
+                            avatar_width,
+                            avatar_height,
+                            avatar_radius,
+                            current_size,
+                            current_color,
+                            current_weight,
+                            current_icon_size,
+                            current_icon_fill,
+                            current_list_selected_icon_size,
+                            current_list_selected_icon_fill,
+                            list_selected_icon_size,
+                            list_selected_icon_fill,
+                            list_selected_icon_fill_hover,
+                            disabled_color,
+                            disabled_bg_color,
+                            disabled_icon_fill,
+                            opacity
+                        },
+                        grid
+                    }
+                }, button_protocol(text))
+                const li = (text === 'no items') 
+                ? bel`<li role="listitem" data-option=${text}">${text}</li>`
+                : bel`<li role="option" data-option=${text}" aria-selected=${is_current ? is_current : selected}>${item}</li>`
+                if (is_current) li.setAttribute('aria-current', is_current)
+                if (disabled) li.setAttribute('disabled', disabled)
+                const option_list = text.toLowerCase().split(' ').join('-')
+                const make = message_maker(`${option_list} / option / ${flow} / widget`)
+                send( make({type: 'ready'}) )
+                shadow.append(li)
+            })
+        }
+        function handle_expanded_event (data) {
+            list.setAttribute('aria-hidden', data)
+            list.setAttribute('aria-expanded', !data)
+        }
+        function handle_mutiple_selected (from, lists) {
+            // Old codes
+            // const make = message_maker(`${from} / option / ${flow}`)
+            // const arr = []
+            // args.forEach( child => {
+            //     if (child.dataset.option === from ) child.setAttribute('aria-selected', selected )
+            //     if (child.getAttribute('aria-selected') === 'true') arr[arr.length] = child.dataset.option
+            // })
+            // recipients[from]( make({type, data: selected}) )
+            // send( make({to: name, type, data: {mode, selected: arr, length: arr.length}}))
+            // New codes for store data
+            body.map((obj, index) => {
+                const state = obj.text === from
+                const make = message_maker(`${obj.text} / option / ${flow}`)
+                if (state) obj.selected = !obj.selected
+                const type = obj.selected ? 'selected' : 'unselected'
+                lists[index].setAttribute('aria-selected', obj.selected)
+                store_data = body
+                if (state) recipients[from]( make({type, data: obj.selected}) )
+                send( make({to: name, type, data: {mode, selected: store_data}}))
+            })
+        }
+
+        function handle_single_selected (from, lists) {
+            // Old codes
+            // args.forEach( child => {
+            //     const state = from === child.dataset.option ? selected : !selected
+            //     const current = state ? from : child.dataset.option
+            //     const make = message_maker(`${current} / option / ${flow}`)
+            //     const type = state ? 'selected' : 'unselected'
+            //     list.setAttribute('aria-activedescendant', from)
+            //     child.setAttribute('aria-selected', state )
+            //     if (state) child.setAttribute('aria-current', state)
+            //     else child.removeAttribute('aria-current')
+            //     recipients[current]( make({type, data: state}) )
+            //     send(make({to: name, type, data: {mode, selected: from} }))
+            // })
+            // New codes for store data
+            body.map((obj, index) => {
+                const state = obj.text === from
+                const current = state ? from : lists[index].dataset.option
+                const make = message_maker(`${current} / option / ${flow}`)
+                const type = state ? 'selected' : 'unselected'
+                obj.selected = state
+                obj.current = state
+                lists[index].setAttribute('aria-activedescendant', from)
+                lists[index].setAttribute('aria-selected', obj.selected)
+                if (state) lists[index].setAttribute('aria-current', obj.current)
+                else lists[index].removeAttribute('aria-current')
+                store_data = body
+                recipients[current]( make({type, data: state}) )
+                send(make({to: name, type, data: {mode, selected: store_data} }))
+            })
+        }
+        function handle_select_event (from) {
+            const { childNodes } = shadow
+            const lists = shadow.firstChild.tagName !== 'STYLE' ? childNodes : [...childNodes].filter( (child, index) => index !== 0)
+            if (mode === 'single-select')  handle_single_selected (from, lists)
+            if (mode === 'multiple-select') handle_mutiple_selected (from, lists)
+        }
+        function button_protocol (name) {
+            return (send) => {
+                recipients[name] = send
+                return get
+            }
+        }
+        function handle_click_event(msg) {
+            const {head, type, data} = msg
+            const role = head[0].split(' / ')[1]
+            const from = head[0].split(' / ')[0]
+            const make = message_maker(`${from} / ${role} / ${flow}`)
+            const message = make({to: '*', type, data})
+            send(message)
+        }
+        function get (msg) {
+            const {head, refs, type, data} = msg
+            const to = head[1]
+            const id = head[2]
+            const role = head[0].split(' / ')[1]
+            const from = head[0].split(' / ')[0]
+            if (role === 'menuitem') return handle_click_event(msg)
+            if (type === 'click' && role === 'option') return handle_select_event(from)
+            if (type.match(/expanded|collapsed/)) return handle_expanded_event(data)
+        }
+    }
+
+    // insert CSS style
+    const custom_style = theme ? theme.style : ''
+    // set CSS variables
+    if (theme && theme.props) {
+    var {
+        bg_color, bg_color_hover,
+        current_bg_color, current_bg_color_hover, disabled_bg_color,
+        width, height, border_width, border_style, border_opacity, border_color,
+        border_color_hover, border_radius, padding,  opacity,
+        shadow_color, offset_x, offset_y, blur, shadow_opacity,
+        shadow_color_hover, offset_x_hover, offset_y_hover, blur_hover, shadow_opacity_hover
+    } = theme.props
+    }
+
+    const style = `
+    :host(i-list) {
+        ${width && 'width: var(--width);'};
+        ${height && 'height: var(--height);'};
+        display: grid;
+        margin-top: 5px;
+        max-width: 100%;
+    }
+    :host(i-list[aria-hidden="true"]) {
+        opacity: 0;
+        animation: close 0.3s;
+        pointer-events: none;
+    }
+    :host([aria-hidden="false"]) {
+        display: grid;
+        animation: open 0.3s;
+    }
+    li {
+        --bg-color: ${bg_color ? bg_color : 'var(--primary-bg-color)'};
+        --border-radius: ${border_radius ? border_radius : 'var(--primary-radius)'};
+        --border-width: ${border_width ? border_width : 'var(--primary-border-width)'};
+        --border-style: ${border_style ? border_style : 'var(--primary-border-style)'};
+        --border-color: ${border_color ? border_color : 'var(--primary-border-color)'};
+        --border-opacity: ${border_opacity ? border_opacity : 'var(--primary-border-opacity)'};
+        --border: var(--border-width) var(--border-style) hsla(var(--border-color), var(--border-opacity));
+        display: grid;
+        grid-template-columns: 1fr;
+        background-color: hsl(var(--bg-color));
+        border: var(--border);
+        margin-top: -1px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+    }
+    li:hover {
+        --bg-color: ${bg_color_hover ? bg_color_hover : 'var(--primary-bg-color-hover)'};
+    }
+    :host(i-list) li:nth-of-type(1) {
+        border-top-left-radius: var(--border-radius);
+        border-top-right-radius: var(--border-radius);
+    }
+    li:last-child {
+        border-bottom-left-radius: var(--border-radius);
+        border-bottom-right-radius: var(--border-radius);
+    }
+    [role="listitem"] {
+        display: grid;
+        grid-template-rows: 24px;
+        padding: 11px;
+        align-items: center;
+    }
+    [role="listitem"]:hover {
+        cursor: default;
+    }
+    li[disabled="true"], li[disabled="true"]:hover {
+        background-color: ${disabled_bg_color ? disabled_bg_color : 'var(--primary-disabled-bg-color)'};
+        cursor: not-allowed;
+    }
+    [role="none"] {
+        --bg-color: var(--list-bg-color);
+        --opacity: 1;
+        background-color: hsla(var(--bg-color), var(--opacity));
+    }
+    [role="none"]:hover {
+        --bg-color: var(--list-bg-color-hover);
+        --opacity: 1;
+        background-color: hsla(var(--bg-color), var(--opacity));
+    }
+    [role="none"] i-link {
+        padding: 12px;
+    }
+    [role="option"] i-button.icon-right, [role="option"] i-button.text-left {
+        grid-template-columns: auto 1fr auto;
+    }
+    [aria-current="true"] {
+        --bg-color: ${current_bg_color ? current_bg_color : 'var(--current-bg-color)'};
+    }
+    @keyframes close {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+    @keyframes open {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    ${custom_style}
+    `
+
+    return widget()
+}
+},{"bel":5,"datdot-ui-button":25,"message-maker":41,"support-style-sheet":42}],41:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"dup":30}],42:[function(require,module,exports){
+arguments[4][31][0].apply(exports,arguments)
+},{"dup":31}],43:[function(require,module,exports){
 module.exports = attributeToProperty
 
 var transform = {
@@ -1437,7 +3053,7 @@ function attributeToProperty (h) {
   }
 }
 
-},{}],29:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 var attrToProp = require('hyperscript-attribute-to-property')
 
 var VAR = 0, TEXT = 1, OPEN = 2, CLOSE = 3, ATTR = 4
@@ -1734,7 +3350,7 @@ var closeRE = RegExp('^(' + [
 ].join('|') + ')(?:[\.#][a-zA-Z0-9\u007F-\uFFFF_:-]+)*$')
 function selfClosing (tag) { return closeRE.test(tag) }
 
-},{"hyperscript-attribute-to-property":28}],30:[function(require,module,exports){
+},{"hyperscript-attribute-to-property":43}],45:[function(require,module,exports){
 var inserted = {};
 
 module.exports = function (css, options) {
@@ -1758,764 +3374,42 @@ module.exports = function (css, options) {
     }
 };
 
-},{}],31:[function(require,module,exports){
-(function (process){(function (){
-// 'path' module extracted from Node.js v8.11.1 (only the posix part)
-// transplited with Babel
-
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-'use strict';
-
-function assertPath(path) {
-  if (typeof path !== 'string') {
-    throw new TypeError('Path must be a string. Received ' + JSON.stringify(path));
-  }
-}
-
-// Resolves . and .. elements in a path with directory names
-function normalizeStringPosix(path, allowAboveRoot) {
-  var res = '';
-  var lastSegmentLength = 0;
-  var lastSlash = -1;
-  var dots = 0;
-  var code;
-  for (var i = 0; i <= path.length; ++i) {
-    if (i < path.length)
-      code = path.charCodeAt(i);
-    else if (code === 47 /*/*/)
-      break;
-    else
-      code = 47 /*/*/;
-    if (code === 47 /*/*/) {
-      if (lastSlash === i - 1 || dots === 1) {
-        // NOOP
-      } else if (lastSlash !== i - 1 && dots === 2) {
-        if (res.length < 2 || lastSegmentLength !== 2 || res.charCodeAt(res.length - 1) !== 46 /*.*/ || res.charCodeAt(res.length - 2) !== 46 /*.*/) {
-          if (res.length > 2) {
-            var lastSlashIndex = res.lastIndexOf('/');
-            if (lastSlashIndex !== res.length - 1) {
-              if (lastSlashIndex === -1) {
-                res = '';
-                lastSegmentLength = 0;
-              } else {
-                res = res.slice(0, lastSlashIndex);
-                lastSegmentLength = res.length - 1 - res.lastIndexOf('/');
-              }
-              lastSlash = i;
-              dots = 0;
-              continue;
-            }
-          } else if (res.length === 2 || res.length === 1) {
-            res = '';
-            lastSegmentLength = 0;
-            lastSlash = i;
-            dots = 0;
-            continue;
-          }
-        }
-        if (allowAboveRoot) {
-          if (res.length > 0)
-            res += '/..';
-          else
-            res = '..';
-          lastSegmentLength = 2;
-        }
-      } else {
-        if (res.length > 0)
-          res += '/' + path.slice(lastSlash + 1, i);
-        else
-          res = path.slice(lastSlash + 1, i);
-        lastSegmentLength = i - lastSlash - 1;
-      }
-      lastSlash = i;
-      dots = 0;
-    } else if (code === 46 /*.*/ && dots !== -1) {
-      ++dots;
-    } else {
-      dots = -1;
-    }
-  }
-  return res;
-}
-
-function _format(sep, pathObject) {
-  var dir = pathObject.dir || pathObject.root;
-  var base = pathObject.base || (pathObject.name || '') + (pathObject.ext || '');
-  if (!dir) {
-    return base;
-  }
-  if (dir === pathObject.root) {
-    return dir + base;
-  }
-  return dir + sep + base;
-}
-
-var posix = {
-  // path.resolve([from ...], to)
-  resolve: function resolve() {
-    var resolvedPath = '';
-    var resolvedAbsolute = false;
-    var cwd;
-
-    for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-      var path;
-      if (i >= 0)
-        path = arguments[i];
-      else {
-        if (cwd === undefined)
-          cwd = process.cwd();
-        path = cwd;
-      }
-
-      assertPath(path);
-
-      // Skip empty entries
-      if (path.length === 0) {
-        continue;
-      }
-
-      resolvedPath = path + '/' + resolvedPath;
-      resolvedAbsolute = path.charCodeAt(0) === 47 /*/*/;
-    }
-
-    // At this point the path should be resolved to a full absolute path, but
-    // handle relative paths to be safe (might happen when process.cwd() fails)
-
-    // Normalize the path
-    resolvedPath = normalizeStringPosix(resolvedPath, !resolvedAbsolute);
-
-    if (resolvedAbsolute) {
-      if (resolvedPath.length > 0)
-        return '/' + resolvedPath;
-      else
-        return '/';
-    } else if (resolvedPath.length > 0) {
-      return resolvedPath;
-    } else {
-      return '.';
-    }
-  },
-
-  normalize: function normalize(path) {
-    assertPath(path);
-
-    if (path.length === 0) return '.';
-
-    var isAbsolute = path.charCodeAt(0) === 47 /*/*/;
-    var trailingSeparator = path.charCodeAt(path.length - 1) === 47 /*/*/;
-
-    // Normalize the path
-    path = normalizeStringPosix(path, !isAbsolute);
-
-    if (path.length === 0 && !isAbsolute) path = '.';
-    if (path.length > 0 && trailingSeparator) path += '/';
-
-    if (isAbsolute) return '/' + path;
-    return path;
-  },
-
-  isAbsolute: function isAbsolute(path) {
-    assertPath(path);
-    return path.length > 0 && path.charCodeAt(0) === 47 /*/*/;
-  },
-
-  join: function join() {
-    if (arguments.length === 0)
-      return '.';
-    var joined;
-    for (var i = 0; i < arguments.length; ++i) {
-      var arg = arguments[i];
-      assertPath(arg);
-      if (arg.length > 0) {
-        if (joined === undefined)
-          joined = arg;
-        else
-          joined += '/' + arg;
-      }
-    }
-    if (joined === undefined)
-      return '.';
-    return posix.normalize(joined);
-  },
-
-  relative: function relative(from, to) {
-    assertPath(from);
-    assertPath(to);
-
-    if (from === to) return '';
-
-    from = posix.resolve(from);
-    to = posix.resolve(to);
-
-    if (from === to) return '';
-
-    // Trim any leading backslashes
-    var fromStart = 1;
-    for (; fromStart < from.length; ++fromStart) {
-      if (from.charCodeAt(fromStart) !== 47 /*/*/)
-        break;
-    }
-    var fromEnd = from.length;
-    var fromLen = fromEnd - fromStart;
-
-    // Trim any leading backslashes
-    var toStart = 1;
-    for (; toStart < to.length; ++toStart) {
-      if (to.charCodeAt(toStart) !== 47 /*/*/)
-        break;
-    }
-    var toEnd = to.length;
-    var toLen = toEnd - toStart;
-
-    // Compare paths to find the longest common path from root
-    var length = fromLen < toLen ? fromLen : toLen;
-    var lastCommonSep = -1;
-    var i = 0;
-    for (; i <= length; ++i) {
-      if (i === length) {
-        if (toLen > length) {
-          if (to.charCodeAt(toStart + i) === 47 /*/*/) {
-            // We get here if `from` is the exact base path for `to`.
-            // For example: from='/foo/bar'; to='/foo/bar/baz'
-            return to.slice(toStart + i + 1);
-          } else if (i === 0) {
-            // We get here if `from` is the root
-            // For example: from='/'; to='/foo'
-            return to.slice(toStart + i);
-          }
-        } else if (fromLen > length) {
-          if (from.charCodeAt(fromStart + i) === 47 /*/*/) {
-            // We get here if `to` is the exact base path for `from`.
-            // For example: from='/foo/bar/baz'; to='/foo/bar'
-            lastCommonSep = i;
-          } else if (i === 0) {
-            // We get here if `to` is the root.
-            // For example: from='/foo'; to='/'
-            lastCommonSep = 0;
-          }
-        }
-        break;
-      }
-      var fromCode = from.charCodeAt(fromStart + i);
-      var toCode = to.charCodeAt(toStart + i);
-      if (fromCode !== toCode)
-        break;
-      else if (fromCode === 47 /*/*/)
-        lastCommonSep = i;
-    }
-
-    var out = '';
-    // Generate the relative path based on the path difference between `to`
-    // and `from`
-    for (i = fromStart + lastCommonSep + 1; i <= fromEnd; ++i) {
-      if (i === fromEnd || from.charCodeAt(i) === 47 /*/*/) {
-        if (out.length === 0)
-          out += '..';
-        else
-          out += '/..';
-      }
-    }
-
-    // Lastly, append the rest of the destination (`to`) path that comes after
-    // the common path parts
-    if (out.length > 0)
-      return out + to.slice(toStart + lastCommonSep);
-    else {
-      toStart += lastCommonSep;
-      if (to.charCodeAt(toStart) === 47 /*/*/)
-        ++toStart;
-      return to.slice(toStart);
-    }
-  },
-
-  _makeLong: function _makeLong(path) {
-    return path;
-  },
-
-  dirname: function dirname(path) {
-    assertPath(path);
-    if (path.length === 0) return '.';
-    var code = path.charCodeAt(0);
-    var hasRoot = code === 47 /*/*/;
-    var end = -1;
-    var matchedSlash = true;
-    for (var i = path.length - 1; i >= 1; --i) {
-      code = path.charCodeAt(i);
-      if (code === 47 /*/*/) {
-          if (!matchedSlash) {
-            end = i;
-            break;
-          }
-        } else {
-        // We saw the first non-path separator
-        matchedSlash = false;
-      }
-    }
-
-    if (end === -1) return hasRoot ? '/' : '.';
-    if (hasRoot && end === 1) return '//';
-    return path.slice(0, end);
-  },
-
-  basename: function basename(path, ext) {
-    if (ext !== undefined && typeof ext !== 'string') throw new TypeError('"ext" argument must be a string');
-    assertPath(path);
-
-    var start = 0;
-    var end = -1;
-    var matchedSlash = true;
-    var i;
-
-    if (ext !== undefined && ext.length > 0 && ext.length <= path.length) {
-      if (ext.length === path.length && ext === path) return '';
-      var extIdx = ext.length - 1;
-      var firstNonSlashEnd = -1;
-      for (i = path.length - 1; i >= 0; --i) {
-        var code = path.charCodeAt(i);
-        if (code === 47 /*/*/) {
-            // If we reached a path separator that was not part of a set of path
-            // separators at the end of the string, stop now
-            if (!matchedSlash) {
-              start = i + 1;
-              break;
-            }
-          } else {
-          if (firstNonSlashEnd === -1) {
-            // We saw the first non-path separator, remember this index in case
-            // we need it if the extension ends up not matching
-            matchedSlash = false;
-            firstNonSlashEnd = i + 1;
-          }
-          if (extIdx >= 0) {
-            // Try to match the explicit extension
-            if (code === ext.charCodeAt(extIdx)) {
-              if (--extIdx === -1) {
-                // We matched the extension, so mark this as the end of our path
-                // component
-                end = i;
-              }
-            } else {
-              // Extension does not match, so our result is the entire path
-              // component
-              extIdx = -1;
-              end = firstNonSlashEnd;
-            }
-          }
-        }
-      }
-
-      if (start === end) end = firstNonSlashEnd;else if (end === -1) end = path.length;
-      return path.slice(start, end);
-    } else {
-      for (i = path.length - 1; i >= 0; --i) {
-        if (path.charCodeAt(i) === 47 /*/*/) {
-            // If we reached a path separator that was not part of a set of path
-            // separators at the end of the string, stop now
-            if (!matchedSlash) {
-              start = i + 1;
-              break;
-            }
-          } else if (end === -1) {
-          // We saw the first non-path separator, mark this as the end of our
-          // path component
-          matchedSlash = false;
-          end = i + 1;
-        }
-      }
-
-      if (end === -1) return '';
-      return path.slice(start, end);
-    }
-  },
-
-  extname: function extname(path) {
-    assertPath(path);
-    var startDot = -1;
-    var startPart = 0;
-    var end = -1;
-    var matchedSlash = true;
-    // Track the state of characters (if any) we see before our first dot and
-    // after any path separator we find
-    var preDotState = 0;
-    for (var i = path.length - 1; i >= 0; --i) {
-      var code = path.charCodeAt(i);
-      if (code === 47 /*/*/) {
-          // If we reached a path separator that was not part of a set of path
-          // separators at the end of the string, stop now
-          if (!matchedSlash) {
-            startPart = i + 1;
-            break;
-          }
-          continue;
-        }
-      if (end === -1) {
-        // We saw the first non-path separator, mark this as the end of our
-        // extension
-        matchedSlash = false;
-        end = i + 1;
-      }
-      if (code === 46 /*.*/) {
-          // If this is our first dot, mark it as the start of our extension
-          if (startDot === -1)
-            startDot = i;
-          else if (preDotState !== 1)
-            preDotState = 1;
-      } else if (startDot !== -1) {
-        // We saw a non-dot and non-path separator before our dot, so we should
-        // have a good chance at having a non-empty extension
-        preDotState = -1;
-      }
-    }
-
-    if (startDot === -1 || end === -1 ||
-        // We saw a non-dot character immediately before the dot
-        preDotState === 0 ||
-        // The (right-most) trimmed path component is exactly '..'
-        preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
-      return '';
-    }
-    return path.slice(startDot, end);
-  },
-
-  format: function format(pathObject) {
-    if (pathObject === null || typeof pathObject !== 'object') {
-      throw new TypeError('The "pathObject" argument must be of type Object. Received type ' + typeof pathObject);
-    }
-    return _format('/', pathObject);
-  },
-
-  parse: function parse(path) {
-    assertPath(path);
-
-    var ret = { root: '', dir: '', base: '', ext: '', name: '' };
-    if (path.length === 0) return ret;
-    var code = path.charCodeAt(0);
-    var isAbsolute = code === 47 /*/*/;
-    var start;
-    if (isAbsolute) {
-      ret.root = '/';
-      start = 1;
-    } else {
-      start = 0;
-    }
-    var startDot = -1;
-    var startPart = 0;
-    var end = -1;
-    var matchedSlash = true;
-    var i = path.length - 1;
-
-    // Track the state of characters (if any) we see before our first dot and
-    // after any path separator we find
-    var preDotState = 0;
-
-    // Get non-dir info
-    for (; i >= start; --i) {
-      code = path.charCodeAt(i);
-      if (code === 47 /*/*/) {
-          // If we reached a path separator that was not part of a set of path
-          // separators at the end of the string, stop now
-          if (!matchedSlash) {
-            startPart = i + 1;
-            break;
-          }
-          continue;
-        }
-      if (end === -1) {
-        // We saw the first non-path separator, mark this as the end of our
-        // extension
-        matchedSlash = false;
-        end = i + 1;
-      }
-      if (code === 46 /*.*/) {
-          // If this is our first dot, mark it as the start of our extension
-          if (startDot === -1) startDot = i;else if (preDotState !== 1) preDotState = 1;
-        } else if (startDot !== -1) {
-        // We saw a non-dot and non-path separator before our dot, so we should
-        // have a good chance at having a non-empty extension
-        preDotState = -1;
-      }
-    }
-
-    if (startDot === -1 || end === -1 ||
-    // We saw a non-dot character immediately before the dot
-    preDotState === 0 ||
-    // The (right-most) trimmed path component is exactly '..'
-    preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
-      if (end !== -1) {
-        if (startPart === 0 && isAbsolute) ret.base = ret.name = path.slice(1, end);else ret.base = ret.name = path.slice(startPart, end);
-      }
-    } else {
-      if (startPart === 0 && isAbsolute) {
-        ret.name = path.slice(1, startDot);
-        ret.base = path.slice(1, end);
-      } else {
-        ret.name = path.slice(startPart, startDot);
-        ret.base = path.slice(startPart, end);
-      }
-      ret.ext = path.slice(startDot, end);
-    }
-
-    if (startPart > 0) ret.dir = path.slice(0, startPart - 1);else if (isAbsolute) ret.dir = '/';
-
-    return ret;
-  },
-
-  sep: '/',
-  delimiter: ':',
-  win32: null,
-  posix: null
-};
-
-posix.posix = posix;
-
-module.exports = posix;
-
-}).call(this)}).call(this,require('_process'))
-},{"_process":32}],32:[function(require,module,exports){
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],33:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 const bel = require('bel')
 const style_sheet = require('support-style-sheet')
 const message_maker = require('message-maker')
+const make_grid = require('make-grid')
 const {int2hsla, str2hashint} = require('generator-color')
+const i_footer = require('footer')
 
-module.exports = terminal
-function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protocol) {
+module.exports = logs
+
+function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol) {
     let is_expanded = expanded
     let types = {}
+    let total = 0
+    const recipients = []
     const send = protocol(get)
-    const make = message_maker(`terminal / index.js`)
-    const message = make({to, type: 'ready', refs: ['old_logs', 'new_logs']})
+    const make = message_maker(`${name} / index.js`)
+    const message = make({to: name, type: 'ready', refs: ['old_logs', 'new_logs']})
     send(message)
     const el = document.createElement('i-terminal')
     const shadow = el.attachShadow({mode: 'closed'})
-    const log_list = document.createElement('log-list')
-    log_list.setAttribute('aria-label', mode)
+    const i_logs = document.createElement('i-logs')
+    const footer = i_footer({name}, footer_protocol(`${name}-footer`))
+    i_logs.setAttribute('aria-label', mode)
     style_sheet(shadow, style)
-    shadow.append(log_list)
+    shadow.append(i_logs, footer)
+
+    // keep tracking logs on last one
+    document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('resize', scroll_down)
+    })
+
     return el
 
-    function get (msg) {
-        const {head, refs, type, data, meta} = msg
-        const from = head[0].split('/')[0].trim()
-        make_logs (msg)
-        if (type === 'layout-mode') return handle_change_layout(data)
-    }
-
-    function handle_change_layout (data) {
-        const {mode, expanded} = data
-        const { childNodes } = log_list
-        if (mode) log_list.setAttribute('aria-label', mode)
-        if (expanded !== void 0) {
-            is_expanded = expanded
-            childNodes.forEach( list => {
-                list.setAttribute('aria-expanded', expanded)
-            })
-        }
+    function scroll_down () {
+        i_logs.scrollTop = i_logs.scrollHeight
     }
 
     function make_logs (msg) {
@@ -2531,9 +3425,9 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
             const data_info = bel`<span aira-label="data" class="data">data: ${typeof data === 'object' ? JSON.stringify(data) : data}</span>`
             const type_info = bel`<span aria-type="${type}" aria-label="${type}" class="type">${type}</span>`
             const refs_info = bel`<div class="refs"><span>refs:</span></div>`
-            refs.map( (ref, i) => refs_info.append(
-                bel`<span>${ref}${i < refs.length - 1 ? ',  ' : ''}</span>`
-            ))
+            refs.map( (ref, i) => 
+                refs_info.append(bel`<span>${ref}${i < refs.length - 1 ? ',  ' : ''}</span>`)
+            )
             const info = bel`<div class="info">${data_info}${refs_info}</div>`
             const header = bel`
             <div class="head">
@@ -2542,7 +3436,7 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
                 <span class="arrow">=＞</span>
                 ${to}
             </div>`
-            const log = bel`<div class="log">${header}${data_info}${refs_info}</div>`
+            const log = bel`<div class="logs">${header}${info}</div>`
             const file = bel`
             <div class="file">
                 <span>${meta.stack[0]}</span>
@@ -2550,14 +3444,18 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
             </div>`
             var list = bel`<section class="list" aria-label="${type}" aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
             generate_type_color(type, type_info)
-            log_list.append(list)
-            el.scrollTop = el.scrollHeight
+            i_logs.append(list)
+            scroll_down()
+            update_count()
         } catch (error) {
-            document.addEventListener('DOMContentLoaded', () => log_list.append(list))
+            document.addEventListener('DOMContentLoaded', () => i_logs.append(list))
             return false
         }
     }
-
+    function update_count () {
+        total = i_logs.childElementCount
+        return recipients[`${name}-footer`](make({type: 'messages-count', data: total}))
+    }
     function generate_type_color (type, el) {
         for (let t in types) { 
             if (t === type && types[t].color) {
@@ -2570,20 +3468,106 @@ function terminal ({to = 'terminal', mode = 'compact', expanded = false}, protoc
         const status = target.ariaExpanded === 'false' ? 'true' : 'false'
         target.ariaExpanded = status
     }
+    function handle_change_layout (data) {
+        const {mode, expanded} = data
+        const { childNodes } = i_logs
+        if (mode) i_logs.setAttribute('aria-label', mode)
+        if (expanded !== void 0) {
+            is_expanded = expanded
+            childNodes.forEach( list => {
+                list.setAttribute('aria-expanded', expanded)
+            })
+        }
+    }
+    function handle_selected (args) {
+        const selected = args.filter( obj => obj.selected )
+        const result = selected[0].text.split(' ')[0].toLowerCase()
+        handle_change_layout({mode: result})
+    }
+    function handle_search_filter (letter) {
+        const {childNodes} = i_logs
+        childNodes.forEach( item => {
+            const from = item.querySelector('.from')
+            const to = item.querySelector('.to')
+            const data = item.querySelector('.data')
+            const refs = item.querySelector('.refs')
+            const file = item.querySelector('.file')
+            element_match (from, letter)
+            element_match (to, letter)
+            element_match (data, letter)
+            element_match (refs, letter)
+            element_match (file, letter)
+        })
+        const mark = i_logs.querySelectorAll('mark')[0]
+        if (mark) mark.classList.add('current')
+
+        const current = i_logs.querySelector('.current')
+        if (current) {
+            const scrollHeight = i_logs.scrollHeight
+            const height = i_logs.offsetHeight
+            const offsetTop = current.offsetTop
+            if (scrollHeight < height) return i_logs.scrollTop = offsetTop
+            if (scrollHeight > height) return i_logs.scrollTop = offsetTop - height
+        }
+    }
+    function element_match (target, letter) {
+        // need to add insenstive for regex
+        const regex = new RegExp(`${letter}`, 'gi')
+        // check target includes letter, add mark inside
+        // !important make sure all texts are lowercase to compare from letter
+        if (target.textContent.toLowerCase().includes(`${letter}`)) {
+            return target.innerHTML = target.textContent.replace(regex, text => `<mark>${text}</mark>`)
+        }
+        // if not return normal text
+        return target.innerHTML = target.textContent.replace(regex, text => text)
+    }
+    function footer_protocol (name) {
+        return send => {
+            recipients[name] = send
+            return get_footer
+        }   
+    }
+    function get_footer (msg) {
+        const {head, refs, type, data, meta} = msg
+        const from = head[0].split('/')[0].trim()
+        if (type.match(/messages-count/)) return
+        if (type === 'layout-mode') return handle_change_layout(data)
+        if (type === 'selected') return handle_selected(data.selected)
+        if (type === 'search-filter') return handle_search_filter(data.letter)
+        if (type === 'cleared-search') return handle_search_filter(data)
+        // todo: fix scrollTop, it is not working when expanded
+        if (from.match(/expanded/) && type === 'click') {
+                i_logs.scrollTop = i_logs.scrollHeight
+        }
+        if (type === 'ready') return make_logs(msg)
+    }
+    function get (msg) {
+        const {head, refs, type, data, meta} = msg
+        const from = head[0].split('/')[0].trim()
+        make_logs(msg)
+    }
 }
 
+const init_grid = {
+    rows: '1fr auto',
+    areas: ['logs', 'footer']
+}
 const style = `
 :host(i-terminal) {
     --bg-color: var(--color-dark);
     --opacity: 1;
     --size: var(--size12);
     --color: var(--color-white);
+    grid-area: terminal;
+    display: grid;
+    ${make_grid(init_grid)}
     font-size: var(--size);
     color: hsl(var(--color));
     background-color: hsla( var(--bg-color), var(--opacity));
-    height: 100%;
-    overflow: hidden auto;
     padding-top: 4px;
+    height: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 h4 {
     --bg-color: var(--color-deep-black);
@@ -2593,8 +3577,13 @@ h4 {
     color: #fff;
     background-color: hsl( var(--bg-color), var(--opacity) );
 }
-log-list {
-    height: 100%;
+i-logs {
+    grid-area: logs;
+    overflow: hidden scroll;
+    max-width: 100%;
+}
+i-footer {
+    grid-area: footer;
 }
 .list {
     --bg-color: 0, 0%, 30%;
@@ -2605,6 +3594,8 @@ log-list {
     background-color: hsla( var(--bg-color), var(--opacity) );
     border-radius: var(--border-radius);
     transition: background-color 0.6s ease-in-out;
+    width: 100%;
+    max-width: 100%;
 }
 .list[aria-expanded="false"] .file {
     height: 0;
@@ -2616,21 +3607,24 @@ log-list {
     height: auto;
     padding: 4px 8px;
 }
-log-list .list:last-child {
+i-logs .list:last-child {
     --bg-color: var(--color-viridian-green);
     --opacity: .3;
 }
-[aria-label="compact"] .list[aria-expanded="false"] .log {
+[aria-label="compact"] .list[aria-expanded="false"] .logs {
     white-space: nowrap;
-    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+    width: 100%;
 }
-[aria-label="compact"] .list[aria-expanded="true"] .log {
+[aria-label="compact"] .list[aria-expanded="false"] .head, [aria-label="compact"] .list[aria-expanded="false"] .info {
+    display: inline;
+}
+[aria-label="compact"] .list[aria-expanded="true"] .logs {
     padding-left: 8px;
     oveflow: auto;
 }
-[aria-label="compact"] .list[aria-expanded="true"] .log .head {
+[aria-label="compact"] .list[aria-expanded="true"] .logs .head {
     margin-left: -8px;
 }
 [aria-label="compact"] .list[aria-expanded="true"] .data {
@@ -2639,7 +3633,10 @@ log-list .list:last-child {
 [aria-label="compact"] .refs {
     padding-left: 8px;
 }
-.log {
+[aria-label="compact"] .info {
+    display: inline;
+}
+.logs {
     line-height: 1.8;
     word-break: break-all;
     white-space: pre-wrap;
@@ -2682,8 +3679,6 @@ log-list .list:last-child {
     --color: var(--color-greyA2);
     color: hsl( var(--color) );
     line-height: 1.6;
-    display: flex;
-    gap: 10px;
 }
 .file > span {
     display: inline-block;
@@ -2756,24 +3751,24 @@ log-list .list:last-child {
     --bg-color: var(--color-heliotrope);
     --opacity: 1;
 }
-log-list .list:last-child .type {}
-log-list .list:last-child .arrow {
+i-logs .list:last-child .type {}
+i-logs .list:last-child .arrow {
     --color: var(--color-white);
 }
-log-list .list:last-child .to {
+i-logs .list:last-child .to {
     --color: var(--color-blue-jeans);
 }
-log-list .list:last-child .file {
+i-logs .list:last-child .file {
     --color: var(--color-white);
 }
-log-list .list:last-child [aria-type="ready"] {
+i-logs .list:last-child [aria-type="ready"] {
     --bg-color: var(--color-deep-black);
     --opacity: 0.3;
 }
-log-list .list:last-child .function {
+i-logs .list:last-child .function {
     --color: var(--color-white);
 }
-[aria-label="comfortable"] .list[aria-expanded="false"] .log {
+[aria-label="comfortable"] .list[aria-expanded="false"] .logs {
     
 }
 [aria-label="comfortable"] .data {
@@ -2793,8 +3788,275 @@ log-list .list:last-child .function {
     display: block;
     padding-left: 8px;
 }
+mark {
+    --mark: var(--color-light-green);
+    background-color: hsl(var(--mark));
+}
+mark.current {
+    --mark: var(--color-orange);
+}
+/* for smart device */
+@media (max-width: 960px) {
+    [aria-label="compact"] .list[aria-expanded="false"] .logs {
+        width: 100vw;
+    }
+    [aria-label="compact"] .list[aria-expanded="false"] .list {
+        width: 100vw;
+    }
+}
 `
-},{"bel":5,"generator-color":34,"message-maker":35,"support-style-sheet":36}],34:[function(require,module,exports){
+},{"bel":5,"footer":47,"generator-color":48,"make-grid":49,"message-maker":50,"support-style-sheet":51}],47:[function(require,module,exports){
+const bel = require('bel')
+const style_sheet = require('support-style-sheet')
+const {i_button} = require('datdot-ui-button')
+const i_dropdown = require('datdot-ui-dropdown')
+const message_maker = require('message-maker')
+const make_grid = require('./make-grid')
+
+module.exports = footer
+
+function footer (opts = {}, protocol) {
+    const {flow = 'i-footer', name, theme = {}} = opts
+    const recipients = []
+    const make = message_maker(`${name} / ${flow}`)
+
+    function widget () {
+        const send = protocol(get)
+        const footer = document.createElement('i-footer')
+        const shadow = footer.attachShadow({mode: 'open'})
+        footer.setAttribute('aria-label', `${name}-footer`)
+        send(make({type: 'ready'}))
+        style_sheet(shadow, style)
+        const theme_option = {
+            message: {
+                size: 'var(--size12)',
+            },
+            button: {
+                padding: '2px 4px',
+                border_radius: '0',
+            }
+        }
+        const filter = bel`<input class="filter" type='text' name='filter' placeholder='Filter' aria-label='search filter'>`
+        const clear = i_button({
+            name: 'clear-filter',
+            icons: {
+                icon: {name: 'cross'}
+            },
+            theme: {
+                props: {
+                    icon_fill: 'var(--color-grey66)',
+                    icon_fill_hover: 'var(--color-white)',
+                    bg_color: 'var(--color-greyD9)',
+                    bg_color_hover: 'var(--primary-bg-color-hover)',
+                    border_width: '0',
+                    border_radius: '50%',
+                    icon_size: '9px',
+                    icon_size_hover: '9px',
+                    width: '12px',
+                    height: '12px',
+                    padding: '4px'
+                }
+            }
+        }, footer_protocol('clear-filter'))
+        const search = bel`<div class="search">${filter}${clear}</div>`
+        const expanded = i_button(
+        {
+            name: 'expanded', 
+            body: 'Collapsed', 
+            role: 'switch',
+            theme: {
+                props: {
+                    ...theme_option.button
+                }
+            }
+        }, footer_protocol('expanded'))
+
+        // option for terminal-selector 
+        const terminal_option = 
+        {
+            name: 'terminal',
+            mode : 'single-select',
+            expanded: false,
+            options: {
+                button: {
+                    theme: {
+                        props: {
+                            border_radius: '0',
+                            padding: '2px 4px',
+                        }
+                    }
+                },
+                list: {
+                    direction: 'up',
+                    array: [
+                        {
+                            text: 'Compact messages'
+                        },
+                        {
+                            text: 'Comfortable messages',
+                        }
+                    ],
+                    theme: {
+                        grid: {
+                            button: {
+                                auto: {
+                                    auto_flow: 'column'
+                                },
+                                justify: 'content-left',
+                                gap: '5px'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        const terminal_selector = i_dropdown(terminal_option, footer_protocol(terminal_option.name))
+        const num = bel`<span>0</span>`
+        const total = bel`<span class="total">All messages: ${num}</span>`
+        const actions = bel`<div class="actions">${search}${terminal_selector}${expanded}</div>`
+        shadow.append(total, actions)
+        filter.addEventListener('keyup', handle_keyup_event)
+        // to prevent fullsrceen event from fullscreen.js
+        filter.addEventListener('keydown', (event) => event.stopPropagation())
+        return footer
+
+        function handle_keyup_event (e) {
+            const key = e.which || e.keyCode || e.keyCodeAt
+            // if (key === 8) return
+            let letter = e.target.value.toLowerCase()
+            return send(make({type: 'search-filter', data: {letter}}))
+        }
+
+        // handle events
+        function switch_event (from, data) {
+            const state = !data
+            const text = state ? 'Expanded' : 'Collapsed'
+            recipients[from](make({type: 'switched', data: state}))
+            recipients[from](make({type: 'changed', data: {text}}))
+            send(make({to: from, type: 'triggered', data: {checked: state}}) )
+            send(make({type: 'layout-mode', data: {expanded: state}}))
+        }
+
+        function selector_event (from, data) {
+            const dropdowns = actions.querySelectorAll('i-dropdown')
+            const state = data.expanded
+            const type = state ? 'expanded' : 'collapsed'
+            const to = `${from} / listbox / ui-list`
+            recipients[from]( make({to, type, data: {from, expanded: state}}) )
+            send( make({to, type, data: {from, expanded: state}}) )
+            dropdowns.forEach( item => {
+                const name = item.getAttribute('aria-label')
+                const to = `${name} / listbox / ui-list`
+                item.style.zIndex = '99'
+                if (name !== from) {
+                    recipients[name]( make({to, type: 'collapsed', data: {name, expanded: false}}) )
+                    send( make({to, type: 'collapsed', data: {name, expanded: false}}) )
+                    item.removeAttribute('style')
+                }
+            })
+        }
+        function clear_input_event () {
+            if (filter.value === '') return
+            filter.value = ''
+            send(make({to: `${name} / index.js`, type: 'cleared-search', data: ''}))
+        }
+        function click_event (from, role, data) {
+            if (role === 'switch') return switch_event(from, data)
+            if (role === 'listbox') return selector_event(from, data)
+            if (from === 'clear-filter') return clear_input_event()
+        }   
+        function footer_protocol (name) {
+            return send => {
+                recipients[name] = send
+                return get
+            }
+        }
+        function get (msg) {
+            const {head, type, data} = msg
+            const from = head[0].split('/')[0].trim()
+            const role = head[0].split(' / ')[1]
+            if (type.match(/ready|click|changed|selected|unselected/)) send(msg)
+            if (type === 'messages-count') return num.textContent = data
+            if (type === 'click') return click_event (from, role, data)
+        }
+    }
+    
+    const style = `
+    :host(i-footer) {
+        --size: var(--size12);
+        --color: var(--color-white);
+        --bg-color: var(--color-dark);
+        display: grid;
+        font-size: var(--size);
+        color: hsl(var(--color));
+        background-color: hsl(var(--bg-color));
+        ${make_grid({
+            areas: ['actions total'],
+        })}
+        max-width: 100%;
+    }
+    .actions {
+        grid-area: actions;
+        display: grid;
+        ${make_grid({
+            rows: 'minmax(0, 30px) auto',
+            columns: 'minmax(0, 200px) minmax(0, 175px) minmax(auto, 100px) 1fr',
+            gap: '6px'
+        })}
+        padding: 6px;
+    }
+    .total {
+        grid-area: total;
+        ${make_grid({
+            justify: 'self-right',
+            align: 'self-center'
+        })}
+        padding: 0 12px;
+    }
+    .search {
+        --bg-color: var(--color-white);
+        display: grid;
+        ${make_grid({
+            columns: 'minmax(0, auto) 24px',
+            align: 'items-center'
+        })}
+        background-color: hsl(var(--bg-color));
+    }
+    .search i-button {
+        opacity: 0;
+        transition: opacity .3s linear;
+    }
+    .search .filter:focus ~ i-button {
+        opacity: 1;
+    }
+    .filter {
+        border: none;
+    }
+    
+    .filter:focus {
+        outline: none;
+    }
+    .status {
+        grid-area: status;
+        padding: 0 8px 8px;
+    }
+    @media only screen and (max-width: 640px) {
+        :host(i-footer) {
+            ${make_grid({
+                areas: ['total', 'actions'],
+            })}
+        }
+        .total {
+            ${make_grid({
+                justify: 'self-left'
+            })}
+        }
+    }
+    `
+    return widget()
+}
+},{"./make-grid":49,"bel":5,"datdot-ui-button":25,"datdot-ui-dropdown":32,"message-maker":50,"support-style-sheet":51}],48:[function(require,module,exports){
  module.exports = {int2hsla, str2hashint}
  function int2hsla (i) { return `hsla(${i % 360}, 100%, 70%, 1)` }
  function str2hashint (str) {
@@ -2805,8 +4067,10 @@ log-list .list:last-child .function {
      })
      return hash
  }
-},{}],35:[function(require,module,exports){
-arguments[4][26][0].apply(exports,arguments)
-},{"dup":26}],36:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"dup":27}]},{},[1]);
+},{"dup":27}],50:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"dup":30}],51:[function(require,module,exports){
+arguments[4][31][0].apply(exports,arguments)
+},{"dup":31}]},{},[1]);
