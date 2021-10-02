@@ -4,6 +4,7 @@ const message_maker = require('message-maker')
 const make_grid = require('make-grid')
 const {int2hsla, str2hashint} = require('generator-color')
 const i_footer = require('footer')
+const {i_button} = require('datdot-ui-button')
 
 module.exports = logs
 
@@ -20,8 +21,10 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     const el = document.createElement('i-terminal')
     const shadow = el.attachShadow({mode: 'open'})
     const i_logs = document.createElement('i-logs')
+    const load_more = i_button({name: 'load-more', body: 'Load more'}, load_more_protocol('load-more'))
     const footer = i_footer({name}, footer_protocol(`${name}-footer`))
     i_logs.setAttribute('aria-label', mode)
+    i_logs.append(load_more)
     style_sheet(shadow, style)
     shadow.append(i_logs, footer)
 
@@ -50,6 +53,8 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
             console.log(store_msg);
         })
     })
+
+    mutation_observer.observe(i_logs, mutation_config)
 
     return el
 
@@ -91,10 +96,7 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
             
             generate_type_color(type, type_info)
 
-            mutation_observer.observe(i_logs, mutation_config)
-            i_logs.childNodes.forEach( (node) => {
-                intersection_observer.observe(node)
-            })
+            
 
             store_msg.push(msg)
             i_logs.append(list)
@@ -171,6 +173,12 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
         }
         // if not return normal text
         return target.innerHTML = target.textContent.replace(regex, text => text)
+    }
+    function load_more_protocol (name) {
+        return send => {
+            recipients[name] = send
+            return get
+        }   
     }
     function footer_protocol (name) {
         return send => {

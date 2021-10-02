@@ -42,7 +42,58 @@ function demo () {
         recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
         recipients['logs'](make({to: '*', type: 'extrinsic'}))
         recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-    }, 500)
+        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'attestor'}))
+        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
+        recipients['logs'](make({to: '*', type: 'expanded'}))
+        recipients['logs'](make({to: '*', type: 'collapsed'}))
+        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'attestor'}))
+        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
+        recipients['logs'](make({to: '*', type: 'expanded'}))
+        recipients['logs'](make({to: '*', type: 'collapsed'}))
+    }, 1200)
     setTimeout(()=> { 
         recipients['logs'](make({to: '*', type: 'user'}))
         recipients['logs'](make({to: '*', type: 'peer'}))
@@ -65,7 +116,56 @@ function demo () {
         recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
         recipients['logs'](make({to: '*', type: 'extrinsic'}))
         recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-    }, 1200)
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'attestor'}))
+        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
+        recipients['logs'](make({to: '*', type: 'expanded'}))
+        recipients['logs'](make({to: '*', type: 'collapsed'}))
+        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'attestor'}))
+        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
+        recipients['logs'](make({to: '*', type: 'expanded'}))
+        recipients['logs'](make({to: '*', type: 'collapsed'}))
+        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
+        recipients['logs'](make({to: '*', type: 'extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
+        recipients['logs'](make({to: '*', type: 'user'}))
+        recipients['logs'](make({to: '*', type: 'peer'}))
+        recipients['logs'](make({to: '*', type: '@todo'}))
+        recipients['logs'](make({to: '*', type: 'hoster'}))
+        recipients['logs'](make({to: '*', type: 'encoder'}))
+        recipients['logs'](make({to: '*', type: 'attestor'}))
+        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
+        recipients['logs'](make({to: '*', type: 'expanded'}))
+        recipients['logs'](make({to: '*', type: 'collapsed'}))
+    }, 1600)
     const click = i_button({name: 'click', body: 'Click', 
     theme: {
         props: { 
@@ -3381,37 +3481,63 @@ const message_maker = require('message-maker')
 const make_grid = require('make-grid')
 const {int2hsla, str2hashint} = require('generator-color')
 const i_footer = require('footer')
+const {i_button} = require('datdot-ui-button')
 
 module.exports = logs
 
 function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol) {
     let is_expanded = expanded
     let types = {}
-    let total = 0
+    let range = 5
+    let store_msg = []
     const recipients = []
     const send = protocol(get)
     const make = message_maker(`${name} / index.js`)
     const message = make({to: name, type: 'ready', refs: ['old_logs', 'new_logs']})
     send(message)
     const el = document.createElement('i-terminal')
-    const shadow = el.attachShadow({mode: 'closed'})
+    const shadow = el.attachShadow({mode: 'open'})
     const i_logs = document.createElement('i-logs')
+    const load_more = i_button({name: 'load-more', body: 'Load more'}, load_more_protocol('load-more'))
     const footer = i_footer({name}, footer_protocol(`${name}-footer`))
     i_logs.setAttribute('aria-label', mode)
+    i_logs.append(load_more)
     style_sheet(shadow, style)
     shadow.append(i_logs, footer)
 
-    // keep tracking logs on last one
-    document.addEventListener('DOMContentLoaded', () => {
-        window.addEventListener('resize', scroll_down)
+    const intersection_config = {
+        root: i_logs,
+        rootMargin: '0px',
+        threshold: 0
+    }
+    const intersection_observer = new IntersectionObserver( (entries) => {
+        entries.forEach( entry => {
+            const {boundingClientRect, intersectionRatio, intersectionRect, isIntersecting, isVisible, rootBounds, target} = entry
+            // target.childElementCount
+            // console.log(target.scrollHeight);
+            // console.log(target.offsetHeight)
+        })
+    }, intersection_config)
+
+    const mutation_config = {
+        attributes: true,
+        childList: true,
+        characterData: true
+    }
+    const mutation_observer = new MutationObserver((entries, observer) => {
+        entries.forEach( (entry) => {
+            const {target, type, attributeName, attributeNamespace, addedNodes, removedNodes, nextSibling, previousSibling, oldValue } = entry
+            console.log(store_msg);
+        })
     })
+
+    mutation_observer.observe(i_logs, mutation_config)
 
     return el
 
     function scroll_down () {
         i_logs.scrollTop = i_logs.scrollHeight
     }
-
     function make_logs (msg) {
         const {head, refs, type, data, meta} = msg
         // make an object for type, count, color
@@ -3419,6 +3545,7 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
         // to check type is existing then do count++, else return new type
         const add = t => ((types[t] || (types[t] = init(t))).count++, types[t])
         add(type)
+
         try {
             const from = bel`<span aria-label=${head[0]} class="from">${head[0]}</span>`
             const to = bel`<span aria-label="to" class="to">${head[1]}</span>`
@@ -3443,17 +3570,20 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
                 <span>${meta.stack[1]}</span>
             </div>`
             var list = bel`<section class="list" aria-label="${type}" aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
+            
             generate_type_color(type, type_info)
+
+            
+
+            store_msg.push(msg)
             i_logs.append(list)
-            scroll_down()
-            update_count()
+            
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => i_logs.append(list))
             return false
         }
     }
-    function update_count () {
-        total = i_logs.childElementCount
+    function total_messages (total) {
         return recipients[`${name}-footer`](make({type: 'messages-count', data: total}))
     }
     function generate_type_color (type, el) {
@@ -3521,30 +3651,27 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
         // if not return normal text
         return target.innerHTML = target.textContent.replace(regex, text => text)
     }
+    function load_more_protocol (name) {
+        return send => {
+            recipients[name] = send
+            return get
+        }   
+    }
     function footer_protocol (name) {
         return send => {
             recipients[name] = send
-            return get_footer
+            return get
         }   
-    }
-    function get_footer (msg) {
-        const {head, refs, type, data, meta} = msg
-        const from = head[0].split('/')[0].trim()
-        if (type.match(/messages-count/)) return
-        if (type === 'layout-mode') return handle_change_layout(data)
-        if (type === 'selected') return handle_selected(data.selected)
-        if (type === 'search-filter') return handle_search_filter(data.letter)
-        if (type === 'cleared-search') return handle_search_filter(data)
-        // todo: fix scrollTop, it is not working when expanded
-        if (from.match(/expanded/) && type === 'click') {
-                i_logs.scrollTop = i_logs.scrollHeight
-        }
-        if (type === 'ready') return make_logs(msg)
     }
     function get (msg) {
         const {head, refs, type, data, meta} = msg
         const from = head[0].split('/')[0].trim()
+        if (type.match(/messages-count/)) return
         make_logs(msg)
+        if (type === 'layout-mode') return handle_change_layout(data)
+        if (type === 'selected') return handle_selected(data.selected)
+        if (type === 'search-filter') return handle_search_filter(data.letter)
+        if (type === 'cleared-search') return handle_search_filter(data)
     }
 }
 
@@ -3805,7 +3932,7 @@ mark.current {
     }
 }
 `
-},{"bel":5,"footer":47,"generator-color":48,"make-grid":49,"message-maker":50,"support-style-sheet":51}],47:[function(require,module,exports){
+},{"bel":5,"datdot-ui-button":25,"footer":47,"generator-color":48,"make-grid":49,"message-maker":50,"support-style-sheet":51}],47:[function(require,module,exports){
 const bel = require('bel')
 const style_sheet = require('support-style-sheet')
 const {i_button} = require('datdot-ui-button')
