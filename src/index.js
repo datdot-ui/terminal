@@ -72,6 +72,7 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     }
     // handle log list
     function add_log (msg) {
+        if (!msg) return
         const {head, refs, type, data, meta} = msg
         try {
             // make an object for type, count, color
@@ -104,8 +105,8 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
             generate_type_color(type, type_info)
             var list = bel`<section class="list" aria-label="${type}" data-id=${i_logs.childElementCount+1} aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
             // have an issue with i-footer, it would be return as a msg to make_logs, so make footer_get to saprate make_logs from others
-            if (len > range ) return recipients[`${name}-footer`](make({type: 'messages-count', data: len}))
             i_logs.append(list)
+            recipients[`${name}-footer`](make({type: 'messages-count', data: len}))
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => i_logs.append(list))
             return false
@@ -186,8 +187,8 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     function handle_load_more (args) {
         const start = range
         range = start + add_list
-        args.filter( (obj, index) => index >= start && index < start + add_list)
-                 .forEach( msg => add_log(msg))
+        args.filter( (msg, index) => index >= start && index < (start + add_list))
+            .forEach( msg => add_log(msg) )
     }
 
     function load_more_protocol (name) {
