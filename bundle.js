@@ -3489,8 +3489,9 @@ module.exports = logs
 function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol) {
     let is_expanded = expanded
     let types = {}
-    let range = 50
+    let range = 10
     let store_msg = []
+    const add_list = 5
     let len = store_msg.length
     const recipients = []
     const send = protocol(get)
@@ -3577,10 +3578,11 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
                 <span>${meta.stack[0]}</span>
                 <span>${meta.stack[1]}</span>
             </div>`
-            var list = bel`<section class="list" aria-label="${type}" aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
             generate_type_color(type, type_info)
+            var list = bel`<section class="list" aria-label="${type}" data-id=${i_logs.childElementCount+1} aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
+            // have an issue with i-footer, it would be return as a msg to make_logs, so make footer_get to saprate make_logs from others
+            if (len > range ) return recipients[`${name}-footer`](make({type: 'messages-count', data: len}))
             i_logs.append(list)
-            recipients[`${name}-footer`](make({type: 'messages-count', data: len}))
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => i_logs.append(list))
             return false
@@ -3590,7 +3592,6 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     function make_logs (msg) {
         store_msg.push(msg)
         len = store_msg.length
-        if (len > range) return
         add_log(msg)
     }
     function total_messages (total) {
@@ -3663,7 +3664,13 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     }
 
     function handle_load_more () {
-
+        const start = range
+        range = start + add_list
+        const add_more = store_msg.filter( (obj, index) => index >= start && index < start + add_list)
+        console.log(store_msg);
+        add_more.forEach( msg => {
+            add_log(msg)
+        })
     }
 
     function load_more_protocol (name) {
@@ -3681,8 +3688,13 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     function footer_protocol (name) {
         return send => {
             recipients[name] = send
-            return get
+            return footer_get
         }   
+    }
+    // have an issue with i-footer, it would be return as a msg to make_logs, so make footer_get to saprate make_logs from others
+    // make i-footer not count into logs list
+    function footer_get (msg) {
+        const {head, refs, type, data, meta} = msg
     }
     function get (msg) {
         const {head, refs, type, data, meta} = msg
