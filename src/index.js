@@ -17,16 +17,18 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     const send = protocol(get)
     const make = message_maker(`${name} / index.js`)
     const message = make({to: name, type: 'ready', refs: ['old_logs', 'new_logs']})
-    send(message)
     const el = document.createElement('i-terminal')
     const shadow = el.attachShadow({mode: 'open'})
+    const container = document.createElement('div')
     const i_logs = document.createElement('i-logs')
     const load_more = i_button({name: 'load-more', body: 'Load more'}, load_more_protocol('load-more'))
     const footer = i_footer({name}, footer_protocol(`${name}-footer`))
+    send(message)
+    container.classList.add('container')
     i_logs.setAttribute('aria-label', mode)
-    i_logs.append(load_more)
+    container.append(i_logs, load_more)
     style_sheet(shadow, style)
-    shadow.append(i_logs, footer)
+    shadow.append(container, footer)
 
     const intersection_config = {
         root: i_logs,
@@ -93,13 +95,10 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
                 <span>${meta.stack[1]}</span>
             </div>`
             var list = bel`<section class="list" aria-label="${type}" aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
-            
             generate_type_color(type, type_info)
-
-            
-
             store_msg.push(msg)
             i_logs.append(list)
+            total_messages(i_logs.childElementCount-1)
             
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => i_logs.append(list))
@@ -227,10 +226,13 @@ h4 {
     color: #fff;
     background-color: hsl( var(--bg-color), var(--opacity) );
 }
-i-logs {
+.container {
     grid-area: logs;
-    overflow: hidden scroll;
     max-width: 100%;
+    overflow: hidden scroll;
+}
+i-logs {
+    
 }
 i-footer {
     grid-area: footer;
