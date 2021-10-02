@@ -10,23 +10,45 @@ module.exports = logs
 function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol) {
     let is_expanded = expanded
     let types = {}
-    let total = 0
+    let range = 5
+    let store_msg = []
     const recipients = []
     const send = protocol(get)
     const make = message_maker(`${name} / index.js`)
     const message = make({to: name, type: 'ready', refs: ['old_logs', 'new_logs']})
     send(message)
     const el = document.createElement('i-terminal')
-    const shadow = el.attachShadow({mode: 'closed'})
+    const shadow = el.attachShadow({mode: 'open'})
     const i_logs = document.createElement('i-logs')
     const footer = i_footer({name}, footer_protocol(`${name}-footer`))
     i_logs.setAttribute('aria-label', mode)
     style_sheet(shadow, style)
     shadow.append(i_logs, footer)
 
-    // keep tracking logs on last one
-    document.addEventListener('DOMContentLoaded', () => {
-        window.addEventListener('resize', scroll_down)
+    const intersection_config = {
+        root: i_logs,
+        rootMargin: '0px',
+        threshold: 0
+    }
+    const intersection_observer = new IntersectionObserver( (entries) => {
+        entries.forEach( entry => {
+            const {boundingClientRect, intersectionRatio, intersectionRect, isIntersecting, isVisible, rootBounds, target} = entry
+            // target.childElementCount
+            // console.log(target.scrollHeight);
+            // console.log(target.offsetHeight)
+        })
+    }, intersection_config)
+
+    const mutation_config = {
+        attributes: true,
+        childList: true,
+        characterData: true
+    }
+    const mutation_observer = new MutationObserver((entries, observer) => {
+        entries.forEach( (entry) => {
+            const {target, type, attributeName, attributeNamespace, addedNodes, removedNodes, nextSibling, previousSibling, oldValue } = entry
+            console.log(store_msg);
+        })
     })
 
     return el
@@ -34,7 +56,6 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     function scroll_down () {
         i_logs.scrollTop = i_logs.scrollHeight
     }
-
     function make_logs (msg) {
         const {head, refs, type, data, meta} = msg
         // make an object for type, count, color
@@ -42,6 +63,7 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
         // to check type is existing then do count++, else return new type
         const add = t => ((types[t] || (types[t] = init(t))).count++, types[t])
         add(type)
+
         try {
             const from = bel`<span aria-label=${head[0]} class="from">${head[0]}</span>`
             const to = bel`<span aria-label="to" class="to">${head[1]}</span>`
@@ -66,17 +88,23 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
                 <span>${meta.stack[1]}</span>
             </div>`
             var list = bel`<section class="list" aria-label="${type}" aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
+            
             generate_type_color(type, type_info)
+
+            mutation_observer.observe(i_logs, mutation_config)
+            i_logs.childNodes.forEach( (node) => {
+                intersection_observer.observe(node)
+            })
+
+            store_msg.push(msg)
             i_logs.append(list)
-            scroll_down()
-            update_count()
+            
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => i_logs.append(list))
             return false
         }
     }
-    function update_count () {
-        total = i_logs.childElementCount
+    function total_messages (total) {
         return recipients[`${name}-footer`](make({type: 'messages-count', data: total}))
     }
     function generate_type_color (type, el) {
@@ -147,27 +175,18 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     function footer_protocol (name) {
         return send => {
             recipients[name] = send
-            return get_footer
+            return get
         }   
-    }
-    function get_footer (msg) {
-        const {head, refs, type, data, meta} = msg
-        const from = head[0].split('/')[0].trim()
-        if (type.match(/messages-count/)) return
-        if (type === 'layout-mode') return handle_change_layout(data)
-        if (type === 'selected') return handle_selected(data.selected)
-        if (type === 'search-filter') return handle_search_filter(data.letter)
-        if (type === 'cleared-search') return handle_search_filter(data)
-        // todo: fix scrollTop, it is not working when expanded
-        if (from.match(/expanded/) && type === 'click') {
-                i_logs.scrollTop = i_logs.scrollHeight
-        }
-        if (type === 'ready') return make_logs(msg)
     }
     function get (msg) {
         const {head, refs, type, data, meta} = msg
         const from = head[0].split('/')[0].trim()
+        if (type.match(/messages-count/)) return
         make_logs(msg)
+        if (type === 'layout-mode') return handle_change_layout(data)
+        if (type === 'selected') return handle_selected(data.selected)
+        if (type === 'search-filter') return handle_search_filter(data.letter)
+        if (type === 'cleared-search') return handle_search_filter(data)
     }
 }
 
