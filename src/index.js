@@ -11,8 +11,9 @@ module.exports = logs
 function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol) {
     let is_expanded = expanded
     let types = {}
-    let range = 5
+    let range = 50
     let store_msg = []
+    let len = store_msg.length
     const recipients = []
     const send = protocol(get)
     const make = message_maker(`${name} / index.js`)
@@ -61,33 +62,16 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     const mutation_observer = new MutationObserver(list_observer)
 
     mutation_observer.observe(i_logs, mutation_config)
-
     return el
 
-    function scroll_down () {
-        i_logs.scrollTop = i_logs.scrollHeight
-    }
     function list_observer (entries, observer) {
         entries.forEach( (entry) => {
             const {target, type, attributeName, attributeNamespace, addedNodes, removedNodes, nextSibling, previousSibling, oldValue } = entry
-
-            
         })
     }
-
-    function store_logs (msg) {
-        store_msg.push(msg)
-
-        console.log(store_msg.length);
-
-        store_msg.forEach( obj => {
-            make_logs(obj)
-        })
-    }
-
-    function make_logs (msg) {
+    // handle log list
+    function add_log ({head, refs, type, data, meta}) {
         try {
-            const {head, refs, type, data, meta} = msg
             // make an object for type, count, color
             const init = t => ({type: t, count: 0, color: type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|expanded|collapsed|error|warning|toggled|changed/) ? null : int2hsla(str2hashint(t)) })
             // to check type is existing then do count++, else return new type
@@ -99,7 +83,7 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
             const type_info = bel`<span aria-type="${type}" aria-label="${type}" class="type">${type}</span>`
             const refs_info = bel`<div class="refs"><span>refs:</span></div>`
             refs.map( (ref, i) => 
-            refs_info.append(bel`<span>${ref}${i < refs.length - 1 ? ',  ' : ''}</span>`)
+                refs_info.append(bel`<span>${ref}${i < refs.length - 1 ? ',  ' : ''}</span>`)
             )
             const info = bel`<div class="info">${data_info}${refs_info}</div>`
             const header = bel`
@@ -117,12 +101,19 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
             </div>`
             var list = bel`<section class="list" aria-label="${type}" aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
             generate_type_color(type, type_info)
-            // i_logs.append(list)
-            total_messages(i_logs.childElementCount-1)
+            i_logs.append(list)
+            recipients[`${name}-footer`](make({type: 'messages-count', data: len}))
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => i_logs.append(list))
             return false
         }
+    }
+    // check logs and store logs as data
+    function make_logs (msg) {
+        store_msg.push(msg)
+        len = store_msg.length
+        if (len > range) return
+        add_log(msg)
     }
     function total_messages (total) {
         return recipients[`${name}-footer`](make({type: 'messages-count', data: total}))
@@ -219,7 +210,7 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
         const {head, refs, type, data, meta} = msg
         const from = head[0].split('/')[0].trim()
         if (type.match(/messages-count/)) return
-        store_logs(msg)
+        make_logs(msg)
         if (type === 'layout-mode') return handle_change_layout(data)
         if (type === 'selected') return handle_selected(data.selected)
         if (type === 'search-filter') return handle_search_filter(data.letter)
