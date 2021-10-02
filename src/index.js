@@ -21,7 +21,16 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     const shadow = el.attachShadow({mode: 'open'})
     const container = document.createElement('div')
     const i_logs = document.createElement('i-logs')
-    const load_more = i_button({name: 'load-more', body: 'Load more'}, load_more_protocol('load-more'))
+    const load_more = i_button({
+        name: 'load-more', 
+        body: 'Load more',
+        classlist: 'load-more',
+        theme: {
+            props: {
+                width: '50vw',
+            }
+        }
+    }, load_more_protocol('load-more'))
     const footer = i_footer({name}, footer_protocol(`${name}-footer`))
     send(message)
     container.classList.add('container')
@@ -49,12 +58,7 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
         childList: true,
         characterData: true
     }
-    const mutation_observer = new MutationObserver((entries, observer) => {
-        entries.forEach( (entry) => {
-            const {target, type, attributeName, attributeNamespace, addedNodes, removedNodes, nextSibling, previousSibling, oldValue } = entry
-            console.log(store_msg);
-        })
-    })
+    const mutation_observer = new MutationObserver(list_observer)
 
     mutation_observer.observe(i_logs, mutation_config)
 
@@ -63,22 +67,39 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     function scroll_down () {
         i_logs.scrollTop = i_logs.scrollHeight
     }
-    function make_logs (msg) {
-        const {head, refs, type, data, meta} = msg
-        // make an object for type, count, color
-        const init = t => ({type: t, count: 0, color: type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|expanded|collapsed|error|warning|toggled|changed/) ? null : int2hsla(str2hashint(t)) })
-        // to check type is existing then do count++, else return new type
-        const add = t => ((types[t] || (types[t] = init(t))).count++, types[t])
-        add(type)
+    function list_observer (entries, observer) {
+        entries.forEach( (entry) => {
+            const {target, type, attributeName, attributeNamespace, addedNodes, removedNodes, nextSibling, previousSibling, oldValue } = entry
 
+            
+        })
+    }
+
+    function store_logs (msg) {
+        store_msg.push(msg)
+
+        console.log(store_msg.length);
+
+        store_msg.forEach( obj => {
+            make_logs(obj)
+        })
+    }
+
+    function make_logs (msg) {
         try {
+            const {head, refs, type, data, meta} = msg
+            // make an object for type, count, color
+            const init = t => ({type: t, count: 0, color: type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|expanded|collapsed|error|warning|toggled|changed/) ? null : int2hsla(str2hashint(t)) })
+            // to check type is existing then do count++, else return new type
+            const add = t => ((types[t] || (types[t] = init(t))).count++, types[t])
+            add(type)
             const from = bel`<span aria-label=${head[0]} class="from">${head[0]}</span>`
             const to = bel`<span aria-label="to" class="to">${head[1]}</span>`
             const data_info = bel`<span aira-label="data" class="data">data: ${typeof data === 'object' ? JSON.stringify(data) : data}</span>`
             const type_info = bel`<span aria-type="${type}" aria-label="${type}" class="type">${type}</span>`
             const refs_info = bel`<div class="refs"><span>refs:</span></div>`
             refs.map( (ref, i) => 
-                refs_info.append(bel`<span>${ref}${i < refs.length - 1 ? ',  ' : ''}</span>`)
+            refs_info.append(bel`<span>${ref}${i < refs.length - 1 ? ',  ' : ''}</span>`)
             )
             const info = bel`<div class="info">${data_info}${refs_info}</div>`
             const header = bel`
@@ -96,10 +117,8 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
             </div>`
             var list = bel`<section class="list" aria-label="${type}" aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
             generate_type_color(type, type_info)
-            store_msg.push(msg)
-            i_logs.append(list)
+            // i_logs.append(list)
             total_messages(i_logs.childElementCount-1)
-            
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => i_logs.append(list))
             return false
@@ -173,11 +192,22 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
         // if not return normal text
         return target.innerHTML = target.textContent.replace(regex, text => text)
     }
+
+    function handle_load_more () {
+
+    }
+
     function load_more_protocol (name) {
         return send => {
             recipients[name] = send
-            return get
+            return load_more_get
         }   
+    }
+    // 
+    function load_more_get (msg) {
+        const {head, refs, type, data, meta} = msg
+        const from = head[0].split('/')[0].trim()
+        if (type === 'click') handle_load_more()
     }
     function footer_protocol (name) {
         return send => {
@@ -189,7 +219,7 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
         const {head, refs, type, data, meta} = msg
         const from = head[0].split('/')[0].trim()
         if (type.match(/messages-count/)) return
-        make_logs(msg)
+        store_logs(msg)
         if (type === 'layout-mode') return handle_change_layout(data)
         if (type === 'selected') return handle_selected(data.selected)
         if (type === 'search-filter') return handle_search_filter(data.letter)
@@ -228,11 +258,17 @@ h4 {
 }
 .container {
     grid-area: logs;
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
     max-width: 100%;
     overflow: hidden scroll;
 }
 i-logs {
     
+}
+.load-more {
+    margin: 0 auto;
 }
 i-footer {
     grid-area: footer;
