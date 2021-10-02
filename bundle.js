@@ -3549,7 +3549,8 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
         })
     }
     // handle log list
-    function add_log ({head, refs, type, data, meta}) {
+    function add_log (msg) {
+        const {head, refs, type, data, meta} = msg
         try {
             // make an object for type, count, color
             const init = t => ({type: t, count: 0, color: type.match(/ready|click|triggered|opened|closed|checked|unchecked|selected|unselected|expanded|collapsed|error|warning|toggled|changed/) ? null : int2hsla(str2hashint(t)) })
@@ -3593,9 +3594,6 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
         store_msg.push(msg)
         len = store_msg.length
         add_log(msg)
-    }
-    function total_messages (total) {
-        return recipients[`${name}-footer`](make({type: 'messages-count', data: total}))
     }
     function generate_type_color (type, el) {
         for (let t in types) { 
@@ -3663,14 +3661,11 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
         return target.innerHTML = target.textContent.replace(regex, text => text)
     }
 
-    function handle_load_more () {
+    function handle_load_more (args) {
         const start = range
         range = start + add_list
-        const add_more = store_msg.filter( (obj, index) => index >= start && index < start + add_list)
-        console.log(store_msg);
-        add_more.forEach( msg => {
-            add_log(msg)
-        })
+        args.filter( (obj, index) => index >= start && index < start + add_list)
+                 .forEach( msg => add_log(msg))
     }
 
     function load_more_protocol (name) {
@@ -3683,7 +3678,7 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
     function load_more_get (msg) {
         const {head, refs, type, data, meta} = msg
         const from = head[0].split('/')[0].trim()
-        if (type === 'click') handle_load_more()
+        if (type === 'click') handle_load_more(store_msg)
     }
     function footer_protocol (name) {
         return send => {
