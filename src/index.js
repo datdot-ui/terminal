@@ -8,12 +8,11 @@ const {i_button} = require('datdot-ui-button')
 
 module.exports = logs
 
-function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol) {
+function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 50, limit = 50}, protocol) {
     let is_expanded = expanded
     let types = {}
-    let range = 10
+    let range = init
     let store_msg = []
-    const add_list = 5
     let len = store_msg.length
     const recipients = []
     const send = protocol(get)
@@ -104,8 +103,9 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
             </div>`
             generate_type_color(type, type_info)
             var list = bel`<section class="list" aria-label="${type}" data-id=${i_logs.childElementCount+1} aria-expanded="${is_expanded}" onclick=${() => handle_accordion_event(list)}>${log}${file}</section>`
+            if (i_logs.childElementCount < range) i_logs.append(list)
+            load_more.style.visibility = i_logs.childElementCount < len ? 'visible' : 'hidden'
             // have an issue with i-footer, it would be return as a msg to make_logs, so make footer_get to saprate make_logs from others
-            i_logs.append(list)
             recipients[`${name}-footer`](make({type: 'messages-count', data: len}))
         } catch (error) {
             document.addEventListener('DOMContentLoaded', () => i_logs.append(list))
@@ -186,8 +186,8 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false}, protocol
 
     function handle_load_more (args) {
         const start = range
-        range = start + add_list
-        args.filter( (msg, index) => index >= start && index < (start + add_list))
+        range = start + limit
+        args.filter( (msg, index) => index >= start && index < (start + limit))
             .forEach( msg => add_log(msg) )
     }
 

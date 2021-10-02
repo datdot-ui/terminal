@@ -14,11 +14,11 @@ function demo () {
     const recipients = []
     let is_checked = false
     let is_selected = false
-    const log_list = logs({expanded: 'false'}, protocol('logs'))
+    const log_list = logs({expanded: 'false', init: 10, limit: 200}, protocol('logs'))
     const make = message_maker(`demo / demo.js`)
     const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
     
-    setTimeout(()=> {
+    setInterval(()=> {
         recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
         recipients['logs'](make({to: '*', type: 'extrinsic'}))
         recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
@@ -94,7 +94,7 @@ function demo () {
         recipients['logs'](make({to: '*', type: 'expanded'}))
         recipients['logs'](make({to: '*', type: 'collapsed'}))
     }, 1200)
-    setTimeout(()=> { 
+    setInterval(()=> { 
         recipients['logs'](make({to: '*', type: 'user'}))
         recipients['logs'](make({to: '*', type: 'peer'}))
         recipients['logs'](make({to: '*', type: '@todo'}))
