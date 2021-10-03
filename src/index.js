@@ -8,7 +8,7 @@ const {i_button} = require('datdot-ui-button')
 
 module.exports = logs
 
-function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 50, limit = 50}, protocol) {
+function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 15, limit = 15}, protocol) {
     let is_expanded = expanded
     let types = {}
     let range = init
@@ -197,7 +197,6 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 50
             return load_more_get
         }   
     }
-    // 
     function load_more_get (msg) {
         const {head, refs, type, data, meta} = msg
         const from = head[0].split('/')[0].trim()
@@ -213,16 +212,17 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 50
     // make i-footer not count into logs list
     function footer_get (msg) {
         const {head, refs, type, data, meta} = msg
-    }
-    function get (msg) {
-        const {head, refs, type, data, meta} = msg
         const from = head[0].split('/')[0].trim()
         if (type.match(/messages-count/)) return
-        make_logs(msg)
         if (type === 'layout-mode') return handle_change_layout(data)
         if (type === 'selected') return handle_selected(data.selected)
         if (type === 'search-filter') return handle_search_filter(data.letter)
         if (type === 'cleared-search') return handle_search_filter(data)
+    }
+    function get (msg) {
+        const {head, refs, type, data, meta} = msg
+        const from = head[0].split('/')[0].trim()
+        make_logs(msg)
     }
 }
 
