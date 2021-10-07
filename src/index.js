@@ -19,7 +19,7 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 15
     const make = message_maker(`${name} / index.js`)
     const message = make({to: name, type: 'ready', refs: ['old_logs', 'new_logs']})
     const el = document.createElement('i-terminal')
-    const shadow = el.attachShadow({mode: 'open'})
+    const shadow = el.attachShadow({mode: 'closed'})
     const container = document.createElement('div')
     const i_logs = document.createElement('i-logs')
     const load_more = i_button({
@@ -208,7 +208,6 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 15
             return footer_get
         }   
     }
-    // have an issue with i-footer, it would be return as a msg to make_logs, so make footer_get to saprate make_logs from others
     // make i-footer not count into logs list
     function footer_get (msg) {
         const {head, refs, type, data, meta} = msg
