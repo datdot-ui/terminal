@@ -3,7 +3,7 @@ const bel = require('bel')
 const csjs = require('csjs-inject')
 // init
 const head = require('head')()
-const fullScreen = require('fullScreen')()
+const fullScreen = require('fullscreen')()
 // modules
 const message_maker = require('../src/node_modules/message-maker')
 const make_grid = require('../src/node_modules/make-grid')
