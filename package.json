@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fionataeyang/datdot-terminal.git"
+    "url": "git+https://github.com/datdotorg/datdot-terminal.git"
   },
   "keywords": [
     "datdot",
@@ -20,14 +20,14 @@
     "dev tool"
   ],
   "author": {
-    "name": "fionataeyang",
-    "url": "https://github.com/fionataeyang"
+    "name": "datdot",
+    "url": "https://github.com/datdotorg"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fionataeyang/datdot-terminal/issues"
+    "url": "https://github.com/datdotorg/datdot-terminal/issues"
   },
-  "homepage": "https://github.com/fionataeyang/datdot-terminal#readme",
+  "homepage": "https://github.com/datdotorg/datdot-terminal#readme",
   "devDependencies": {
     "browserify": "^17.0.0",
     "budo": "^11.6.4"
@@ -35,8 +35,8 @@
   "dependencies": {
     "bel": "^6.0.0",
     "csjs-inject": "^1.0.1",
-    "datdot-ui-button": "git+https://github.com/fionataeyang/datdot-ui-button.git",
-    "datdot-ui-dropdown": "git+https://github.com/fionataeyang/datdot-ui-dropdown.git",
-    "datdot-ui-list": "git+https://github.com/fionataeyang/datdot-ui-list.git"
+    "datdot-ui-button": "git+https://github.com/datdotorg/datdot-ui-button.git",
+    "datdot-ui-dropdown": "git+https://github.com/datdotorg/datdot-ui-dropdown.git",
+    "datdot-ui-list": "git+https://github.com/datdotorg/datdot-ui-list.git"
   }
 }
