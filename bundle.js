@@ -1,4 +1,5 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+(function (__filename){(function (){
 // 3rd dependances
 const bel = require('bel')
 const csjs = require('csjs-inject')
@@ -6,209 +7,235 @@ const csjs = require('csjs-inject')
 const head = require('head')()
 const fullScreen = require('fullscreen')()
 // modules
-const message_maker = require('../src/node_modules/message-maker')
+const message_maker = require('message-maker')
 const make_grid = require('../src/node_modules/make-grid')
 const logs = require('..')
-const {i_button} = require('datdot-ui-button')
+const i_button = require('datdot-ui-button')
+
+var id = 0
 
 function demo () {
-    const recipients = []
+// -----------------------------------
+    const myaddress = `${__filename}-${id++}`
+    const inbox = {}
+    const outbox = {}
+    const recipients = {}
+    const names = {}
+    const message_id = to => (outbox[to] = 1 + (outbox[to]||0))
+
+    function make_protocol (name) {
+        return function protocol (address, notify) {
+            names[address] = recipients[name] = { name, address, notify, make: message_maker(myaddress) }
+            return { notify: listen, address: myaddress }
+        }
+    }
+    function listen (msg) {
+        console.log('New message', { msg })
+        const { head, refs, type, data, meta } = msg // receive msg
+        inbox[head.join('/')] = msg                  // store msg
+        const [from] = head
+        // send back ack
+        const { notify, make, address } = names[from]
+        notify(make({ to: address, type: 'ack', refs: { 'cause': head } }))
+    }
+// -----------------------------------
     let is_checked = false
     let is_selected = false
-    const log_list = logs({expanded: 'false'}, protocol('logs'))
-    const make = message_maker(`demo / demo.js`)
-    const message = make({to: 'demo / demo.js', type: 'ready', refs: ['old_logs', 'new_logs']})
-    
-    setInterval(()=> {
-        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'register'}))
-        recipients['logs'](make({to: '*', type: 'current-block'}))
-        recipients['logs'](make({to: '*', type: 'eventpool'}))
-        recipients['logs'](make({to: '*', type: 'keep-alive'}))
-        // todo: for testing only, after remove
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'attestor'}))
-        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
-        recipients['logs'](make({to: '*', type: 'expanded'}))
-        recipients['logs'](make({to: '*', type: 'collapsed'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'attestor'}))
-        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
-        recipients['logs'](make({to: '*', type: 'expanded'}))
-        recipients['logs'](make({to: '*', type: 'collapsed'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'attestor'}))
-        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
-        recipients['logs'](make({to: '*', type: 'expanded'}))
-        recipients['logs'](make({to: '*', type: 'collapsed'}))
-    }, 1200)
-    setInterval(()=> { 
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'attestor'}))
-        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
-        recipients['logs'](make({to: '*', type: 'expanded'}))
-        recipients['logs'](make({to: '*', type: 'collapsed'}))
-        // todo: for testing only, after remove
-        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'attestor'}))
-        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
-        recipients['logs'](make({to: '*', type: 'expanded'}))
-        recipients['logs'](make({to: '*', type: 'collapsed'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'attestor'}))
-        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
-        recipients['logs'](make({to: '*', type: 'expanded'}))
-        recipients['logs'](make({to: '*', type: 'collapsed'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["New user: poppy, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'info', data: ["Old user: Sharon Septimus, {\"address\":\"5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":46}"]  }))
-        recipients['logs'](make({to: '*', type: 'extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'execute-extrinsic'}))
-        recipients['logs'](make({to: '*', type: 'user'}))
-        recipients['logs'](make({to: '*', type: 'peer'}))
-        recipients['logs'](make({to: '*', type: '@todo'}))
-        recipients['logs'](make({to: '*', type: 'hoster'}))
-        recipients['logs'](make({to: '*', type: 'encoder'}))
-        recipients['logs'](make({to: '*', type: 'attestor'}))
-        recipients['logs'](make({to: '*', type: 'chat', data: `[eve] says: {"feedkey":{"type":"Buffer","data":[76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184]},"topic":{"type":"Buffer","data":[94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193]}}`, refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"]}))
-        recipients['logs'](make({to: '*', type: 'expanded'}))
-        recipients['logs'](make({to: '*', type: 'collapsed'}))
-    }, 1600)
+    const log_list = logs({expanded: 'false'}, make_protocol('logs'))
+    notifyLogs()
+    function notifyLogs () {
+        const { make, notify, address } = recipients['logs']
+        setInterval(()=> {
+            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 }  }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'register'}))
+            notify(make({to: address, type: 'current-block'}))
+            notify(make({to: address, type: 'eventpool'}))
+            notify(make({to: address, type: 'keep-alive'}))
+            // todo: for testing only, after remove
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'attestor'}))
+            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+            notify(make({to: address, type: 'expanded'}))
+            notify(make({to: address, type: 'collapsed'}))
+            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 }  }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'attestor'}))
+            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+            notify(make({to: address, type: 'expanded'}))
+            notify(make({to: address, type: 'collapsed'}))
+            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'attestor'}))
+            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+            notify(make({to: address, type: 'expanded'}))
+            notify(make({to: address, type: 'collapsed'}))
+        }, 1200)
+        setInterval(()=> { 
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'attestor'}))
+            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+            notify(make({to: address, type: 'expanded'}))
+            notify(make({to: address, type: 'collapsed'}))
+            // todo: for testing only, after remove
+            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'attestor'}))
+            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+            notify(make({to: address, type: 'expanded'}))
+            notify(make({to: address, type: 'collapsed'}))
+            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'attestor'}))
+            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+            notify(make({to: address, type: 'expanded'}))
+            notify(make({to: address, type: 'collapsed'}))
+            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+            notify(make({to: address, type: 'extrinsic'}))
+            notify(make({to: address, type: 'execute-extrinsic'}))
+            notify(make({to: address, type: 'user'}))
+            notify(make({to: address, type: 'peer'}))
+            notify(make({to: address, type: '@todo'}))
+            notify(make({to: address, type: 'hoster'}))
+            notify(make({to: address, type: 'encoder'}))
+            notify(make({to: address, type: 'attestor'}))
+            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+            notify(make({to: address, type: 'expanded'}))
+            notify(make({to: address, type: 'collapsed'}))
+        }, 1600)
+    }    
     const click = i_button({name: 'click', body: 'Click', 
     theme: {
         props: { 
             border_radius: '0'
         }
-    }}, protocol('click'))
+    }}, make_protocol('click'))
     const open = i_button({name: 'open', body: 'Open', 
     theme: {
         props: { 
             border_radius: '0'
         }
-    }}, protocol('open'))
+    }}, make_protocol('open'))
     const close = i_button({name: 'close', body: 'Close', 
     theme: {
         props: { 
             border_radius: '0'
         }
-    }}, protocol('close'))
+    }}, make_protocol('close'))
     const error = i_button({name: 'error', body: 'Error', 
     theme: {
         props: { 
             border_radius: '0'
         }
-    }}, protocol('error'))
+    }}, make_protocol('error'))
     const warning = i_button({name: 'warning', body: 'Warning', 
     theme: {
         props: { 
             border_radius: '0'
         }
-    }}, protocol('warning'))
+    }}, make_protocol('warning'))
     const select = i_button({name: 'select', role: 'button', body: 'Select', selected: is_selected, 
     theme: {
         props: { 
             border_radius: '0'
         }
-    }}, protocol('select'))
+    }}, make_protocol('select'))
     const toggle = i_button({name: 'toggle', role: 'switch', body: 'Toggle',
     theme: {
         props: { 
             border_radius: '0'
         }
-    }}, protocol('toggle'))
+    }}, make_protocol('toggle'))
             
     const actions = bel`<div class="${css.actions}">${click}${open}${close}${error}${warning}${toggle}${select}</div>`
 
@@ -552,7 +579,8 @@ button:hover {
 `
 
 document.body.append( demo() )
-},{"..":45,"../src/node_modules/make-grid":48,"../src/node_modules/message-maker":49,"bel":5,"csjs-inject":8,"datdot-ui-button":25,"fullscreen":2,"head":3}],2:[function(require,module,exports){
+}).call(this)}).call(this,"/demo/demo.js")
+},{"..":44,"../src/node_modules/make-grid":47,"bel":5,"csjs-inject":8,"datdot-ui-button":25,"fullscreen":2,"head":3,"message-maker":40}],2:[function(require,module,exports){
 module.exports = fullscreen
 
 function fullscreen () {
@@ -821,7 +849,7 @@ module.exports = hyperx(belCreateElement, {comments: true})
 module.exports.default = module.exports
 module.exports.createElement = belCreateElement
 
-},{"./appendChild":4,"hyperx":43}],6:[function(require,module,exports){
+},{"./appendChild":4,"hyperx":42}],6:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
@@ -840,7 +868,7 @@ function csjsInserter() {
 module.exports = csjsInserter;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"csjs":11,"insert-css":44}],7:[function(require,module,exports){
+},{"csjs":11,"insert-css":43}],7:[function(require,module,exports){
 'use strict';
 
 module.exports = require('csjs/get-css');
@@ -1318,313 +1346,44 @@ function scopify(css, ignores) {
 }
 
 },{"./regex":21,"./replace-animations":22,"./scoped-name":23}],25:[function(require,module,exports){
+(function (__filename){(function (){
 const style_sheet = require('support-style-sheet')
 const message_maker = require('message-maker')
 const make_img = require('make-image')
 const make_element = require('make-element')
-const {main_icon, select_icon, list_icon} = require('make-icon')
 const make_grid = require('make-grid')
-
-module.exports = {i_button, i_link}
-
-var link_id = 0
-
-function i_link (opt, parent_protocol) {
-// ---------------------------------------------------------------
-const myaddress = `button-${link_id++}` // unique
-const inbox = {}
-const outbox = {}
-const recipients = {}
-const message_id = to => ( outbox[to] = 1 + (outbox[to]||0) )
-
-const {notify, address} = parent_protocol(myaddress, listen)
-recipients['parent'] = { notify, address, make: message_maker(myaddress) }
-
-let make = message_maker(myaddress) // @TODO: replace flow with myaddress/myaddress
-let message = make({to: address, type: 'ready', data: {}})
-notify(message)
-
-function listen (msg) {
-    const {head, refs, type, data, meta } = msg
-    inbox[head.join('/')] = msg                  // store msg
-    const [from, to, msg_id] = head
-
-
-}
-
-function make_protocol (name) {
-    return function protocol (address, notify) {
-        recipients[name] = { address, notify, make: message_maker(myaddress) }
-        return { notify: listen, address: myaddress }
-    }
-}
-// ---------------------------------------------------------------
-    const {page = '*', flow = 'ui-link', name, role='link', body, link = {}, icons = {}, classlist, cover, disabled = false, theme = {}} = opt
-    const { icon } = icons
-    const make_icon = 'icon' in icons ? main_icon(icon) : undefined
-    let {url = '#', target = '_self'} = link
-    let is_disabled = disabled
-
-    function widget () {
-        const el = make_element({name: 'i-link', role})
-        const shadow = el.attachShadow({mode: 'closed'})
-        const text = make_element({name: 'span', classlist: 'text'})
-        const avatar = make_element({name: 'span', classlist: 'avatar'})
-        text.append(body)
-        el.setAttribute('aria-label', body)
-        el.setAttribute('href', url)
-        if (is_disabled) set_attr ({aria: 'disabled', prop: is_disabled})
-        if (!target.match(/self/)) el.setAttribute('target', target)
-        if (classlist) el.classList.add(classlist)
-        style_sheet(shadow, style)
-        // check icon, cover and body if has value
-        const add_cover = typeof cover === 'string' ? avatar : undefined
-        const add_icon = icon ? make_icon : undefined
-        const add_text = body ? typeof body === 'string' && (add_icon || add_cover ) ? text : body : typeof body === 'object' && body.localName === 'div' ? body : undefined
-        if (typeof cover === 'string') avatar.append(make_img({src: cover, alt: name}))
-        if (typeof cover === 'object') notify(make({ to: address, type: 'error', data: `cover[${typeof cover}] must to be a string`}))
-        if (add_icon) shadow.append(make_icon)
-        if (add_cover) shadow.append(add_cover)
-        if (add_text) shadow.append(add_text)
-        if (!is_disabled) el.onclick = handle_open_link
-        return el
-
-        function set_attr ({aria, prop}) {
-            el.setAttribute(`aria-${aria}`, prop)
-        }
-    
-        function handle_open_link () {
-            if (target.match(/_/)) {
-                window.open(url, target)
-            }
-            if (target.match(/#/) && target.length > 1) {
-                const el = document.querySelector(target)
-                el.src = url
-            }
-            notify(make({to: address, type: 'go to', data: {url, window: target}}))
-        }
-
-        // protocol get msg
-        function get (msg) {
-            const { head, refs, type, data } = msg
-        }
-
-    }
-
-    // insert CSS style
-    const custom_style = theme ? theme.style : ''
-    // set CSS variables
-    const {props = {}, grid = {}} = theme
-    const {
-        // default        
-        padding, margin, width, height, opacity,
-        // size
-        size, size_hover, disabled_size,
-        // weight
-        weight, weight_hover, disabled_weight,
-        // color
-        color, color_hover, color_focus, disabled_color,
-        // background-color    
-        bg_color, bg_color_hover, disabled_bg_color,
-        // deco
-        deco, deco_hover, disabled_deco,
-        // border
-        border_width, border_style, border_opacity, 
-        border_color, border_color_hover, border_radius,
-        // shadowbox
-        shadow_color, shadow_color_hover,
-        offset_x, offset_y, offset_x_hover, offset_y_hover, 
-        blur, blur_hover, shadow_opacity, shadow_opacity_hover,
-        // icon
-        icon_size, icon_size_hover, disabled_icon_size,
-        icon_fill, icon_fill_hover, disabled_icon_fill,
-        // avatar
-        avatar_width, avatar_height, avatar_radius, 
-        avatar_width_hover, avatar_height_hover,
-        scale, scale_hover
-    } = props
-
-    const grid_link = grid.link ? grid.link : {auto: {auto_flow: 'column'}, align: 'items-center', gap: '4px'}
-    const style = `
-    :host(i-link) {
-        --size: ${size ? size : 'var(--link-size)'};
-        --weight: ${weight ? weight : 'var(--weight300)'};
-        --color: ${color ? color : 'var(--link-color)'};
-        --color-focus: ${color_focus ? color_focus : 'var(--link-color-focus)'};
-        --bg-color: ${bg_color ? bg_color : 'var(--link-bg-color)'};
-        --opacity: ${opacity ? opacity : '0'};
-        --deco: ${deco ? deco : 'none'};
-        --padding: ${padding ? padding : '0'};
-        --margin: ${margin ? margin : '0'};
-        --icon-size: ${icon_size ? icon_size : 'var(--link-icon-size)'};
-        display: inline-grid;
-        font-size: var(--size);
-        font-weight: var(--weight);
-        color: hsl(var(--color));
-        background-color: hsla(var(--bg-color), var(--opacity));
-        text-decoration: var(--deco);
-        padding: var(--padding);
-        margin: var(--margin);
-        transition: color .5s, background-color .5s, font-size .5s, font-weight .5s, opacity .5s ease-in-out;
-        cursor: pointer;
-        ${make_grid(grid_link)}
-    }
-    :host(i-link:hover) {
-        --color: ${color_hover ? color_hover : 'var(--link-color-hover)'};
-        --size: ${size_hover ? size_hover : 'var(--link-size-hover)'};
-        --deco: ${deco_hover ? deco_hover : 'underline'};
-        --bg-color: ${bg_color_hover ? bg_color_hover : 'var(--color-white)'};
-        --opacity: ${opacity ? opacity : '0'};
-        text-decoration: var(--deco);
-    }
-    :host(i-link:focus) {
-        --color: ${color_focus ? color_focus : 'var(--link-color-focus)'};
-    }
-    :host(i-link) img {
-        --scale: ${scale ? scale : '1'};
-        width: 100%;
-        height: 100%;
-        transform: scale(var(--scale));
-        transition: transform 0.3s linear;
-        object-fit: cover;
-        border-radius: var(--avatar-radius);
-    }
-    :host(i-link:hover) img {
-        --scale: ${scale_hover ? scale_hover : '1.2'};
-    }
-    :host(i-link) svg {
-        width: 100%;
-        height: auto;
-    }
-    :host(i-link) g {
-        --icon-fill: ${icon_fill ? icon_fill : 'var(--link-icon-fill)'};
-        fill: hsl(var(--icon-fill));
-        transition: fill 0.05s ease-in-out;
-    }
-    :host(i-link:hover) g, :host(i-link:hover) path{
-        --icon-fill: ${icon_fill_hover ? icon_fill_hover : 'var(--link-icon-fill-hover)'};
-    }
-    :host(i-link) .text {
-        ${make_grid(grid.text)}
-    }
-    :host(i-link) .icon {
-        width: var(--icon-size);
-        max-width: 100%;
-        ${make_grid(grid.icon)}
-    }
-    :host(i-link:hover) .icon {
-        --icon-size: ${icon_size_hover ? icon_size_hover : 'var(--link-icon-size)'};
-    }
-    :host(i-link) .avatar {
-        --avatar-width: ${avatar_width ? avatar_width : 'var(--link-avatar-width)'};
-        --avatar-height: ${avatar_height ? avatar_height : 'var(--link-avatar-height)'};
-        --avatar-radius: ${avatar_radius ? avatar_radius : 'var(--link-avatar-radius)'};
-        display: block;
-        width: var(--avatar-width);
-        height: var(--avatar-height);
-        border-radius: var(--avatar-radius);
-        -webkit-mask-image: -webkit-radial-gradient(center, white, black);
-        max-width: 100%;
-        max-height: 100%;
-        ${make_grid(grid.avatar)}
-        transition: width 0.2s, height 0.2s linear;
-    }
-    :host(i-link:hover) .avatar {
-        --avatar-width: ${avatar_width_hover ? avatar_width_hover : 'var(--link-avatar-width-hover)'};
-        --avatar-height: ${avatar_height_hover ? avatar_height_hover : 'var(--link-avatar-height-hover)'};
-    }
-    :host(i-link[role="menuitem"]) {
-        --size: ${size ? size : 'var(--menu-size)'};
-        --color: ${color ? color : 'var(--menu-color)'};
-        --weight: ${weight ? weight : 'var(--menu-weight)'};
-        background-color: transparent;
-    }
-    :host(i-link[role="menuitem"]:hover) {
-        --size: ${size ? size : 'var(--menu-size-hover)'};
-        --color: ${color_hover ? color_hover : 'var(--menu-color-hover)'};
-        --weight: ${weight ? weight : 'var(--menu-weight-hover)'};
-        text-decoration: none;
-        background-color: transparent;
-    }
-    :host(i-link[role="menuitem"]:focus) {
-        --color: var(--color-focus);
-    }
-    :host(i-link[role="menuitem"]) .icon {
-        --icon-size: ${icon_size ? icon_size : 'var(--menu-icon-size)'};
-    }
-    :host(i-link[role="menuitem"]) g {
-        --icon-fill: ${icon_fill ? icon_fill : 'var(--menu-icon-fill)'};
-    }
-    :host(i-link[role="menuitem"]:hover) g {
-        --icon-fill: ${icon_fill_hover ? icon_fill_hover : 'var(--menu-icon-fill-hover)'};
-    }
-    :host(i-link[aria-disabled="true"]), :host(i-link[aria-disabled="true"]:hover) {
-        --size: ${disabled_size ? disabled_size : 'var(--link-disabled-size)'};
-        --color: ${disabled_color ? disabled_color : 'var(--link-disabled-color)'};
-        text-decoration: none;
-        cursor: not-allowed;
-    }
-    :host(i-link[disabled]) g,
-    :host(i-link[disabled]) path,
-    :host(i-link[disabled]:hover) g,
-    :host(i-link[disabled]:hover) path,
-    :host(i-link[role][disabled]) g,
-    :host(i-link[role][disabled]) path,
-    :host(i-link[role][disabled]:hover) g,
-    :host(i-link[role][disabled]:hover) path
-    {
-        --icon-fill: ${disabled_icon_fill ? disabled_icon_fill : 'var(--link-disabled-icon-fill)'};
-    }
-    :host(i-link[disabled]) .avatar {
-        opacity: 0.6;
-    }
-    :host(i-link.right) {
-        flex-direction: row-reverse;
-    }
-    ${custom_style}
-    `
-    return widget()
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+const i_icon = require('datdot-ui-icon')
 
 var id = 0
+var icon_count = 0
 
-function i_button (opt, parent_protocol) {
- // ---------------------------------------------------------------
-    const myaddress = `button-${id++}` // unique
+module.exports = i_button
+
+function i_button (opts, parent_protocol) {
+//-------------------------------------------------
+    const myaddress = `${__filename}-${id++}`
     const inbox = {}
     const outbox = {}
     const recipients = {}
-    const message_id = to => ( outbox[to] = 1 + (outbox[to]||0) )
+    const names = {}
+    const message_id = to => (outbox[to] = 1 + (outbox[to]||0))
 
     const {notify, address} = parent_protocol(myaddress, listen)
-    recipients['parent'] = { notify, address, make: message_maker(myaddress) }
+    names[address] = recipients['parent'] = { name: 'parent', notify, address, make: message_maker(myaddress) }
+    notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
 
-    let make = message_maker(myaddress) // @TODO: replace flow with myaddress/myaddress
-    let message = make({to: address, type: 'ready', data: {}})
-    notify(message)
+    function make_protocol (name) {
+        return function protocol (address, notify) {
+            names[address] = recipients[name] = { name, address, notify, make: message_maker(myaddress) }
+            return { notify: listen, address: myaddress }
+        }
+    }
 
     function listen (msg) {
-        const {head, refs, type, data, meta } = msg
+        const { head, refs, type, data, meta } = msg // receive msg
         inbox[head.join('/')] = msg                  // store msg
         const [from, to, msg_id] = head
-        make_logs(msg)
-
+        console.log('New message', { from, msg })
         // toggle
         if (type.match(/switched/)) return switched_event(data)
         // dropdown
@@ -1639,29 +1398,21 @@ function i_button (opt, parent_protocol) {
             is_current = data
             return set_attr({aria: 'current', prop: is_current})
         }
-
     }
-
-    function make_protocol (name) {
-        return function protocol (address, notify) {
-            recipients[name] = { address, notify, make: message_maker(myaddress) }
-            return { notify: listen, address: myaddress }
-        }
-    }
-// ---------------------------------------------------------------
-
-    const {page = "*", flow = 'ui-button', name, role = 'button', controls, body = '', icons = {}, cover, classlist = null, mode = '', state, expanded = undefined, current = undefined, selected = false, checked = false, disabled = false, theme = {}} = opt
-    const {icon, select = {}, list = {}} = icons
-    const make_icon = icon ? main_icon(icon) : undefined
-    if (role === 'listbox') var make_select_icon = select_icon(select)
-    if (role === 'option') var make_list_icon = list_icon(list)
+//-------------------------------------------------
+    const {name, role = 'button', controls, body = '', icons = {}, cover, classlist = null, mode = '', state, expanded = undefined, current = undefined, selected = false, checked = false, disabled = false, theme = {}} = opts
+    const {icon} = icons
+    const main_icon = i_icon({ name: icon?.name, path: icon?.path}, make_protocol(`${icon?.name}-${icon_count++}`))
     let is_current = current
     let is_checked = checked
     let is_disabled = disabled
     let is_selected = selected
-    let is_expanded = 'expanded' in opt ? expanded : void 0
+    let is_expanded = 'expanded' in opts ? expanded : void 0
 
     function widget () {
+        const { notify, address, make } = recipients['parent']
+        const data = role === 'tab' ?  {selected: is_current ? 'true' : is_selected, current: is_current} : role === 'switch' ? {checked: is_checked} : role === 'listbox' ? {expanded: is_expanded} : disabled ? {disabled} : role === 'option' ? {selected: is_selected, current: is_current} : null
+        notify(make({ to: address, type: 'ready', data }))
         const el = make_element({name: 'i-button', classlist, role })
         const shadow = el.attachShadow({mode: 'closed'})
         const text = make_element({name: 'span', classlist: 'text'})
@@ -1672,8 +1423,8 @@ function i_button (opt, parent_protocol) {
         const add_cover = typeof cover === 'string' ? avatar : undefined
         const add_text = body ? typeof body === 'object' ? 'undefined' : text : undefined
         if (typeof cover === 'string') avatar.append(make_img({src: cover, alt: name}))
-        if (typeof cover === 'object') notify(make({to: address, type: 'error', data: `cover[${typeof cover}] must to be a string`}))
-        if (typeof body === 'object') notify(make({to: address, type: 'error', data: {body: `content is an ${typeof body}`, content: body }}))
+        if (typeof cover === 'object') notify(make({ to: address, type: 'error', data: `cover[${typeof cover}] must to be a string` }))
+        if (typeof body === 'object') notify(make({ to: address, type: 'error', data: { body: `content is an ${typeof body}`, content: body } }))
         if (!is_disabled) el.onclick = handle_click
         el.setAttribute('aria-label', name)
         text.append(body)
@@ -1716,12 +1467,12 @@ function i_button (opt, parent_protocol) {
 
         // make element to append into shadowDOM
         function append_items() {           
-            const items = [make_icon, add_cover, add_text]
+            const items = [main_icon, add_cover, add_text]
             const target = role === 'listbox' ? listbox : role === 'option' ?  option : shadow
             // list of listbox or dropdown menu
-            if (role.match(/option/)) shadow.append(make_list_icon, option)
+            if (role.match(/option/)) shadow.append(i_icon({ name: 'check'},  make_protocol(`check-${icon_count++}`)), option)
             // listbox or dropdown button
-            if (role.match(/listbox/)) shadow.append(make_select_icon, listbox)
+            if (role.match(/listbox/)) shadow.append(i_icon({ name: 'arrow-down' }, make_protocol(`arrow-down-${icon_count++}`)), listbox)
             items.forEach( item => {
                 if (item === undefined) return
                 target.append(item)
@@ -1757,7 +1508,7 @@ function i_button (opt, parent_protocol) {
                 set_attr({aria: 'current', prop: is_current})
             }
             // option is selected then send selected items to listbox button
-            if (is_selected) notify(make({to: address, type: 'changed', data: {text: body, cover, icon} }))
+            if (is_selected) notify(make({ to: address, type: 'changed', data: {text: body, cover, icon } }))
         }
         function changed_event (data) {
             const {text, cover, icon, title} = data
@@ -1789,7 +1540,7 @@ function i_button (opt, parent_protocol) {
                     if (old_avatar) old_avatar.remove()
                 }
                 if (icon) {
-                    const new_icon = main_icon(icon)
+                    const new_icon = i_icon({ name: icon.name, path: icon.path}, make_protocol(`${icon.name}-${icon_count++}`))
                     if (old_icon) old_icon.parentNode.replaceChild(new_icon, old_icon)
                     else shadow.insertBefore(new_icon, shadow.firstChild)
                 } else {
@@ -1800,7 +1551,7 @@ function i_button (opt, parent_protocol) {
             if (role.match(/listbox/)) {
                 listbox.innerHTML = ''
                 if (icon) {
-                    const new_icon = main_icon(icon)
+                    const new_icon = i_icon({ name: icon.name, path: icon.path}, make_protocol(`${icon.name}-${icon_count++}`))
                     if (role.match(/listbox/)) listbox.append(new_icon)
                 }
                 if (cover) {
@@ -1816,31 +1567,31 @@ function i_button (opt, parent_protocol) {
         // button click
         function handle_click () {
             const type = 'click'
-            if ('current' in opt) {
-                notify(make({to: address, type: 'current', data: {name, current: is_current}}) )
+            if ('current' in opts) {
+                notify(make({ to: address, type: 'current', data: {name, current: is_current } }) )
             }
             if (expanded !== undefined) {
                 const type = !is_expanded ? 'expanded' : 'collapsed'
-                notify(make({to: address, type, data: {name, expanded: is_expanded}}))
+                notify(make({ to: address, type, data: {name, expanded: is_expanded } }))
             }
             if (role === 'button') {
-                return notify(make({to: address, type, to: controls} ))
+                return notify( make({type, to: controls} ))
             }
             if (role === 'tab') {
                 if (is_current) return
                 is_selected = !is_selected
-                return notify(make({to: address, type, data: {name, selected: is_selected}}) )
+                return notify(make({ to: address, type, data: {name, selected: is_selected } }) )
             }
             if (role === 'switch') {
-                return notify(make({to: address, type, data: {name, checked: is_checked}}) )
+                return notify(make({ to: address, type, data: {name, checked: is_checked } }) )
             }
             if (role === 'listbox') {
                 is_expanded = !is_expanded
-                return notify(make({to: address, type, data: {name, expanded: is_expanded}}))
+                return notify(make({ to: address, type, data: {name, expanded: is_expanded } }))
             }
             if (role === 'option') {
                 is_selected = !is_selected
-                return notify( make({to: address, type, data: {name, selected: is_selected, content: is_selected ? {text: body, cover, icon} : '' }}) )
+                return notify(make({ to: address, type, data: {name, selected: is_selected, content: is_selected ? {text: body, cover, icon} : '' } }) )
             }
         }
     }
@@ -2296,7 +2047,8 @@ function i_button (opt, parent_protocol) {
 
     return widget()
 }
-},{"make-element":26,"make-grid":27,"make-icon":28,"make-image":29,"message-maker":30,"support-style-sheet":31}],26:[function(require,module,exports){
+}).call(this)}).call(this,"/node_modules/datdot-ui-button/src/index.js")
+},{"datdot-ui-icon":34,"make-element":26,"make-grid":27,"make-image":28,"message-maker":29,"support-style-sheet":30}],26:[function(require,module,exports){
 module.exports = make_element
 
 function make_element({name = '', classlist = null, role }) {
@@ -2395,54 +2147,6 @@ function make_grid (opts = {}) {
     }
 }
 },{}],28:[function(require,module,exports){
-const i_icon = require('datdot-ui-icon')
-const message_maker = require('message-maker')
-
-var id = 0
-
-module.exports = {main_icon, select_icon, list_icon}
-
-// ---------------------------------------------------------------
-const myaddress = `icon-${id++}`
-const inbox = {}
-const outbox = {}
-let recipients = {}
-const message_id = to => ( outbox[to] = 1 + (outbox[to]||0) )
-// ---------------------------------------------------------------
-function make_protocol (name) {
-    return function protocol (address, notify) {
-        recipients[name] = { address, notify, make: message_maker(myaddress) }
-        return { notify: listen, address: myaddress }
-    }
-}
-function listen (msg) {
-    const { head, refs, type, data, meta } = msg // receive msg
-    const [from, to, msg_id] = head
-    inbox[head.join('/')] = msg                  // store msg
-}
-// ---------------------------------------------------------------
-
-var main_count = 0
-var select_count = 0
-var list_count = 0
-
-function main_icon ({name, path}) {
-    const el = i_icon({name, path}, make_protocol(`${name}-${main_count++}`))
-    return el
-}
-
-function select_icon ({name = 'arrow-down', path}) {
-    const el =  i_icon({name, path}, make_protocol(`${name}-${select_count++}`))
-    return el
-}
-
-function list_icon ({name = 'check', path} ) {
-    const el =  i_icon({name, path}, make_protocol(`${name}-${list_count++}`))
-    return el
-}
-
-
-},{"datdot-ui-icon":35,"message-maker":30}],29:[function(require,module,exports){
 module.exports = img
 
 function img ({src, alt}) {
@@ -2451,15 +2155,16 @@ function img ({src, alt}) {
     img.setAttribute('alt', alt)
     return img
 }
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 module.exports = function message_maker (from) {
     let msg_id = 0
-    return function make ({to, type, data = null, refs = {} }) {
+    return function make ({to, type, data = null, refs = []}) {
         const stack = (new Error().stack.split('\n').slice(2).filter(x => x.trim()))
-        return { head: [from, to, msg_id++], refs, type, data, meta: { stack }}
+        const message = { head: [from, to, ++msg_id], refs, type, data, meta: { stack }}
+        return message
     }
-  }
-},{}],31:[function(require,module,exports){
+}
+},{}],30:[function(require,module,exports){
 module.exports = support_style_sheet
 function support_style_sheet (root, style) {
     return (() => {
@@ -2475,20 +2180,51 @@ function support_style_sheet (root, style) {
         }
     })()
 }
-},{}],32:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
+(function (__filename){(function (){
 const style_sheet = require('support-style-sheet')
 const message_maker = require('message-maker')
+const i_button = require('datdot-ui-button')
 const make_list = require('make-list')
-const {i_button: button} = require('datdot-ui-button')
 
 var id = 0
 
 module.exports = i_dropdown
 
-function i_dropdown ({page = '*', flow = 'ui-dropdown', name, options = {}, expanded = false, disabled = false, mode = 'single-select', theme}, parent_protocol) {
-    const {button = {}, list = {}} = options
-    const list_name = `${name}-list`
+function i_dropdown (opts, parent_protocol) {
+// -----------------------------------------
+    const myaddress = `${__filename}-${id++}`
+    const inbox = {}
+    const outbox = {}
+    const recipients = {}
+    const names = {}
+    const message_id = to => (outbox[to] = 1 + (outbox[to]||0))
 
+    const {notify, address} = parent_protocol(myaddress, listen)
+    names[address] = recipients['parent'] = { name: 'parent', notify, address, make: message_maker(myaddress) }
+    notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
+
+    function make_protocol (name) {
+        return function protocol (address, notify) {
+            names[address] = recipients[name] = { name, address, notify, make: message_maker(myaddress) }
+            return { notify: listen, address: myaddress }
+        }
+    }
+    
+    function listen (msg) {
+        const { head, refs, type, data, meta } = msg // receive msg
+        inbox[head.join('/')] = msg                  // store msg
+        const [from, to, msg_id] = head
+        console.log('New message', { from, msg })
+        // handle
+        const { notify, address, make } = recipients['parent']
+        notify(make({ to: address, type, data }))
+        if (type.match(/expanded|collapsed/)) return handle_expanded_event( data)
+        if (type.match(/selected/)) return handle_select_event(data)
+    }
+// -----------------------------------------
+    const {page = '*', flow = 'ui-dropdown', name, options: {button = {}, list = {}}, expanded = false, disabled = false, mode = 'single-select', theme} = opts
+    const list_name = `${name}-list`
     let is_expanded = expanded
     let is_disabled = disabled
     let store_data = []
@@ -2513,48 +2249,15 @@ function i_dropdown ({page = '*', flow = 'ui-dropdown', name, options = {}, expa
             if (item.selected) store_data.push(item)
         })
     }
-// ---------------------------------------------------------------
-    var myaddress = `dropdown-${id++}` // unique
-    const inbox = {}
-    const outbox = {}
-    const recipients = {}
-    const message_id = to => ( outbox[to] = 1 + (outbox[to]||0) )
-
-    const {notify, address} = parent_protocol(myaddress, listen)
-    recipients['parent'] = { notify, address, make: message_maker(myaddress) }
-
-    let make = message_maker(myaddress) // @TODO: replace flow with myaddress/myaddress
-    let message = make({to: address, type: 'ready', data: {}})
-    notify(message)
-
-    function listen (msg) {
-        const {head, refs, type, data, meta } = msg
-        inbox[head.join('/')] = msg                  // store msg
-        const [from, to, msg_id] = head
-        notify(msg)
-        if (type.match(/expanded|collapsed/)) return handle_expanded_event(data)
-        if (type.match(/selected/)) return handle_select_event(data)
-    }
-
-    function make_protocol (name) {
-        return function protocol (address, notify) {
-            recipients[name] = { address, notify, make: message_maker(myaddress) }
-            return { notify: listen, address: myaddress }
-        }
-    }
-// ---------------------------------------------------------------
     function widget () {
         const dropdown = document.createElement('i-dropdown')
         const shadow = dropdown.attachShadow({mode: 'closed'})
-
-        const i_button = button({
+        i_button({ 
             name, 
-            role: 'listbox',
-            icons,
-            cover, 
+            role: 'listbox', 
             mode: mode.match(/single|multiple/) ? 'selector' : 'menu', 
             expanded: is_expanded, 
-            disabled, 
+            disabled: is_disabled, 
             theme: {
                 style: `
                     :host(i-button) > .icon {
@@ -2566,12 +2269,12 @@ function i_dropdown ({page = '*', flow = 'ui-dropdown', name, options = {}, expa
                     }
                     ${style}
                 `,
-                props: button.theme.props || {},
-                grid: button.theme.grid || {}
+                props: {},
+                grid: {}
             }
         }, make_protocol(name))
-        
         const i_list = make_list({page, name: list_name, option: list, mode, hidden: is_expanded}, make_protocol('list'))
+        // notify(message)
         dropdown.setAttribute('aria-label', name)
         if (is_disabled) dropdown.setAttribute('disabled', is_disabled)
         style_sheet(shadow, style)
@@ -2587,15 +2290,21 @@ function i_dropdown ({page = '*', flow = 'ui-dropdown', name, options = {}, expa
                 const type = 'collapsed'
                 if (is_expanded) {
                     is_expanded = false
-                    notify(make({ to: address, type, data: is_expanded }) )
-                    recipients[list_name].notify(recipients[list_name].make({ to: recipients[list_name].address, type, data: !is_expanded }))
-                    notify(make({ to: address, type, data: {selected: store_data }}) )
+                    const { name: name_notify, make: name_make, address: name_address } = recipients[name]
+                    name_notify(name_make({ to: name_address, type, data: is_expanded }))
+                    const { notify: list_notify, make: list_make, address: list_address } = recipients[list_name]
+                    list_notify(list_make({ to: list_address, type, data: !is_expanded }))
+                    const { notify, make, address } = recipients['parent']
+                    notify(make({to: address, type, data: { selected: store_data }}) )
                 }
             })
         }
         function handle_change_event (content) {
-            const msg = make({type: 'changed', data: content})
-            notify(msg)
+            const { notify: name_notify, make: name_make, address: name_address } = recipients[name]
+            name_notify(name_make({ to: name_address, type: 'changed', data: content }))
+            
+            const { notify, make, address } = recipients['parent']
+            notify(make({ to: address, type: 'changed', data: content }))
         }
         function handle_select_event (data) {
             const {mode, selected} = data
@@ -2620,13 +2329,15 @@ function i_dropdown ({page = '*', flow = 'ui-dropdown', name, options = {}, expa
             is_expanded = expanded
             const type = is_expanded ? 'expanded' : 'collapsed'
             // check which one dropdown is not using then do collapsed
+            const { notify: name_notify, make: name_make, address: name_address } = recipients[name]
+            const { notify: list_notify, make: list_make, address: list_address } = recipients[list_name]
             if (from !== name) {
-                recipients[name].notify(recipients[name].make({ to: recipients[name].address, type: 'collapsed', data: is_expanded }))
-                recipients[list_name].notify(recipients[list_name].make({ to: recipients[list_name].address, type, data: !is_expanded }))
+                name_notify(name_make({ to: name_address,type: 'collapsed', data: is_expanded }))
+                list_notify(list_make({ to: list_address, type, data: !is_expanded }))
             }
             // check which dropdown is currently using then do expanded
-            recipients[name].notify(recipients[name].make({ to: recipients[name].address, type, data: is_expanded }))
-            recipients[list_name].notify(recipients[list_name].make({ to: recipients[list_name].address, type, data: !is_expanded }))
+            name_notify(name_make({ to: name_address, type, data: is_expanded }))
+            list_notify(list_make({ to: list_address, type, data: !is_expanded }))
             if (is_expanded && from == name) shadow.append(i_list)
         }
     }
@@ -2717,10 +2428,40 @@ function i_dropdown ({page = '*', flow = 'ui-dropdown', name, options = {}, expa
 }
 
 
-},{"datdot-ui-button":25,"make-list":33,"message-maker":41,"support-style-sheet":34}],33:[function(require,module,exports){
+}).call(this)}).call(this,"/node_modules/datdot-ui-dropdown/src/index.js")
+},{"datdot-ui-button":25,"make-list":32,"message-maker":40,"support-style-sheet":33}],32:[function(require,module,exports){
+(function (__filename){(function (){
 const i_list = require('datdot-ui-list')
+const message_maker = require('message-maker')
+
+var id = 0
+
 module.exports = make_list
-function make_list ({page, name, option = {}, mode, hidden}, protocol) {
+
+function make_list ({page, name, option = {}, mode, hidden}, parent_protocol) {
+// ----------------------------------------
+    const myaddress = `${__filename}-${id++}`
+    const inbox = {}
+    const outbox = {}
+    const recipients = {}
+    const names = {}
+    const message_id = to => (outbox[to] = 1 + (outbox[to]||0))
+
+    const {notify, address} = parent_protocol(myaddress, listen)
+    names[address] = recipients['parent'] = { name: 'parent', notify, address, make: message_maker(myaddress) }
+    notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
+
+    function make_protocol (name) {
+        return function protocol (address, notify) {
+            names[address] = recipients[name] = { name, address, notify, make: message_maker(myaddress) }
+            return { notify: listen, address: myaddress }
+        }
+    }
+    
+    function listen (msg) {
+        console.log('New message', { msg })
+    }
+// ----------------------------------------
     const {flow = 'ui-dropdown-list', role = 'option', array, theme} = option
     let store_selected = []
     let render_list = []
@@ -2731,7 +2472,7 @@ function make_list ({page, name, option = {}, mode, hidden}, protocol) {
     render_list.filter( item => {
         if (item.selected) return store_selected.push(item.text)
     })
-    return i_list({page, flow, name, role, body: render_list, mode, hidden, expanded: !hidden, theme}, protocol(name))
+    return i_list({page, flow, name, role, body: render_list, mode, hidden, expanded: !hidden, theme}, make_protocol(name))
 
     function make_single_select (args) {
         return args.map((opt, index) => {
@@ -2778,9 +2519,11 @@ function make_list ({page, name, option = {}, mode, hidden}, protocol) {
         })
     }
 }
-},{"datdot-ui-list":38}],34:[function(require,module,exports){
-arguments[4][31][0].apply(exports,arguments)
-},{"dup":31}],35:[function(require,module,exports){
+}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-dropdown@c96baa008e0577a75a4a2044471c181970976b20/node_modules/datdot-ui-dropdown/src/node_modules/make-list.js")
+},{"datdot-ui-list":37,"message-maker":40}],33:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"dup":30}],34:[function(require,module,exports){
+(function (__filename){(function (){
 const style_sheet = require('support-style-sheet')
 const svg = require('svg')
 const message_maker = require('message-maker')
@@ -2789,21 +2532,22 @@ var id = 0
 
 module.exports = ({name, path, is_shadow = false, theme}, parent_protocol) => {
 // ---------------------------------------------------------------
-    const myaddress = `icon-${id++}`
+    const myaddress = `${__filename}-${id++}`
     const inbox = {}
     const outbox = {}
     const recipients = {}
-    const message_id = to => ( outbox[to] = 1 + (outbox[to]||0) )
+    const names = {}
+    const message_id = to => (outbox[to] = 1 + (outbox[to]||0))
 
     const {notify, address} = parent_protocol(myaddress, listen)
-    const make = message_maker(myaddress)
-    let message = make({ to: address, type: 'ready', refs: ['old_logs', 'new_logs'] })
-    notify(message)
+    names[address] = recipients['parent'] = { name: 'parent', notify, address, make: message_maker(myaddress) }
+    notify(recipients['parent'].make({ to: address, type: 'ready', refs: ['old_logs', 'new_logs'] }))
 
     function listen (msg) {
         const {head, refs, type, data, meta } = msg
         inbox[head.join('/')] = msg                  // store msg
-        const [from, to, msg_id] = head       
+        const [from, to, msg_id] = head    
+        console.log('New message', { msg })
     }
  // ---------------------------------------------------------------   
     const url = path ? path : './src/svg'
@@ -2817,8 +2561,16 @@ module.exports = ({name, path, is_shadow = false, theme}, parent_protocol) => {
             style_sheet(shadow, style)
             slot.append(symbol)
             shadow.append(slot)
+            shadow.addEventListener('click', handleOnClick)
             return icon
         }
+
+        function handleOnClick (e) {
+            console.log('Click', e)
+            const { notify, address, make } = recipients['parent']
+            notify(make({ to: address, type: 'click', data: { event: e }, refs: {} }))
+        }
+
         // insert CSS style
         const custom_style = theme ? theme.style : ''
         // set CSS variables
@@ -2857,9 +2609,10 @@ module.exports = ({name, path, is_shadow = false, theme}, parent_protocol) => {
     return symbol
 }
 
-},{"message-maker":41,"support-style-sheet":36,"svg":37}],36:[function(require,module,exports){
-arguments[4][31][0].apply(exports,arguments)
-},{"dup":31}],37:[function(require,module,exports){
+}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-button@0a8da2b334db9f19e15048a337b2994563e8fd35/node_modules/datdot-ui-icon/src/index.js")
+},{"message-maker":40,"support-style-sheet":35,"svg":36}],35:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"dup":30}],36:[function(require,module,exports){
 module.exports = svg
 function svg (path) {
     const span = document.createElement('span')
@@ -2873,10 +2626,10 @@ function svg (path) {
     }
     return span
 }   
-},{}],38:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
+(function (__filename){(function (){
 const style_sheet = require('support-style-sheet')
-const {i_button, i_link} = require('datdot-ui-button')
-const button = i_button
+const button = require('datdot-ui-button')
 const message_maker = require('message-maker')
 const make_grid = require('make-grid')
 module.exports = i_list
@@ -2884,41 +2637,42 @@ module.exports = i_list
 var id = 0
 
 function i_list (opts = {}, parent_protocol) {
-    const {page = '*', flow = 'ui-list', name, body = [], mode = 'multiple-select', expanded = false, hidden = true, theme = {} } = opts
-    let is_hidden = hidden
-    let is_expanded = !is_hidden ? !is_hidden : expanded
-    const {grid} = theme
-// ---------------------------------------------------------------
-    var myaddress = `list-${id++}` // unique
+// -----------------------------------
+    const myaddress = `${__filename}-${id++}`
     const inbox = {}
     const outbox = {}
     const recipients = {}
+    const names = {}
     const message_id = to => (outbox[to] = 1 + (outbox[to]||0))
 
     const {notify, address} = parent_protocol(myaddress, listen)
-    recipients['parent'] = { notify, address, make: message_maker(myaddress) }
-
-    let make = message_maker(myaddress) // @TODO: replace flow with myaddress/myaddress
-    let message = make({to: address, type: 'ready', data: {}})
-    notify(message)
-
-    function listen (msg) {
-        const {head, refs, type, data, meta } = msg
-        inbox[head.join('/')] = msg                  // store msg
-        const [from, to, msg_id] = head
-        if (from === 'menuitem') return handle_click_event(msg)
-        if (type === 'click' && from === 'option') return handle_select_event({from, to, data})
-        if (type.match(/expanded|collapsed/)) return handle_expanded_event(data)
-
-    }
+    names[address] = recipients['parent'] = { name: 'parent', notify, address, make: message_maker(myaddress) }
+    notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
 
     function make_protocol (name) {
         return function protocol (address, notify) {
-            recipients[name] = { address, notify, make: message_maker(myaddress) }
+            names[address] = recipients[name] = { name, address, notify, make: message_maker(myaddress) }
             return { notify: listen, address: myaddress }
         }
     }
-// ---------------------------------------------------------------
+
+    function listen (msg) {
+        const { head, refs, type, data, meta } = msg // receive msg
+        inbox[head.join('/')] = msg                  // store msg
+        const [from, to] = head
+        console.log('New message', { from, name: recipients[from].name, msg })
+        // handle
+        if (from === 'menuitem') return handle_click_event(msg)
+        if (type === 'click' && role === 'option') return handle_select_event({from, to, data})
+        if (type.match(/expanded|collapsed/)) return handle_expanded_event(data)
+    }
+// -----------------------------------
+    const {name, body = [], mode = 'multiple-select', expanded = false, hidden = true, theme = {} } = opts
+    let is_hidden = hidden
+    let is_expanded = !is_hidden ? !is_hidden : expanded
+    const store_selected = []
+    const {grid} = theme
+
     function widget () {
         const list = document.createElement('i-list')
         const shadow = list.attachShadow({mode: 'closed'})
@@ -2928,6 +2682,7 @@ function i_list (opts = {}, parent_protocol) {
         list.ariaExpanded = is_expanded
         list.dataset.mode = mode
         style_sheet(shadow, style)
+        const { make } = recipients['parent']
         try {
             if (mode.match(/single|multiple/)) {
                 list.setAttribute('role', 'listbox')
@@ -2937,9 +2692,9 @@ function i_list (opts = {}, parent_protocol) {
                 list.setAttribute('role', 'menubar')
                 make_list()
             }
-            if (body.length === 0) send(make({type: 'error', data: 'body no items'}))
+            if (body.length === 0) notify(make({ to: address, type: 'error', data: { text: 'body no items', opts } }))
         } catch(e) {
-            send(make({type: 'error', data: {message: 'something went wrong', opts }}))
+            notify(make({ to: address, type: 'error', data: {text: 'something went wrong', opts }}))
         }
         
         return list
@@ -2984,7 +2739,6 @@ function i_list (opts = {}, parent_protocol) {
 
                 const is_current = mode === 'single-select' ? current : false
                 const make_button = button({
-                    page,
                     name: list_name, 
                     body: text, 
                     role, icons, cover, 
@@ -3018,7 +2772,7 @@ function i_list (opts = {}, parent_protocol) {
                 if (disabled) li.setAttribute('disabled', disabled)
                 li.append(make_button)
                 shadow.append(li)
-                recipients[list_name].notify(recipients[list_name].make({ to: recipients[list_name].address, type: 'ready' }))
+                notify(make({ to: address, type: 'ready' }))
             })
         }
 
@@ -3048,7 +2802,6 @@ function i_list (opts = {}, parent_protocol) {
                 } = props
                 if (role === 'link' ) {
                     var item = i_link({
-                        page,
                         name: list_name,
                         body: text,
                         role: 'menuitem',
@@ -3104,42 +2857,43 @@ function i_list (opts = {}, parent_protocol) {
             list.setAttribute('aria-hidden', data)
             list.setAttribute('aria-expanded', !data)
         }
-        function handle_mutiple_selected ({make, from, lists, selected}) {
-            recipients[from].notify(recipients[from].make({ to: recipients[from].address, type, data: selected }))
+        function handle_mutiple_selected ({from, lists, selected}) {
+            const type = selected ? 'selected' : 'unselected'
+            const { notify, address, make } = recipients[from]
+            notify(make({ to: address, type, data: { selected } }))
             lists.forEach( list => {
                 const label = list.firstChild.getAttribute('aria-label') 
                 if (label === from) list.setAttribute('aria-selected', selected)
             })
-            const message = recipients[from].make({ to: recipients[from].address, type: 'selected', data: {selected: from} })
-            recipients[from].notify( message )
+            notify(make({type: 'selected', data: {selected: from}}))
         }
 
-        function handle_single_selected ({make, from, lists, selected}) {
+        function handle_single_selected ({from, lists, selected}) {
             lists.forEach( list => {
                 const label = list.firstChild.getAttribute('aria-label') 
                 const state = label === from
                 const type = state ? 'selected' : 'unselected'
                 const name = state ? from : label
-                recipients[name].notify(recipients[from].make({ to: recipients[from].address, type, data: state }))
-                recipients[name].notify(recipients[from].make({ to: recipients[from].address, type: 'current', data: state }))
+                const { notify, address, make } = recipients[name]
+                notify(make({ to: address, type, data: { state } }))
+                notify(make({ to: address, type: 'current', data: { state }}))
                 list.setAttribute('aria-current', state)
                 list.setAttribute('aria-selected', state)
             })
-            notify(make({ to: address, type: 'selected', data: {selected: from} }))
+            notify(make({ to: address, type: 'selected', data: { selected: from } }))
         }
         function handle_select_event ({from, to, data}) {
             const {selected} = data
             // !important  <style> as a child into inject shadowDOM, only Safari and Firefox did, Chrome, Brave, Opera and Edge are not count <style> as a childElemenet
             const lists = shadow.firstChild.tagName !== 'STYLE' ? shadow.childNodes : [...shadow.childNodes].filter( (child, index) => index !== 0)
-            if (mode === 'single-select')  handle_single_selected({make: recipients[from].make, from, lists, selected})
-            if (mode === 'multiple-select') handle_mutiple_selected({make: recipients[from].make, from, lists, selected})
+            if (mode === 'single-select')  handle_single_selected({from, lists, selected})
+            if (mode === 'multiple-select') handle_mutiple_selected({from, lists, selected})
             
         }
         function handle_click_event(msg) {
             const {head, type, data} = msg
-            const { from } = head
-            const message = recipients[from].make({to: recipients[from].address, type, data})
-            recipients[from].notify(message)
+            const [from] = head
+            notify(make({to: address, type, data}))
         }
     }
 
@@ -3253,11 +3007,12 @@ function i_list (opts = {}, parent_protocol) {
 
     return widget()
 }
-},{"datdot-ui-button":25,"make-grid":39,"message-maker":41,"support-style-sheet":40}],39:[function(require,module,exports){
+}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-dropdown@c96baa008e0577a75a4a2044471c181970976b20/node_modules/datdot-ui-list/src/index.js")
+},{"datdot-ui-button":25,"make-grid":38,"message-maker":40,"support-style-sheet":39}],38:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"dup":27}],40:[function(require,module,exports){
-arguments[4][31][0].apply(exports,arguments)
-},{"dup":31}],41:[function(require,module,exports){
+},{"dup":27}],39:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"dup":30}],40:[function(require,module,exports){
 module.exports = function message_maker (from) {
   let msg_id = 0
   return function make ({to, type, data = null, refs = {} }) {
@@ -3265,7 +3020,7 @@ module.exports = function message_maker (from) {
       return { head: [from, to, msg_id++], refs, type, data, meta: { stack }}
   }
 }
-},{}],42:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 module.exports = attributeToProperty
 
 var transform = {
@@ -3286,7 +3041,7 @@ function attributeToProperty (h) {
   }
 }
 
-},{}],43:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 var attrToProp = require('hyperscript-attribute-to-property')
 
 var VAR = 0, TEXT = 1, OPEN = 2, CLOSE = 3, ATTR = 4
@@ -3583,7 +3338,7 @@ var closeRE = RegExp('^(' + [
 ].join('|') + ')(?:[\.#][a-zA-Z0-9\u007F-\uFFFF_:-]+)*$')
 function selfClosing (tag) { return closeRE.test(tag) }
 
-},{"hyperscript-attribute-to-property":42}],44:[function(require,module,exports){
+},{"hyperscript-attribute-to-property":41}],43:[function(require,module,exports){
 var inserted = {};
 
 module.exports = function (css, options) {
@@ -3607,27 +3362,61 @@ module.exports = function (css, options) {
     }
 };
 
-},{}],45:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
+(function (__filename){(function (){
 const bel = require('bel')
 const style_sheet = require('support-style-sheet')
 const message_maker = require('message-maker')
 const make_grid = require('make-grid')
 const {int2hsla, str2hashint} = require('generator-color')
 const i_footer = require('footer')
-const {i_button} = require('datdot-ui-button')
+const i_button = require('datdot-ui-button')
+
+var id = 0
 
 module.exports = logs
 
-function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 15, limit = 15}, protocol) {
+function logs (opts, parent_protocol) {
+    const {name = 'terminal', mode = 'compact', expanded = false, init = 15, limit = 15} = opts
     let is_expanded = expanded
     let types = {}
     let range = init
     let store_msg = []
     let len = store_msg.length
-    const recipients = []
-    const send = protocol(get)
-    const make = message_maker(`${name} / index.js`)
-    const message = make({to: name, type: 'ready', refs: ['old_logs', 'new_logs']})
+// --------------------------------
+    const myaddress = `${__filename}-${id++}`
+    const inbox = {}
+    const outbox = {}
+    const recipients = {}
+    const names = {}
+    const message_id = to => (outbox[to] = 1 + (outbox[to]||0))
+    
+    const {notify, address} = parent_protocol(myaddress, listen)
+    names[address] = recipients['parent'] = { name: 'parent', notify, address, make: message_maker(myaddress) }
+    notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
+    
+    function listen (msg) {
+        console.log('New message', { msg })
+        const { head, refs, type, data, meta } = msg // receive msg
+        inbox[head.join('/')] = msg                  // store msg
+        const [from, to] = head
+        make_logs(msg)
+        //handle
+        if (type === 'click') handle_load_more(store_msg)
+        if (type.match(/messages-count/)) return
+        if (type === 'layout-mode') return handle_change_layout(data)
+        if (type === 'selected') return handle_selected(data.selected)
+        if (type === 'search-filter') return handle_search_filter(data.letter)
+        if (type === 'cleared-search') return handle_search_filter(data)
+    }
+
+    function make_protocol (name) {
+        return function protocol (address, notify) {
+            names[address] = recipients[name] = { name, address, notify, make: message_maker(myaddress) }
+            return { notify: listen, address: myaddress }
+        }
+    }
+// --------------------------------
     const el = document.createElement('i-terminal')
     const shadow = el.attachShadow({mode: 'closed'})
     const container = document.createElement('div')
@@ -3641,9 +3430,8 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 15
                 width: '50vw',
             }
         }
-    }, load_more_protocol('load-more'))
-    const footer = i_footer({name}, footer_protocol(`${name}-footer`))
-    send(message)
+    }, make_protocol('load-more'))
+    const footer = i_footer({name}, make_protocol(`${name}-footer`))
     container.classList.add('container')
     i_logs.setAttribute('aria-label', mode)
     container.append(i_logs, load_more)
@@ -3799,39 +3587,6 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 15
         range = start + limit
         args.filter( (msg, index) => index >= start && index < (start + limit))
             .forEach( msg => add_log(msg) )
-    }
-
-    function load_more_protocol (name) {
-        return send => {
-            recipients[name] = send
-            return load_more_get
-        }   
-    }
-    function load_more_get (msg) {
-        const {head, refs, type, data, meta} = msg
-        const from = head[0].split('/')[0].trim()
-        if (type === 'click') handle_load_more(store_msg)
-    }
-    function footer_protocol (name) {
-        return send => {
-            recipients[name] = send
-            return footer_get
-        }   
-    }
-    // make i-footer not count into logs list
-    function footer_get (msg) {
-        const {head, refs, type, data, meta} = msg
-        const from = head[0].split('/')[0].trim()
-        if (type.match(/messages-count/)) return
-        if (type === 'layout-mode') return handle_change_layout(data)
-        if (type === 'selected') return handle_selected(data.selected)
-        if (type === 'search-filter') return handle_search_filter(data.letter)
-        if (type === 'cleared-search') return handle_search_filter(data)
-    }
-    function get (msg) {
-        const {head, refs, type, data, meta} = msg
-        const from = head[0].split('/')[0].trim()
-        make_logs(msg)
     }
 }
 
@@ -4101,27 +3856,60 @@ mark.current {
     }
 }
 `
-},{"bel":5,"datdot-ui-button":25,"footer":46,"generator-color":47,"make-grid":48,"message-maker":49,"support-style-sheet":50}],46:[function(require,module,exports){
+}).call(this)}).call(this,"/src/index.js")
+},{"bel":5,"datdot-ui-button":25,"footer":45,"generator-color":46,"make-grid":47,"message-maker":40,"support-style-sheet":48}],45:[function(require,module,exports){
+(function (__filename){(function (){
 const bel = require('bel')
 const style_sheet = require('support-style-sheet')
-const {i_button} = require('datdot-ui-button')
+const i_button = require('datdot-ui-button')
 const i_dropdown = require('datdot-ui-dropdown')
 const message_maker = require('message-maker')
 const make_grid = require('./make-grid')
 
+var id = 0
+
 module.exports = footer
 
-function footer (opts = {}, protocol) {
+function footer (opts = {}, parent_protocol) {
+// --------------------------------------------
+    const myaddress = `${__filename}-${id++}`
+    const inbox = {}
+    const outbox = {}
+    const recipients = {}
+    const names = {}
+    const message_id = to => (outbox[to] = 1 + (outbox[to]||0))
+
+    const {notify, address} = parent_protocol(myaddress, listen)
+    names[address] = recipients['parent'] = { name: 'parent', notify, address, make: message_maker(myaddress) }
+    notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
+
+    function make_protocol (name) {
+        return function protocol (address, notify) {
+            names[address] = recipients[name] = { name, address, notify, make: message_maker(myaddress) }
+            return { notify: listen, address: myaddress }
+        }
+    }
+    
+    function listen (msg) {
+        console.log('New message', { msg })
+        const { head, refs, type, data, meta } = msg // receive msg
+        inbox[head.join('/')] = msg                  // store msg
+        const [from, to] = head
+        // handle
+        const { notify, address, make } = recipients['parent']
+        if (type.match(/ready|click|changed|selected|unselected/)) notify(make({ to: address, type, data }))
+        if (type === 'messages-count') return num.textContent = data
+        if (type === 'click') return click_event (from, role, data)
+    }
+
+// --------------------------------------------
     const {flow = 'i-footer', name, theme = {}} = opts
-    const recipients = []
     const make = message_maker(`${name} / ${flow}`)
 
     function widget () {
-        const send = protocol(get)
         const footer = document.createElement('i-footer')
         const shadow = footer.attachShadow({mode: 'closed'})
         footer.setAttribute('aria-label', `${name}-footer`)
-        send(make({type: 'ready'}))
         style_sheet(shadow, style)
         const theme_option = {
             message: {
@@ -4153,7 +3941,7 @@ function footer (opts = {}, protocol) {
                     padding: '4px'
                 }
             }
-        }, footer_protocol('clear-filter'))
+        }, make_protocol('clear-filter'))
         const search = bel`<div class="search">${filter}${clear}</div>`
         const expanded = i_button(
         {
@@ -4165,7 +3953,7 @@ function footer (opts = {}, protocol) {
                     ...theme_option.button
                 }
             }
-        }, footer_protocol('expanded'))
+        }, make_protocol('expanded'))
 
         // option for terminal-selector 
         const terminal_option = 
@@ -4207,7 +3995,7 @@ function footer (opts = {}, protocol) {
             }
         }
 
-        const terminal_selector = i_dropdown(terminal_option, footer_protocol(terminal_option.name))
+        const terminal_selector = i_dropdown(terminal_option, make_protocol(terminal_option.name))
         const num = bel`<span>0</span>`
         const total = bel`<span class="total">All messages: ${num}</span>`
         const actions = bel`<div class="actions">${search}${terminal_selector}${expanded}</div>`
@@ -4262,20 +4050,6 @@ function footer (opts = {}, protocol) {
             if (role === 'listbox') return selector_event(from, data)
             if (from === 'clear-filter') return clear_input_event()
         }   
-        function footer_protocol (name) {
-            return send => {
-                recipients[name] = send
-                return get
-            }
-        }
-        function get (msg) {
-            const {head, type, data} = msg
-            const from = head[0].split('/')[0].trim()
-            const role = head[0].split(' / ')[1]
-            if (type.match(/ready|click|changed|selected|unselected/)) send(msg)
-            if (type === 'messages-count') return num.textContent = data
-            if (type === 'click') return click_event (from, role, data)
-        }
     }
     
     const style = `
@@ -4352,7 +4126,8 @@ function footer (opts = {}, protocol) {
     `
     return widget()
 }
-},{"./make-grid":48,"bel":5,"datdot-ui-button":25,"datdot-ui-dropdown":32,"message-maker":49,"support-style-sheet":50}],47:[function(require,module,exports){
+}).call(this)}).call(this,"/src/node_modules/footer.js")
+},{"./make-grid":47,"bel":5,"datdot-ui-button":25,"datdot-ui-dropdown":31,"message-maker":40,"support-style-sheet":48}],46:[function(require,module,exports){
  module.exports = {int2hsla, str2hashint}
  function int2hsla (i) { return `hsla(${i % 360}, 100%, 70%, 1)` }
  function str2hashint (str) {
@@ -4363,17 +4138,8 @@ function footer (opts = {}, protocol) {
      })
      return hash
  }
-},{}],48:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"dup":27}],49:[function(require,module,exports){
-module.exports = function message_maker (from) {
-    let msg_id = 0
-    return function make ({to, type, data = null, refs = []}) {
-        const stack = (new Error().stack.split('\n').slice(2).filter(x => x.trim()))
-        const message = { head: [from, to, ++msg_id], refs, type, data, meta: { stack }}
-        return message
-    }
-}
-},{}],50:[function(require,module,exports){
-arguments[4][31][0].apply(exports,arguments)
-},{"dup":31}]},{},[1]);
+},{"dup":27}],48:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"dup":30}]},{},[1]);

@@ -4,20 +4,53 @@ const message_maker = require('message-maker')
 const make_grid = require('make-grid')
 const {int2hsla, str2hashint} = require('generator-color')
 const i_footer = require('footer')
-const {i_button} = require('datdot-ui-button')
+const i_button = require('datdot-ui-button')
+
+var id = 0
 
 module.exports = logs
 
-function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 15, limit = 15}, protocol) {
+function logs (opts, parent_protocol) {
+    const {name = 'terminal', mode = 'compact', expanded = false, init = 15, limit = 15} = opts
     let is_expanded = expanded
     let types = {}
     let range = init
     let store_msg = []
     let len = store_msg.length
-    const recipients = []
-    const send = protocol(get)
-    const make = message_maker(`${name} / index.js`)
-    const message = make({to: name, type: 'ready', refs: ['old_logs', 'new_logs']})
+// --------------------------------
+    const myaddress = `${__filename}-${id++}`
+    const inbox = {}
+    const outbox = {}
+    const recipients = {}
+    const names = {}
+    const message_id = to => (outbox[to] = 1 + (outbox[to]||0))
+    
+    const {notify, address} = parent_protocol(myaddress, listen)
+    names[address] = recipients['parent'] = { name: 'parent', notify, address, make: message_maker(myaddress) }
+    notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
+    
+    function listen (msg) {
+        console.log('New message', { msg })
+        const { head, refs, type, data, meta } = msg // receive msg
+        inbox[head.join('/')] = msg                  // store msg
+        const [from, to] = head
+        make_logs(msg)
+        //handle
+        if (type === 'click') handle_load_more(store_msg)
+        if (type.match(/messages-count/)) return
+        if (type === 'layout-mode') return handle_change_layout(data)
+        if (type === 'selected') return handle_selected(data.selected)
+        if (type === 'search-filter') return handle_search_filter(data.letter)
+        if (type === 'cleared-search') return handle_search_filter(data)
+    }
+
+    function make_protocol (name) {
+        return function protocol (address, notify) {
+            names[address] = recipients[name] = { name, address, notify, make: message_maker(myaddress) }
+            return { notify: listen, address: myaddress }
+        }
+    }
+// --------------------------------
     const el = document.createElement('i-terminal')
     const shadow = el.attachShadow({mode: 'closed'})
     const container = document.createElement('div')
@@ -31,9 +64,8 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 15
                 width: '50vw',
             }
         }
-    }, load_more_protocol('load-more'))
-    const footer = i_footer({name}, footer_protocol(`${name}-footer`))
-    send(message)
+    }, make_protocol('load-more'))
+    const footer = i_footer({name}, make_protocol(`${name}-footer`))
     container.classList.add('container')
     i_logs.setAttribute('aria-label', mode)
     container.append(i_logs, load_more)
@@ -189,39 +221,6 @@ function logs ({name = 'terminal', mode = 'compact', expanded = false, init = 15
         range = start + limit
         args.filter( (msg, index) => index >= start && index < (start + limit))
             .forEach( msg => add_log(msg) )
-    }
-
-    function load_more_protocol (name) {
-        return send => {
-            recipients[name] = send
-            return load_more_get
-        }   
-    }
-    function load_more_get (msg) {
-        const {head, refs, type, data, meta} = msg
-        const from = head[0].split('/')[0].trim()
-        if (type === 'click') handle_load_more(store_msg)
-    }
-    function footer_protocol (name) {
-        return send => {
-            recipients[name] = send
-            return footer_get
-        }   
-    }
-    // make i-footer not count into logs list
-    function footer_get (msg) {
-        const {head, refs, type, data, meta} = msg
-        const from = head[0].split('/')[0].trim()
-        if (type.match(/messages-count/)) return
-        if (type === 'layout-mode') return handle_change_layout(data)
-        if (type === 'selected') return handle_selected(data.selected)
-        if (type === 'search-filter') return handle_search_filter(data.letter)
-        if (type === 'cleared-search') return handle_search_filter(data)
-    }
-    function get (msg) {
-        const {head, refs, type, data, meta} = msg
-        const from = head[0].split('/')[0].trim()
-        make_logs(msg)
     }
 }
 
