@@ -24,9 +24,6 @@
     "url": "https://github.com/datdotorg"
   },
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/datdotorg/datdot-terminal/issues"
-  },
   "homepage": "https://github.com/datdotorg/datdot-terminal#readme",
   "devDependencies": {
     "browserify": "^17.0.0",
@@ -37,6 +34,7 @@
     "csjs-inject": "^1.0.1",
     "datdot-ui-button": "git+https://github.com/datdotorg/datdot-ui-button.git",
     "datdot-ui-dropdown": "git+https://github.com/datdotorg/datdot-ui-dropdown.git",
-    "datdot-ui-list": "git+https://github.com/datdotorg/datdot-ui-list.git"
+    "datdot-ui-list": "git+https://github.com/datdotorg/datdot-ui-list.git",
+    "message-maker": "git+https://github.com/datdotorg/message-maker.git"
   }
 }
