@@ -2609,7 +2609,7 @@ module.exports = ({name, path, is_shadow = false, theme}, parent_protocol) => {
     return symbol
 }
 
-}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-button@0a8da2b334db9f19e15048a337b2994563e8fd35/node_modules/datdot-ui-icon/src/index.js")
+}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-button@bf39b12f2e2eed4d79425ba00059af6247650ecb/node_modules/datdot-ui-icon/src/index.js")
 },{"message-maker":40,"support-style-sheet":35,"svg":36}],35:[function(require,module,exports){
 arguments[4][30][0].apply(exports,arguments)
 },{"dup":30}],36:[function(require,module,exports){
