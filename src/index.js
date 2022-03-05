@@ -30,7 +30,7 @@ function logs (opts, parent_protocol) {
     notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
     
     function listen (msg) {
-        console.log('New message', { msg })
+        // console.log('New message', { msg })
         const { head, refs, type, data, meta } = msg // receive msg
         inbox[head.join('/')] = msg                  // store msg
         const [from, to] = head
@@ -116,9 +116,7 @@ function logs (opts, parent_protocol) {
             const data_info = bel`<span aira-label="data" class="data">data: ${typeof data === 'object' ? JSON.stringify(data) : data}</span>`
             const type_info = bel`<span aria-type="${type}" aria-label="${type}" class="type">${type}</span>`
             const refs_info = bel`<div class="refs"><span>refs:</span></div>`
-            refs.map( (ref, i) => 
-                refs_info.append(bel`<span>${ref}${i < refs.length - 1 ? ',  ' : ''}</span>`)
-            )
+            if (!(Object.keys(refs).length === 0)) Object.keys(refs).map((key) => refs_info.append(bel`<span>${refs[key]}${i < Object.keys(keys).length - 1 ? ',  ' : ''}</span>`))
             const info = bel`<div class="info">${data_info}${refs_info}</div>`
             const header = bel`
             <div class="head">
@@ -138,8 +136,10 @@ function logs (opts, parent_protocol) {
             if (i_logs.childElementCount < range) i_logs.append(list)
             load_more.style.visibility = i_logs.childElementCount < len ? 'visible' : 'hidden'
             // have an issue with i-footer, it would be return as a msg to make_logs, so make footer_get to saprate make_logs from others
-            recipients[`${name}-footer`](make({type: 'messages-count', data: len}))
+            const { address: name_address, notify: name_notify, make: name_make } = recipients[`${name}-footer`]
+            name_notify(name_make({ to: name_address, type: 'messages-count', data: len }))
         } catch (error) {
+            // console.log({error})
             document.addEventListener('DOMContentLoaded', () => i_logs.append(list))
             return false
         }
