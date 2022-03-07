@@ -30,13 +30,14 @@ function demo () {
         }
     }
     function listen (msg) {
-        console.log('New message', { msg })
+        // console.log('New message', { msg })
         const { head, refs, type, data, meta } = msg // receive msg
         inbox[head.join('/')] = msg                  // store msg
         const [from] = head
+        if (type === 'click') return handle_click(from, type)
         // send back ack
-        const { notify, make, address } = names[from]
-        notify(make({ to: address, type: 'ack', refs: { 'cause': head } }))
+        // const { notify, make, address } = names[from]
+        // notify(make({ to: address, type: 'ack', refs: { 'cause': head } }))
     }
 // -----------------------------------
     let is_checked = false
@@ -45,155 +46,151 @@ function demo () {
     notifyLogs()
     function notifyLogs () {
         const { make, notify, address } = recipients['logs']
-        setInterval(()=> {
-            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 }  }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'register'}))
-            notify(make({to: address, type: 'current-block'}))
-            notify(make({to: address, type: 'eventpool'}))
-            notify(make({to: address, type: 'keep-alive'}))
-            // todo: for testing only, after remove
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'attestor'}))
-            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
-            notify(make({to: address, type: 'expanded'}))
-            notify(make({to: address, type: 'collapsed'}))
-            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 }  }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'attestor'}))
-            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
-            notify(make({to: address, type: 'expanded'}))
-            notify(make({to: address, type: 'collapsed'}))
-            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'attestor'}))
-            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
-            notify(make({to: address, type: 'expanded'}))
-            notify(make({to: address, type: 'collapsed'}))
-        }, 1200)
-        setInterval(()=> { 
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'attestor'}))
-            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
-            notify(make({to: address, type: 'expanded'}))
-            notify(make({to: address, type: 'collapsed'}))
-            // todo: for testing only, after remove
-            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'attestor'}))
-            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
-            notify(make({to: address, type: 'expanded'}))
-            notify(make({to: address, type: 'collapsed'}))
-            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'attestor'}))
-            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
-            notify(make({to: address, type: 'expanded'}))
-            notify(make({to: address, type: 'collapsed'}))
-            notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
-            notify(make({to: address, type: 'extrinsic'}))
-            notify(make({to: address, type: 'execute-extrinsic'}))
-            notify(make({to: address, type: 'user'}))
-            notify(make({to: address, type: 'peer'}))
-            notify(make({to: address, type: '@todo'}))
-            notify(make({to: address, type: 'hoster'}))
-            notify(make({to: address, type: 'encoder'}))
-            notify(make({to: address, type: 'attestor'}))
-            notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
-            notify(make({to: address, type: 'expanded'}))
-            notify(make({to: address, type: 'collapsed'}))
-        }, 1600)
-    }    
+        notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 }  }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'register'}))
+        notify(make({to: address, type: 'current-block'}))
+        notify(make({to: address, type: 'eventpool'}))
+        notify(make({to: address, type: 'keep-alive'}))
+        // todo: for testing only, after remove
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'attestor'}))
+        notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+        notify(make({to: address, type: 'expanded'}))
+        notify(make({to: address, type: 'collapsed'}))
+        notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 }  }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'attestor'}))
+        notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+        notify(make({to: address, type: 'expanded'}))
+        notify(make({to: address, type: 'collapsed'}))
+        notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'attestor'}))
+        notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+        notify(make({to: address, type: 'expanded'}))
+        notify(make({to: address, type: 'collapsed'}))
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'attestor'}))
+        notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+        notify(make({to: address, type: 'expanded'}))
+        notify(make({to: address, type: 'collapsed'}))
+        // todo: for testing only, after remove
+        notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'attestor'}))
+        notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+        notify(make({to: address, type: 'expanded'}))
+        notify(make({to: address, type: 'collapsed'}))
+        notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'attestor'}))
+        notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+        notify(make({to: address, type: 'expanded'}))
+        notify(make({to: address, type: 'collapsed'}))
+        notify(make({to: address, type: 'info', data: { New_user: 'poppy', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'info', data: { Old_user: 'shannon', address: '5HQyG6vukenbLDPFBsnHkLHpX8rBaHyWi5WD8cy4uUvsSKnE', noiseKey: { type: 'buffer', data: [8,94,61,252,227,5,211,20,255,248,162,237,241,237,238,88,226,240,104,226,168,119,35,35,188,81,92,25,228,226,253,61]}, signingKey: { type: 'Buffer', data: [172,229,161,118,201,45,60,40,217,146,238,23,93,212,161,31,176,194,119,44,139,186,111,39,203,198,158,184,154,206,131,29]}, form: {}, idleStorage: 0, rating: 0, balance: 0, id: 46 } }))
+        notify(make({to: address, type: 'extrinsic'}))
+        notify(make({to: address, type: 'execute-extrinsic'}))
+        notify(make({to: address, type: 'user'}))
+        notify(make({to: address, type: 'peer'}))
+        notify(make({to: address, type: '@todo'}))
+        notify(make({to: address, type: 'hoster'}))
+        notify(make({to: address, type: 'encoder'}))
+        notify(make({to: address, type: 'attestor'}))
+        notify(make({to: address, type: 'chat', data: { eve_says: { feedkey: { type: 'Buffer', data: [76,160,52,198,102,163,249,71,227,149,111,218,4,197,117,167,124,176,47,176,225,53,187,139,207,121,189,202,71,102,84,184] }, topic: { type: 'Buffer', data: [94,32,85,249,12,183,242,125,62,191,244,253,212,164,127,243,199,182,126,35,11,188,176,86,240,42,193,107,71,92,16,193] } } , refs: ["log1: janice, {\"address\":\"5Exp7NViUbfrRrFNPbH33F6GWXJZGwqzE3tyJucUfnLZza6F\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[246,154,158,32,110,242,75,85,125,75,44,97,87,97,125,84,16,91,223,24,142,49,35,89,3,195,18,50,242,76,232,172]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[112,34,215,111,71,153,9,239,173,159,29,36,39,194,233,89,140,136,238,173,89,202,41,77,201,13,27,92,53,12,140,217]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":32}", "log2: two, {\"address\":\"5Gb39p9GLpL4MxkhqY3oBohva4nnF9FGu9NFSE9vom6jpujW\",\"noiseKey\":{\"type\":\"Buffer\",\"data\":[122,245,207,238,106,50,236,161,87,166,209,147,126,179,75,107,146,252,98,69,66,104,15,202,189,1,166,107,131,149,83,158]},\"signingKey\":{\"type\":\"Buffer\",\"data\":[134,88,213,147,241,23,157,79,167,171,44,123,117,117,173,115,80,29,7,100,174,216,180,56,30,125,45,152,195,9,61,182]},\"form\":{},\"idleStorage\":0,\"rating\":0,\"balance\":0,\"id\":38}"] } }))
+        notify(make({to: address, type: 'expanded'}))
+        notify(make({to: address, type: 'collapsed'}))
+    }
     const click = i_button({name: 'click', body: 'Click', 
     theme: {
         props: { 
@@ -270,73 +267,53 @@ function demo () {
     return app
 
     function click_event (target) {
-        const make = message_maker(`${target} / button / PLAN / handle_click_event`)
-        const message = make({type: 'click'})
-        recipients['logs'](message)
+        const { make, notify, address } = recipients['logs']
+        notify(make({ to: address, type: 'click' }))
         trigger_event(target)
     }
     function trigger_event(target) {
-        const make = message_maker(`${target} / button / PLAN / handle_trigger_event`)
-        const message = make({type: 'triggered'})
-        recipients['logs'](message)
+        const { make, notify, address } = recipients['logs']
+        notify(make({ to: address, type: 'triggered' }))
     }
     function open_event (target) {
-        const make = message_maker(`${target} / button / PLAN / handle_open_event`)
-        const message = make({type: 'opened'})
-        recipients['logs'](message)
+        const { make, notify, address } = recipients['logs']
+        notify(make({ to: address, type: 'opened' }))
     }
     function close_event (target) {
-        const make = message_maker(`${target} / button / USER / handle_error_event`)
-        const message = make({type: 'closed'})
-        recipients['logs'](message)
+        const { make, notify, address } = recipients['logs']
+        notify(make({ to: address, type: 'closed' }))
     }
     function error_event (target) {
-        const make = message_maker(`${target} / button / USER / handle_error_event`)
-        const message = make({type: 'error'})
-        recipients['logs'](message)
+        const { make, notify, address } = recipients['logs']
+        notify(make({ to: address, type: 'error' }))
     }
     function warning_event (target) {
-        const make = message_maker(`${target} / button / PLAN / handle_warning_event`)
-        const message = make({type: 'warning'})
-        recipients['logs'](message)
+        const { make, notify, address } = recipients['logs']
+        notify(make({ to: address, type: 'warning' }))
     }
     function toggle_event(target) {
         is_checked = !is_checked
         const type = is_checked === true ? 'checked' : 'unchecked'
         toggle.ariaChecked = is_checked
-        const make = message_maker(`${target} / button / JOBS / handle_toggle_event`)
-        const message = make({type})
-        recipients['logs'](message)
+        const { make, notify, address } = recipients['logs']
+        notify(make({ to: address, type }))
     }
     function selected_event (target) {
         is_selected = !is_selected
         const type = is_selected === true ? 'selected' : 'unselected'
         select.ariaSelected = is_selected
-        const make = message_maker(`${target} / button / PLAN / handle_selected_event`)
-        const message = make({type})
-        recipients['logs'](message)
+        const { make, notify, address } = recipients['logs']
+        notify(make({ to: address, type }))
     }
-    function handle_click (from) {
-        const [target, type, flow] = from.split(" ").join("").split("/")
-        if (target === 'select') return selected_event(target)
-        if (target === 'open') return open_event(target)
-        if (target === 'close') return close_event(target)
-        if (target === 'error') return error_event(target)
-        if (target === 'warning') return warning_event(target)
+    function handle_click (from, type) {
+        const name = names[from].name
+        if (name === 'select') return selected_event(name)
+        if (name === 'open') return open_event(name)
+        if (name === 'close') return close_event(name)
+        if (name === 'error') return error_event(name)
+        if (name === 'warning') return warning_event(name)
         if (type === 'button') return click_event(target)
         if (type === 'switch') return toggle_event(target)
-    }
-    function protocol (name) {
-        return sender => {
-            recipients[name] = sender
-            return (msg) => {
-                let {head, type, data, refs, meta} = msg
-                // console.table( msg )
-                // console.log( `type: ${type}, file: ${file}, line: ${line}`);
-                if (type === 'click') return handle_click(head[0])
-                recipients['logs'](msg)
-            }
-        }
     }
 }
 
@@ -580,7 +557,7 @@ button:hover {
 
 document.body.append( demo() )
 }).call(this)}).call(this,"/demo/demo.js")
-},{"..":44,"../src/node_modules/make-grid":47,"bel":5,"csjs-inject":8,"datdot-ui-button":25,"fullscreen":2,"head":3,"message-maker":40}],2:[function(require,module,exports){
+},{"..":48,"../src/node_modules/make-grid":51,"bel":5,"csjs-inject":8,"datdot-ui-button":25,"fullscreen":2,"head":3,"message-maker":44}],2:[function(require,module,exports){
 module.exports = fullscreen
 
 function fullscreen () {
@@ -849,7 +826,7 @@ module.exports = hyperx(belCreateElement, {comments: true})
 module.exports.default = module.exports
 module.exports.createElement = belCreateElement
 
-},{"./appendChild":4,"hyperx":42}],6:[function(require,module,exports){
+},{"./appendChild":4,"hyperx":46}],6:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
@@ -868,7 +845,7 @@ function csjsInserter() {
 module.exports = csjsInserter;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"csjs":11,"insert-css":43}],7:[function(require,module,exports){
+},{"csjs":11,"insert-css":47}],7:[function(require,module,exports){
 'use strict';
 
 module.exports = require('csjs/get-css');
@@ -1360,6 +1337,8 @@ var icon_count = 0
 module.exports = i_button
 
 function i_button (opts, parent_protocol) {
+    const {name, role = 'button', controls, body = '', icons = {}, cover, classlist = null, mode = '', state, expanded = undefined, current = undefined, selected = false, checked = false, disabled = false, theme = {}} = opts
+    const el = make_element({name: 'i-button', classlist, role })
 //-------------------------------------------------
     const myaddress = `${__filename}-${id++}`
     const inbox = {}
@@ -1400,9 +1379,9 @@ function i_button (opts, parent_protocol) {
         }
     }
 //-------------------------------------------------
-    const {name, role = 'button', controls, body = '', icons = {}, cover, classlist = null, mode = '', state, expanded = undefined, current = undefined, selected = false, checked = false, disabled = false, theme = {}} = opts
-    const {icon} = icons
-    const main_icon = i_icon({ name: icon?.name, path: icon?.path}, make_protocol(`${icon?.name}-${icon_count++}`))
+
+    const {icon = {}, select = { name: 'check' }, list = { name: 'arrow-down'} } = icons
+    if (icon?.name) var main_icon = i_icon({ name: icon.name, path: icon.path}, make_protocol(`${icon.name}-${icon_count++}`))
     let is_current = current
     let is_checked = checked
     let is_disabled = disabled
@@ -1410,10 +1389,9 @@ function i_button (opts, parent_protocol) {
     let is_expanded = 'expanded' in opts ? expanded : void 0
 
     function widget () {
-        const { notify, address, make } = recipients['parent']
+        const { make } = recipients['parent']
         const data = role === 'tab' ?  {selected: is_current ? 'true' : is_selected, current: is_current} : role === 'switch' ? {checked: is_checked} : role === 'listbox' ? {expanded: is_expanded} : disabled ? {disabled} : role === 'option' ? {selected: is_selected, current: is_current} : null
         notify(make({ to: address, type: 'ready', data }))
-        const el = make_element({name: 'i-button', classlist, role })
         const shadow = el.attachShadow({mode: 'closed'})
         const text = make_element({name: 'span', classlist: 'text'})
         const avatar = make_element({name: 'span', classlist: 'avatar'})
@@ -1429,170 +1407,173 @@ function i_button (opts, parent_protocol) {
         el.setAttribute('aria-label', name)
         text.append(body)
         style_sheet(shadow, style)
-        append_items()
-        init_attr()
+        const items = [main_icon, add_cover, add_text]
+        append_items(items, shadow, option, listbox)
+        init_attr(el)
         return el
+    }
 
-        function init_attr () {
-            // define conditions
-            if (state) set_attr({aria: 'aria-live', prop: 'assertive'})
-            if (role === 'tab') {
-                set_attr({aria: 'selected', prop: is_selected})
-                set_attr({aria: 'controls', prop: controls})
-                el.setAttribute('tabindex', is_current ? 0 : -1)
-            }
-            if (role === 'switch') {
-                set_attr({aria: 'checked', prop: is_checked})
-            }
-            if (role === 'listbox') set_attr({aria: 'haspopup', prop: role})
-            if (disabled) {
-                set_attr({aria: 'disabled', prop: is_disabled})
-                el.setAttribute('disabled', is_disabled)
-            } 
-            if (is_checked) set_attr({aria: 'checked', prop: is_checked})
-            if (role.match(/option/)) {
-                is_selected = is_current ? is_current : is_selected
-                set_attr({aria: 'selected', prop: is_selected})
-            }
-            if (expanded !== undefined) {
-                set_attr({aria: 'expanded', prop: is_expanded})
-            }
-            // make current status
-            if (current !== undefined) set_attr({aria: 'current', prop: is_current})
-        }
-
-        function set_attr ({aria, prop}) {
-            el.setAttribute(`aria-${aria}`, prop)
-        }
-
-        // make element to append into shadowDOM
-        function append_items() {           
-            const items = [main_icon, add_cover, add_text]
-            const target = role === 'listbox' ? listbox : role === 'option' ?  option : shadow
-            // list of listbox or dropdown menu
-            if (role.match(/option/)) shadow.append(i_icon({ name: 'check'},  make_protocol(`check-${icon_count++}`)), option)
-            // listbox or dropdown button
-            if (role.match(/listbox/)) shadow.append(i_icon({ name: 'arrow-down' }, make_protocol(`arrow-down-${icon_count++}`)), listbox)
-            items.forEach( item => {
-                if (item === undefined) return
-                target.append(item)
-            })
-        }
-
-        // toggle
-        function switched_event (data) {
-            const {checked} = data
-            is_checked = checked
-            if (is_checked) return set_attr({aria: 'checked', prop: is_checked})
-            else el.removeAttribute('aria-checked')
-        }
-        function expanded_event (data) {
-            is_expanded = data
-            set_attr({aria: 'expanded', prop: is_expanded})
-        }
-        function collapsed_event (data) {
-            is_expanded = data
-            set_attr({aria: 'expanded', prop: is_expanded})
-        }
-        // tab selected
-        function tab_selected_event ({selected}) {
-            is_selected = selected
+    function init_attr (el) {
+        // define conditions
+        if (state) set_attr({aria: 'aria-live', prop: 'assertive'})
+        if (role === 'tab') {
             set_attr({aria: 'selected', prop: is_selected})
+            set_attr({aria: 'controls', prop: controls})
             el.setAttribute('tabindex', is_current ? 0 : -1)
         }
-        function list_selected_event (state) {
-            is_selected = state
+        if (role === 'switch') {
+            set_attr({aria: 'checked', prop: is_checked})
+        }
+        if (role === 'listbox') set_attr({aria: 'haspopup', prop: role})
+        if (disabled) {
+            set_attr({aria: 'disabled', prop: is_disabled})
+            el.setAttribute('disabled', is_disabled)
+        } 
+        if (is_checked) set_attr({aria: 'checked', prop: is_checked})
+        if (role.match(/option/)) {
+            is_selected = is_current ? is_current : is_selected
             set_attr({aria: 'selected', prop: is_selected})
-            if (mode === 'single-select') {
-                is_current = is_selected
-                set_attr({aria: 'current', prop: is_current})
-            }
-            // option is selected then send selected items to listbox button
-            if (is_selected) notify(make({ to: address, type: 'changed', data: {text: body, cover, icon } }))
         }
-        function changed_event (data) {
-            const {text, cover, icon, title} = data
-            // new element
-            const new_text = make_element({name: 'span', classlist: 'text'})
-            const new_avatar = make_element({name: 'span', classlist: 'avatar'})
-            // old element
-            const old_icon = shadow.querySelector('.icon')
-            const old_avatar = shadow.querySelector('.avatar')
-            const old_text = shadow.querySelector('.text')
-            // change content for button or switch or tab
-            if (role.match(/button|switch|tab/)) {
-                el.setAttribute('aria-label', text || title)
-                if (text) {
-                    if (old_text) old_text.textContent = text
-                } else {
-                    if (old_text) old_text.remove()
-                }
-                if (cover) {
-                    if (old_avatar) {
-                        const img = old_avatar.querySelector('img')
-                        img.alt = text || title
-                        img.src = cover
-                    } else {
-                        new_avatar.append(make_img({src: cover, alt: text || title}))
-                        shadow.insertBefore(new_avatar, shadow.firstChild)
-                    }
-                } else {
-                    if (old_avatar) old_avatar.remove()
-                }
-                if (icon) {
-                    const new_icon = i_icon({ name: icon.name, path: icon.path}, make_protocol(`${icon.name}-${icon_count++}`))
-                    if (old_icon) old_icon.parentNode.replaceChild(new_icon, old_icon)
-                    else shadow.insertBefore(new_icon, shadow.firstChild)
-                } else {
-                    if (old_icon) old_icon.remove()
-                }
-            }
-            // change content for listbox
-            if (role.match(/listbox/)) {
-                listbox.innerHTML = ''
-                if (icon) {
-                    const new_icon = i_icon({ name: icon.name, path: icon.path}, make_protocol(`${icon.name}-${icon_count++}`))
-                    if (role.match(/listbox/)) listbox.append(new_icon)
-                }
-                if (cover) {
-                    new_avatar.append(make_img({src: cover, alt: text}))
-                    if (role.match(/listbox/)) listbox.append(new_avatar)
-                }
-                if (text) {
-                    new_text.append(text)
-                    if (role.match(/listbox/)) listbox.append(new_text)
-                }
-            } 
+        if (expanded !== undefined) {
+            set_attr({aria: 'expanded', prop: is_expanded})
         }
-        // button click
-        function handle_click () {
-            const type = 'click'
-            if ('current' in opts) {
-                notify(make({ to: address, type: 'current', data: {name, current: is_current } }) )
+        // make current status
+        if (current !== undefined) set_attr({aria: 'current', prop: is_current})
+    }
+
+    // make element to append into shadowDOM
+    function append_items(items, shadow, option, listbox) {         
+        const [main_icon, add_cover, add_text] = items
+        const target = role === 'listbox' ? listbox : role === 'option' ?  option : shadow
+        // list of listbox or dropdown menu
+        if (role.match(/option/)) shadow.append(i_icon(list,  make_protocol(`${list.name}-${icon_count++}`)), option)
+        // listbox or dropdown button
+        if (role.match(/listbox/)) shadow.append(i_icon(select, make_protocol(`${select.name}-${icon_count++}`)), listbox)
+        items.forEach( item => {
+            if (item === undefined) return
+            target.append(item)
+        })
+    }
+
+    function set_attr ({aria, prop}) {
+        el.setAttribute(`aria-${aria}`, prop)
+    }
+
+    // toggle
+    function switched_event (data) {
+        const {checked} = data
+        is_checked = checked
+        if (is_checked) return set_attr({aria: 'checked', prop: is_checked})
+        else el.removeAttribute('aria-checked')
+    }
+    function expanded_event (data) {
+        is_expanded = data
+        set_attr({aria: 'expanded', prop: is_expanded})
+    }
+    function collapsed_event (data) {
+        is_expanded = data
+        set_attr({aria: 'expanded', prop: is_expanded})
+    }
+    // tab selected
+    function tab_selected_event ({selected}) {
+        is_selected = selected
+        set_attr({aria: 'selected', prop: is_selected})
+        el.setAttribute('tabindex', is_current ? 0 : -1)
+    }
+    function list_selected_event (state) {
+        is_selected = state
+        set_attr({aria: 'selected', prop: is_selected})
+        if (mode === 'single-select') {
+            is_current = is_selected
+            set_attr({aria: 'current', prop: is_current})
+        }
+        // option is selected then send selected items to listbox button
+        const { make } = recipients['parent']
+        if (is_selected) notify(make({ to: address, type: 'changed', data: {text: body, cover, icon } }))
+    }
+    function changed_event (data) {
+        const {text, cover, icon, title} = data
+        // new element
+        const new_text = make_element({name: 'span', classlist: 'text'})
+        const new_avatar = make_element({name: 'span', classlist: 'avatar'})
+        // old element
+        const old_icon = shadow.querySelector('.icon')
+        const old_avatar = shadow.querySelector('.avatar')
+        const old_text = shadow.querySelector('.text')
+        // change content for button or switch or tab
+        if (role.match(/button|switch|tab/)) {
+            el.setAttribute('aria-label', text || title)
+            if (text) {
+                if (old_text) old_text.textContent = text
+            } else {
+                if (old_text) old_text.remove()
             }
-            if (expanded !== undefined) {
-                const type = !is_expanded ? 'expanded' : 'collapsed'
-                notify(make({ to: address, type, data: {name, expanded: is_expanded } }))
+            if (cover) {
+                if (old_avatar) {
+                    const img = old_avatar.querySelector('img')
+                    img.alt = text || title
+                    img.src = cover
+                } else {
+                    new_avatar.append(make_img({src: cover, alt: text || title}))
+                    shadow.insertBefore(new_avatar, shadow.firstChild)
+                }
+            } else {
+                if (old_avatar) old_avatar.remove()
             }
-            if (role === 'button') {
-                return notify( make({type, to: controls} ))
+            if (icon) {
+                const new_icon = i_icon({ name: icon.name, path: icon.path}, make_protocol(`${icon.name}-${icon_count++}`))
+                if (old_icon) old_icon.parentNode.replaceChild(new_icon, old_icon)
+                else shadow.insertBefore(new_icon, shadow.firstChild)
+            } else {
+                if (old_icon) old_icon.remove()
             }
-            if (role === 'tab') {
-                if (is_current) return
-                is_selected = !is_selected
-                return notify(make({ to: address, type, data: {name, selected: is_selected } }) )
+        }
+        // change content for listbox
+        if (role.match(/listbox/)) {
+            listbox.innerHTML = ''
+            if (icon) {
+                const new_icon = i_icon({ name: icon.name, path: icon.path}, make_protocol(`${icon.name}-${icon_count++}`))
+                if (role.match(/listbox/)) listbox.append(new_icon)
             }
-            if (role === 'switch') {
-                return notify(make({ to: address, type, data: {name, checked: is_checked } }) )
+            if (cover) {
+                new_avatar.append(make_img({src: cover, alt: text}))
+                if (role.match(/listbox/)) listbox.append(new_avatar)
             }
-            if (role === 'listbox') {
-                is_expanded = !is_expanded
-                return notify(make({ to: address, type, data: {name, expanded: is_expanded } }))
+            if (text) {
+                new_text.append(text)
+                if (role.match(/listbox/)) listbox.append(new_text)
             }
-            if (role === 'option') {
-                is_selected = !is_selected
-                return notify(make({ to: address, type, data: {name, selected: is_selected, content: is_selected ? {text: body, cover, icon} : '' } }) )
-            }
+        } 
+    }
+    // button click
+    function handle_click () {
+        const { make } = recipients['parent']
+        const type = 'click'
+        if ('current' in opts) {
+            notify(make({ to: address, type: 'current', data: {name, current: is_current } }) )
+        }
+        if (expanded !== undefined) {
+            const type = !is_expanded ? 'expanded' : 'collapsed'
+            notify(make({ to: address, type, data: {name, expanded: is_expanded } }))
+        }
+        if (role === 'button') {
+            return notify( make({type, to: controls} ))
+        }
+        if (role === 'tab') {
+            if (is_current) return
+            is_selected = !is_selected
+            return notify(make({ to: address, type, data: {name, selected: is_selected } }) )
+        }
+        if (role === 'switch') {
+            return notify(make({ to: address, type, data: {name, checked: is_checked } }) )
+        }
+        if (role === 'listbox') {
+            is_expanded = !is_expanded
+            return notify(make({ to: address, type, data: {name, expanded: is_expanded } }))
+        }
+        if (role === 'option') {
+            is_selected = !is_selected
+            return notify(make({ to: address, type, data: {name, selected: is_selected, content: is_selected ? {text: body, cover, icon} : '' } }) )
         }
     }
    
@@ -2048,16 +2029,16 @@ function i_button (opts, parent_protocol) {
     return widget()
 }
 }).call(this)}).call(this,"/node_modules/datdot-ui-button/src/index.js")
-},{"datdot-ui-icon":34,"make-element":26,"make-grid":27,"make-image":28,"message-maker":29,"support-style-sheet":30}],26:[function(require,module,exports){
+},{"datdot-ui-icon":33,"make-element":26,"make-grid":27,"make-image":28,"message-maker":44,"support-style-sheet":29}],26:[function(require,module,exports){
 module.exports = make_element
 
 function make_element({name = '', classlist = null, role }) {
     const el = document.createElement(name)
-    if (classlist) ste_class()
+    if (classlist) set_class()
     if (role) set_role()
     return el
 
-    function ste_class () {
+    function set_class () {
         el.className = classlist
     }
     
@@ -2156,15 +2137,6 @@ function img ({src, alt}) {
     return img
 }
 },{}],29:[function(require,module,exports){
-module.exports = function message_maker (from) {
-    let msg_id = 0
-    return function make ({to, type, data = null, refs = []}) {
-        const stack = (new Error().stack.split('\n').slice(2).filter(x => x.trim()))
-        const message = { head: [from, to, ++msg_id], refs, type, data, meta: { stack }}
-        return message
-    }
-}
-},{}],30:[function(require,module,exports){
 module.exports = support_style_sheet
 function support_style_sheet (root, style) {
     return (() => {
@@ -2180,7 +2152,7 @@ function support_style_sheet (root, style) {
         }
     })()
 }
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 (function (__filename){(function (){
 const style_sheet = require('support-style-sheet')
 const message_maker = require('message-maker')
@@ -2429,7 +2401,7 @@ function i_dropdown (opts, parent_protocol) {
 
 
 }).call(this)}).call(this,"/node_modules/datdot-ui-dropdown/src/index.js")
-},{"datdot-ui-button":25,"make-list":32,"message-maker":40,"support-style-sheet":33}],32:[function(require,module,exports){
+},{"datdot-ui-button":25,"make-list":31,"message-maker":44,"support-style-sheet":32}],31:[function(require,module,exports){
 (function (__filename){(function (){
 const i_list = require('datdot-ui-list')
 const message_maker = require('message-maker')
@@ -2519,10 +2491,10 @@ function make_list ({page, name, option = {}, mode, hidden}, parent_protocol) {
         })
     }
 }
-}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-dropdown@c96baa008e0577a75a4a2044471c181970976b20/node_modules/datdot-ui-dropdown/src/node_modules/make-list.js")
-},{"datdot-ui-list":37,"message-maker":40}],33:[function(require,module,exports){
-arguments[4][30][0].apply(exports,arguments)
-},{"dup":30}],34:[function(require,module,exports){
+}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-dropdown@33f8bcb041c9061a14232822825fa7bcf170aebb/node_modules/datdot-ui-dropdown/src/node_modules/make-list.js")
+},{"datdot-ui-list":41,"message-maker":44}],32:[function(require,module,exports){
+arguments[4][29][0].apply(exports,arguments)
+},{"dup":29}],33:[function(require,module,exports){
 (function (__filename){(function (){
 const style_sheet = require('support-style-sheet')
 const svg = require('svg')
@@ -2609,10 +2581,10 @@ module.exports = ({name, path, is_shadow = false, theme}, parent_protocol) => {
     return symbol
 }
 
-}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-button@bf39b12f2e2eed4d79425ba00059af6247650ecb/node_modules/datdot-ui-icon/src/index.js")
-},{"message-maker":40,"support-style-sheet":35,"svg":36}],35:[function(require,module,exports){
-arguments[4][30][0].apply(exports,arguments)
-},{"dup":30}],36:[function(require,module,exports){
+}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-button@036821f16611a24c307f2e9601b719db79dcd703/node_modules/datdot-ui-icon/src/index.js")
+},{"message-maker":44,"support-style-sheet":34,"svg":35}],34:[function(require,module,exports){
+arguments[4][29][0].apply(exports,arguments)
+},{"dup":29}],35:[function(require,module,exports){
 module.exports = svg
 function svg (path) {
     const span = document.createElement('span')
@@ -2626,10 +2598,306 @@ function svg (path) {
     }
     return span
 }   
-},{}],37:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
+(function (__filename){(function (){
+const style_sheet = require('support-style-sheet')
+const message_maker = require('message-maker')
+const make_img = require('make-image')
+const make_element = require('make-element')
+const make_grid = require('make-grid')
+const i_icon = require('datdot-ui-icon')
+
+
+var id = 0
+var icon_count = 0
+
+module.exports = i_link
+
+function i_link (opts, parent_protocol) {
+//-------------------------------------------------
+    const myaddress = `${__filename}-${id++}`
+    const inbox = {}
+    const outbox = {}
+    const recipients = {}
+    const names = {}
+    const message_id = to => (outbox[to] = 1 + (outbox[to]||0))
+
+    const {notify, address} = parent_protocol(myaddress, listen)
+    names[address] = recipients['parent'] = { name: 'parent', notify, address, make: message_maker(myaddress) }
+    notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
+
+    function make_protocol (name) {
+        return function protocol (address, notify) {
+            names[address] = recipients[name] = { name, address, notify, make: message_maker(myaddress) }
+            return { notify: listen, address: myaddress }
+        }
+    }
+
+    function listen (msg) {
+        const { head, refs, type, data, meta } = msg // receive msg
+        inbox[head.join('/')] = msg                  // store msg
+        const [from, to] = head
+        console.log('New message', { from, name: names[from].name, msg })
+    }
+    
+//-------------------------------------------------
+    const { name, role='link', body, link = {}, icons = {}, classlist, cover, disabled = false, theme = {}} = opts
+    const { icon } = icons
+    if (icon?.name) var main_icon = i_icon({ name: icon.name, path: icon.path}, make_protocol(`${icon.name}-${icon_count++}`))
+    
+    let {url = '#', target = '_self'} = link
+    let is_disabled = disabled
+
+    function widget () {
+        const el = make_element({name: 'i-link', role})
+        const shadow = el.attachShadow({mode: 'closed'})
+        const text = make_element({name: 'span', classlist: 'text'})
+        const avatar = make_element({name: 'span', classlist: 'avatar'})
+        const { notify, address, make } = recipients['parent']
+        text.append(body)
+        el.setAttribute('aria-label', body)
+        el.setAttribute('href', url)
+        if (is_disabled) set_attr ({aria: 'disabled', prop: is_disabled})
+        if (!target.match(/self/)) el.setAttribute('target', target)
+        if (classlist) el.classList.add(classlist)
+        style_sheet(shadow, style)
+        // check icon, cover and body if has value
+        const add_cover = typeof cover === 'string' ? avatar : undefined
+        const add_icon = icon ? main_icon : undefined
+        const add_text = body ? typeof body === 'string' && (add_icon || add_cover ) ? text : body : typeof body === 'object' && body.localName === 'div' ? body : undefined
+        if (typeof cover === 'string') avatar.append(make_img({src: cover, alt: name}))
+        if (typeof cover === 'object') notify(make({ to: address, type: 'error', data: `cover[${typeof cover}] must to be a string` }))
+        if (add_icon) shadow.append(main_icon)
+        if (add_cover) shadow.append(add_cover)
+        if (add_text) shadow.append(add_text)
+        notify(make({to: address, type: 'ready'}))
+        if (!is_disabled) el.onclick = handle_open_link
+        
+        return el
+
+        function set_attr ({aria, prop}) {
+            el.setAttribute(`aria-${aria}`, prop)
+        }
+    
+        function handle_open_link () {
+            if (target.match(/_/)) {
+                window.open(url, target)
+            }
+            if (target.match(/#/) && target.length > 1) {
+                const el = document.querySelector(target)
+                el.src = url
+            }
+            notify(make({ to: address, type: 'go to', data: { url, window: target } }))
+        }
+    }
+
+    // insert CSS style
+    const custom_style = theme ? theme.style : ''
+    // set CSS variables
+    const {props = {}, grid = {}} = theme
+    const {
+        // default        
+        padding, margin, width, height, opacity,
+        // size
+        size, size_hover, disabled_size,
+        // weight
+        weight, weight_hover, disabled_weight,
+        // color
+        color, color_hover, color_focus, disabled_color,
+        // background-color    
+        bg_color, bg_color_hover, disabled_bg_color,
+        // deco
+        deco, deco_hover, disabled_deco,
+        // border
+        border_width, border_style, border_opacity, 
+        border_color, border_color_hover, border_radius,
+        // shadowbox
+        shadow_color, shadow_color_hover,
+        offset_x, offset_y, offset_x_hover, offset_y_hover, 
+        blur, blur_hover, shadow_opacity, shadow_opacity_hover,
+        // icon
+        icon_size, icon_size_hover, disabled_icon_size,
+        icon_fill, icon_fill_hover, disabled_icon_fill,
+        // avatar
+        avatar_width, avatar_height, avatar_radius, 
+        avatar_width_hover, avatar_height_hover,
+        scale, scale_hover
+    } = props
+
+    const grid_link = grid.link ? grid.link : {auto: {auto_flow: 'column'}, align: 'items-center', gap: '4px'}
+    const style = `
+    :host(i-link) {
+        --size: ${size ? size : 'var(--link-size)'};
+        --weight: ${weight ? weight : 'var(--weight300)'};
+        --color: ${color ? color : 'var(--link-color)'};
+        --color-focus: ${color_focus ? color_focus : 'var(--link-color-focus)'};
+        --bg-color: ${bg_color ? bg_color : 'var(--link-bg-color)'};
+        --opacity: ${opacity ? opacity : '0'};
+        --deco: ${deco ? deco : 'none'};
+        --padding: ${padding ? padding : '0'};
+        --margin: ${margin ? margin : '0'};
+        --icon-size: ${icon_size ? icon_size : 'var(--link-icon-size)'};
+        display: inline-grid;
+        font-size: var(--size);
+        font-weight: var(--weight);
+        color: hsl(var(--color));
+        background-color: hsla(var(--bg-color), var(--opacity));
+        text-decoration: var(--deco);
+        padding: var(--padding);
+        margin: var(--margin);
+        transition: color .5s, background-color .5s, font-size .5s, font-weight .5s, opacity .5s ease-in-out;
+        cursor: pointer;
+        ${make_grid(grid_link)}
+    }
+    :host(i-link:hover) {
+        --color: ${color_hover ? color_hover : 'var(--link-color-hover)'};
+        --size: ${size_hover ? size_hover : 'var(--link-size-hover)'};
+        --deco: ${deco_hover ? deco_hover : 'underline'};
+        --bg-color: ${bg_color_hover ? bg_color_hover : 'var(--color-white)'};
+        --opacity: ${opacity ? opacity : '0'};
+        text-decoration: var(--deco);
+    }
+    :host(i-link:focus) {
+        --color: ${color_focus ? color_focus : 'var(--link-color-focus)'};
+    }
+    :host(i-link) img {
+        --scale: ${scale ? scale : '1'};
+        width: 100%;
+        height: 100%;
+        transform: scale(var(--scale));
+        transition: transform 0.3s linear;
+        object-fit: cover;
+        border-radius: var(--avatar-radius);
+    }
+    :host(i-link:hover) img {
+        --scale: ${scale_hover ? scale_hover : '1.2'};
+    }
+    :host(i-link) svg {
+        width: 100%;
+        height: auto;
+    }
+    :host(i-link) g {
+        --icon-fill: ${icon_fill ? icon_fill : 'var(--link-icon-fill)'};
+        fill: hsl(var(--icon-fill));
+        transition: fill 0.05s ease-in-out;
+    }
+    :host(i-link:hover) g, :host(i-link:hover) path{
+        --icon-fill: ${icon_fill_hover ? icon_fill_hover : 'var(--link-icon-fill-hover)'};
+    }
+    :host(i-link) .text {
+        ${make_grid(grid.text)}
+    }
+    :host(i-link) .icon {
+        width: var(--icon-size);
+        max-width: 100%;
+        ${make_grid(grid.icon)}
+    }
+    :host(i-link:hover) .icon {
+        --icon-size: ${icon_size_hover ? icon_size_hover : 'var(--link-icon-size)'};
+    }
+    :host(i-link) .avatar {
+        --avatar-width: ${avatar_width ? avatar_width : 'var(--link-avatar-width)'};
+        --avatar-height: ${avatar_height ? avatar_height : 'var(--link-avatar-height)'};
+        --avatar-radius: ${avatar_radius ? avatar_radius : 'var(--link-avatar-radius)'};
+        display: block;
+        width: var(--avatar-width);
+        height: var(--avatar-height);
+        border-radius: var(--avatar-radius);
+        -webkit-mask-image: -webkit-radial-gradient(center, white, black);
+        max-width: 100%;
+        max-height: 100%;
+        ${make_grid(grid.avatar)}
+        transition: width 0.2s, height 0.2s linear;
+    }
+    :host(i-link:hover) .avatar {
+        --avatar-width: ${avatar_width_hover ? avatar_width_hover : 'var(--link-avatar-width-hover)'};
+        --avatar-height: ${avatar_height_hover ? avatar_height_hover : 'var(--link-avatar-height-hover)'};
+    }
+    :host(i-link[role="menuitem"]) {
+        --size: ${size ? size : 'var(--menu-size)'};
+        --color: ${color ? color : 'var(--menu-color)'};
+        --weight: ${weight ? weight : 'var(--menu-weight)'};
+        background-color: transparent;
+    }
+    :host(i-link[role="menuitem"]:hover) {
+        --size: ${size ? size : 'var(--menu-size-hover)'};
+        --color: ${color_hover ? color_hover : 'var(--menu-color-hover)'};
+        --weight: ${weight ? weight : 'var(--menu-weight-hover)'};
+        text-decoration: none;
+        background-color: transparent;
+    }
+    :host(i-link[role="menuitem"]:focus) {
+        --color: var(--color-focus);
+    }
+    :host(i-link[role="menuitem"]) .icon {
+        --icon-size: ${icon_size ? icon_size : 'var(--menu-icon-size)'};
+    }
+    :host(i-link[role="menuitem"]) g {
+        --icon-fill: ${icon_fill ? icon_fill : 'var(--menu-icon-fill)'};
+    }
+    :host(i-link[role="menuitem"]:hover) g {
+        --icon-fill: ${icon_fill_hover ? icon_fill_hover : 'var(--menu-icon-fill-hover)'};
+    }
+    :host(i-link[aria-disabled="true"]), :host(i-link[aria-disabled="true"]:hover) {
+        --size: ${disabled_size ? disabled_size : 'var(--link-disabled-size)'};
+        --color: ${disabled_color ? disabled_color : 'var(--link-disabled-color)'};
+        text-decoration: none;
+        cursor: not-allowed;
+    }
+    :host(i-link[disabled]) g,
+    :host(i-link[disabled]) path,
+    :host(i-link[disabled]:hover) g,
+    :host(i-link[disabled]:hover) path,
+    :host(i-link[role][disabled]) g,
+    :host(i-link[role][disabled]) path,
+    :host(i-link[role][disabled]:hover) g,
+    :host(i-link[role][disabled]:hover) path
+    {
+        --icon-fill: ${disabled_icon_fill ? disabled_icon_fill : 'var(--link-disabled-icon-fill)'};
+    }
+    :host(i-link[disabled]) .avatar {
+        opacity: 0.6;
+    }
+    :host(i-link.right) {
+        flex-direction: row-reverse;
+    }
+    ${custom_style}
+    `
+    return widget()
+}
+}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-list@38604900402b741439363ebcfe1092ae7b05592e/node_modules/datdot-ui-link/src/index.js")
+},{"datdot-ui-icon":33,"make-element":37,"make-grid":38,"make-image":39,"message-maker":44,"support-style-sheet":40}],37:[function(require,module,exports){
+module.exports = make_element
+
+function make_element({name = '', classlist = null, role }) {
+    const el = document.createElement(name)
+    if (classlist) ste_class()
+    if (role) set_role()
+    return el
+
+    function ste_class () {
+        el.className = classlist
+    }
+    
+    function set_role () {
+        const tabindex = role.match(/button|switch/) ? 0 : -1
+        el.setAttribute('role', role)
+        el.setAttribute('tabindex',  tabindex)
+    }
+}
+
+
+},{}],38:[function(require,module,exports){
+arguments[4][27][0].apply(exports,arguments)
+},{"dup":27}],39:[function(require,module,exports){
+arguments[4][28][0].apply(exports,arguments)
+},{"dup":28}],40:[function(require,module,exports){
+arguments[4][29][0].apply(exports,arguments)
+},{"dup":29}],41:[function(require,module,exports){
 (function (__filename){(function (){
 const style_sheet = require('support-style-sheet')
 const button = require('datdot-ui-button')
+const i_link = require('datdot-ui-link')
 const message_maker = require('message-maker')
 const make_grid = require('make-grid')
 module.exports = i_list
@@ -2660,49 +2928,65 @@ function i_list (opts = {}, parent_protocol) {
         const { head, refs, type, data, meta } = msg // receive msg
         inbox[head.join('/')] = msg                  // store msg
         const [from, to] = head
-        console.log('New message', { from, name: recipients[from].name, msg })
+        // console.log('New message', { from, name: names[from].name, msg, data })
         // handle
+        console.log({from, name: names[from].name, type, recipients})
         if (from === 'menuitem') return handle_click_event(msg)
-        if (type === 'click' && role === 'option') return handle_select_event({from, to, data})
         if (type.match(/expanded|collapsed/)) return handle_expanded_event(data)
+        if (type === 'click') return handle_select_event({from, to, data})
+        // if (type === 'click' && role === 'option') return handle_select_event({from, to, data})
     }
 // -----------------------------------
-    const {name, body = [], mode = 'multiple-select', expanded = false, hidden = true, theme = {} } = opts
-    let is_hidden = hidden
-    let is_expanded = !is_hidden ? !is_hidden : expanded
-    const store_selected = []
-    const {grid} = theme
+    const {name, body = [], mode = 'listbox-multi', expanded = false, hidden = true, theme = {} } = opts
+    // mode: 'compact', 'listbox-single', 'menubar', 'listbox-multi' (default)
+    // expanded: true/false
+    // hidden: true/false
 
+    const { grid } = theme
+
+    var status // 'is-expanded-hidden', 'is-collapsed-hidden', 'is-expanded-visible', 'is-collapsed-visible'
+
+    const list = document.createElement('i-list')
+    const shadow = list.attachShadow({mode: 'closed'})
+    
     function widget () {
-        const list = document.createElement('i-list')
-        const shadow = list.attachShadow({mode: 'closed'})
-        list.ariaHidden = is_hidden
+        list.ariaHidden = hidden
         list.ariaLabel = name
         list.tabIndex = -1
-        list.ariaExpanded = is_expanded
+        list.ariaExpanded = !hidden ? !hidden : expanded
         list.dataset.mode = mode
         style_sheet(shadow, style)
         const { make } = recipients['parent']
         try {
-            if (mode.match(/single|multiple/)) {
-                list.setAttribute('role', 'listbox')
-                make_selector(body)
-            }   
-            if (mode.match(/dropdown/)) {
-                list.setAttribute('role', 'menubar')
-                make_list()
-            }
-            if (body.length === 0) notify(make({ to: address, type: 'error', data: { text: 'body no items', opts } }))
+            if (body.length === 0) return notify(make({ to: address, type: 'error', data: { text: 'body no items', opts } }))
+            if (mode.match(/listbox/)) list.setAttribute('role', 'listbox') // <i-list role="listbox" data-mode="single"></i-list>  
+            else if (mode.match(/menubar/)) list.setAttribute('role', 'menubar')
+            make_list(body)
         } catch(e) {
-            notify(make({ to: address, type: 'error', data: {text: 'something went wrong', opts }}))
+            notify(make({ to: address, type: 'error', data: {text: 'something went wrong', e, opts }}))
         }
         
         return list
 
-        function make_selector (args) {
-            args.forEach( (list, i) => {
-                const {list_name, address = undefined, text = undefined, role = 'option', icons = {}, cover, current = undefined, selected = false, disabled = false, theme = {}} = list
+        function make_list (body) {
+            body.forEach( (item, i) => {
+                const { 
+                    list_name, 
+                    address = undefined, 
+                    url = '#', 
+                    target = '_blank', 
+                    text = undefined, 
+                    role = 'option', 
+                    icons = {}, 
+                    cover, 
+                    current = false, // aria-current values = { page, step, location, date, time, true, false }
+                    selected = false, 
+                    disabled = false, 
+                    theme = {}
+                } = item
                 const {style = ``, props = {}} = theme
+                // const is_current = mode === 'listbox-single' ? current : false
+                const is_current = current 
                 const {
                     size = 'var(--primary-size)', 
                     size_hover = 'var(--primary-size)',
@@ -2714,7 +2998,7 @@ function i_list (opts = {}, parent_protocol) {
                     bg_color_hover = 'var(--primary-bg-color-hover)', 
                     bg_color_focus = 'var(--primary-bg-color-focus)',
                     icon_size = 'var(--primary-icon-size)',
-                    icon_size_hover = 'var(--primary-icon-size_hover)',
+                    icon_size_hover = 'var(--primary-icon-size-hover)',
                     icon_fill = 'var(--primary-icon-fill)',
                     icon_fill_hover = 'var(--primary-icon-fill-hover)',
                     avatar_width = 'var(--primary-avatar-width)', 
@@ -2737,97 +3021,14 @@ function i_list (opts = {}, parent_protocol) {
                     opacity = '0'
                 } = props
 
-                const is_current = mode === 'single-select' ? current : false
-                const make_button = button({
-                    name: list_name, 
-                    body: text, 
-                    role, icons, cover, 
-                    current: is_current, 
-                    selected, 
-                    disabled,
-                    theme: {
-                        style,
-                        props: {
-                        size, size_hover, weight, 
-                        color, color_hover, color_focus,
-                        bg_color, bg_color_hover, bg_color_focus,
-                        icon_size, icon_size_hover, icon_fill, icon_fill_hover,
-                        avatar_width, avatar_height, avatar_radius,
-                        current_size, current_color, current_weight,
-                        current_icon_size, current_icon_fill,
-                        current_list_selected_icon_size, current_list_selected_icon_fill,
-                        list_selected_icon_size, list_selected_icon_fill, list_selected_icon_fill_hover,
-                        disabled_color, disabled_bg_color, disabled_icon_fill,
-                        padding,
-                        opacity
-                    }, 
-                    grid
-                }}, make_protocol(list_name))
-
-                const li = document.createElement('li')
-                if (address) li.dataset.address = address
-                li.dataset.option = text || list_name
-                li.setAttribute('aria-selected', is_current || selected)
-                if (is_current) li.setAttribute('aria-current', is_current)
-                if (disabled) li.setAttribute('disabled', disabled)
-                li.append(make_button)
-                shadow.append(li)
-                notify(make({ to: address, type: 'ready' }))
-            })
-        }
-
-        function make_list () {
-            body.map( (list, i) => {
-                const {list_name, text = undefined, role = 'option', url = '#', target, icons, cover, disabled = false, theme = {}} = list
-                const {style = ``, props = {}} = theme
-                const {
-                    size = `var(--primary-size)`, 
-                    size_hover = `var(--primary-size)`, 
-                    color = `var(--primary-color)`, 
-                    color_hover = `var(--primary-color-hover)`,     
-                    bg_color = 'var(--primary-bg-color)', 
-                    bg_color_hover = 'var(--primary-bg-color-hover)', 
-                    icon_fill = 'var(--primary-color)', 
-                    icon_fill_hover = 'var(--primary-color-hover)', 
-                    icon_size = 'var(--primary-icon-size)',
-                    icon_size_hover = 'var(--primary-icon-size-hover)',
-                    current_icon_size = 'var(--current-icon-size)',
-                    avatar_width = 'var(--primary-avatar-width)', 
-                    avatar_height = 'var(--primary-avatar-height)', 
-                    avatar_radius = 'var(--primary-avatar-radius)',
-                    disabled_color = 'var(--primary-disabled-color)',
-                    disabled_bg_color = 'var(--primary-disabled-bg-color)',
-                    disabled_icon_fill = 'var(--primary-disabled-icon-fill)',
-                    padding = null
-                } = props
                 if (role === 'link' ) {
-                    var item = i_link({
-                        name: list_name,
-                        body: text,
-                        role: 'menuitem',
-                        link: {
-                            url,
-                            target
-                        },
-                        icons,
-                        cover,
-                        disabled,
-                        theme: {
-                            style,
-                            props,
-                            grid
-                        }
-                    }, make_protocol(list_name))
+                    console.log('It is link, let us make an element')
+                    el = i_link({ name: list_name, body: text, role: 'link', link: { url, target }, icons, cover, disabled, theme: { style, props, grid } }, make_protocol(list_name))
+                    console.log('Got the link, maybe..')
                 }
 
-                if (role === 'menuitem') {
-                    var item = i_button({
-                        name: list_name,
-                        body: text,
-                        role,
-                        icons,
-                        cover,
-                        disabled,
+                else if (role === 'menuitem') {
+                    el = button({ name: list_name, body: text, role, icons, cover, disabled, 
                         theme: {
                             style,
                             props: {
@@ -2845,58 +3046,90 @@ function i_list (opts = {}, parent_protocol) {
                         }
                     }, make_protocol(list_name))
                 }
-                const li = document.createElement('li')
-                li.setAttribute('role', 'none')
-                if (disabled) li.setAttribute('disabled', disabled)
-                li.append(item)
-                shadow.append(li)
-            })
-            
-        }
-        function handle_expanded_event (data) {
-            list.setAttribute('aria-hidden', data)
-            list.setAttribute('aria-expanded', !data)
-        }
-        function handle_mutiple_selected ({from, lists, selected}) {
-            const type = selected ? 'selected' : 'unselected'
-            const { notify, address, make } = recipients[from]
-            notify(make({ to: address, type, data: { selected } }))
-            lists.forEach( list => {
-                const label = list.firstChild.getAttribute('aria-label') 
-                if (label === from) list.setAttribute('aria-selected', selected)
-            })
-            notify(make({type: 'selected', data: {selected: from}}))
-        }
 
-        function handle_single_selected ({from, lists, selected}) {
-            lists.forEach( list => {
-                const label = list.firstChild.getAttribute('aria-label') 
-                const state = label === from
-                const type = state ? 'selected' : 'unselected'
-                const name = state ? from : label
-                const { notify, address, make } = recipients[name]
-                notify(make({ to: address, type, data: { state } }))
-                notify(make({ to: address, type: 'current', data: { state }}))
-                list.setAttribute('aria-current', state)
-                list.setAttribute('aria-selected', state)
+                else {
+                    el = button({ name: list_name, body: text, role, icons, cover, current: is_current, selected, disabled,
+                        theme: {
+                            style,
+                            props: {
+                                size, size_hover, weight, 
+                                color, color_hover, color_focus,
+                                bg_color, bg_color_hover, bg_color_focus,
+                                icon_size, icon_size_hover, icon_fill, icon_fill_hover,
+                                avatar_width, avatar_height, avatar_radius,
+                                current_size, current_color, current_weight,
+                                current_icon_size, current_icon_fill,
+                                current_list_selected_icon_size, current_list_selected_icon_fill,
+                                list_selected_icon_size, list_selected_icon_fill, list_selected_icon_fill_hover,
+                                disabled_color, disabled_bg_color, disabled_icon_fill,
+                                padding,
+                                opacity
+                            },
+                            grid
+                    } }, make_protocol(list_name))
+                }
+
+
+                const li = document.createElement('li')
+                if (address) li.dataset.address = address
+                li.dataset.option = text || list_name
+                li.setAttribute('aria-selected', is_current || selected)
+                if (is_current) li.setAttribute('aria-current', is_current)
+                if (disabled) li.setAttribute('disabled', disabled)
+                li.append(el)
+                shadow.append(li)
+                notify(make({ to: address, type: 'ready' }))
             })
-            notify(make({ to: address, type: 'selected', data: { selected: from } }))
-        }
-        function handle_select_event ({from, to, data}) {
-            const {selected} = data
-            // !important  <style> as a child into inject shadowDOM, only Safari and Firefox did, Chrome, Brave, Opera and Edge are not count <style> as a childElemenet
-            const lists = shadow.firstChild.tagName !== 'STYLE' ? shadow.childNodes : [...shadow.childNodes].filter( (child, index) => index !== 0)
-            if (mode === 'single-select')  handle_single_selected({from, lists, selected})
-            if (mode === 'multiple-select') handle_mutiple_selected({from, lists, selected})
-            
-        }
-        function handle_click_event(msg) {
-            const {head, type, data} = msg
-            const [from] = head
-            notify(make({to: address, type, data}))
         }
     }
 
+    // ------------------------------------------------------------------
+    
+    function handle_expanded_event (data) {
+        list.setAttribute('aria-hidden', data)
+        list.setAttribute('aria-expanded', !data)
+    }
+    function handle_mutiple_selected ({from, lists, selected}) {
+        const type = selected ? 'selected' : 'unselected'
+        const { notify, address, make } = names[from]
+        notify(make({ to: address, type, data: { selected } }))
+        lists.forEach( list => {
+            const label = list.firstChild.getAttribute('aria-label') 
+            if (label === from) list.setAttribute('aria-selected', selected)
+        })
+        notify(make({type: 'selected', data: {selected: from}}))
+    }
+
+    function handle_single_selected ({from, lists, selected}) {
+        lists.forEach( list => {
+            const label = list.firstChild.getAttribute('aria-label') 
+            const state = label === from
+            const type = state ? 'selected' : 'unselected'
+            const name = state ? from : label
+            const { notify, address, make } = recipients[name]
+            notify(make({ to: address, type, data: { state } }))
+            notify(make({ to: address, type: 'current', data: { state }}))
+            list.setAttribute('aria-current', state)
+            list.setAttribute('aria-selected', state)
+        })
+        const { make } = recipients['parent']
+        notify(make({ to: address, type: 'selected', data: { selected: from } }))
+    }
+    function handle_select_event ({from, to, data}) {
+        const {selected} = data
+        // !important  <style> as a child into inject shadowDOM, only Safari and Firefox did, Chrome, Brave, Opera and Edge are not count <style> as a childElemenet
+        const lists = shadow.firstChild.tagName !== 'STYLE' ? shadow.childNodes : [...shadow.childNodes].filter( (child, index) => index !== 0)
+        if (mode === 'listbox-single')  handle_single_selected({from, lists, selected})
+        if (mode === 'listbox-multi') handle_mutiple_selected({from, lists, selected})
+        
+    }
+    function handle_click_event(msg) {
+        const {head, type, data} = msg
+        const [from] = head
+        const { make } = recipients['parent']
+        notify(make({to: address, type, data}))
+    }
+    
     // insert CSS style
     const custom_style = theme ? theme.style : ''
     // set CSS variables
@@ -3007,12 +3240,12 @@ function i_list (opts = {}, parent_protocol) {
 
     return widget()
 }
-}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-dropdown@c96baa008e0577a75a4a2044471c181970976b20/node_modules/datdot-ui-list/src/index.js")
-},{"datdot-ui-button":25,"make-grid":38,"message-maker":40,"support-style-sheet":39}],38:[function(require,module,exports){
+}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-dropdown@33f8bcb041c9061a14232822825fa7bcf170aebb/node_modules/datdot-ui-list/src/index.js")
+},{"datdot-ui-button":25,"datdot-ui-link":36,"make-grid":42,"message-maker":44,"support-style-sheet":43}],42:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"dup":27}],39:[function(require,module,exports){
-arguments[4][30][0].apply(exports,arguments)
-},{"dup":30}],40:[function(require,module,exports){
+},{"dup":27}],43:[function(require,module,exports){
+arguments[4][29][0].apply(exports,arguments)
+},{"dup":29}],44:[function(require,module,exports){
 module.exports = function message_maker (from) {
   let msg_id = 0
   return function make ({to, type, data = null, refs = {} }) {
@@ -3020,7 +3253,7 @@ module.exports = function message_maker (from) {
       return { head: [from, to, msg_id++], refs, type, data, meta: { stack }}
   }
 }
-},{}],41:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 module.exports = attributeToProperty
 
 var transform = {
@@ -3041,7 +3274,7 @@ function attributeToProperty (h) {
   }
 }
 
-},{}],42:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 var attrToProp = require('hyperscript-attribute-to-property')
 
 var VAR = 0, TEXT = 1, OPEN = 2, CLOSE = 3, ATTR = 4
@@ -3338,7 +3571,7 @@ var closeRE = RegExp('^(' + [
 ].join('|') + ')(?:[\.#][a-zA-Z0-9\u007F-\uFFFF_:-]+)*$')
 function selfClosing (tag) { return closeRE.test(tag) }
 
-},{"hyperscript-attribute-to-property":41}],43:[function(require,module,exports){
+},{"hyperscript-attribute-to-property":45}],47:[function(require,module,exports){
 var inserted = {};
 
 module.exports = function (css, options) {
@@ -3362,7 +3595,7 @@ module.exports = function (css, options) {
     }
 };
 
-},{}],44:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 (function (__filename){(function (){
 const bel = require('bel')
 const style_sheet = require('support-style-sheet')
@@ -3396,7 +3629,7 @@ function logs (opts, parent_protocol) {
     notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
     
     function listen (msg) {
-        console.log('New message', { msg })
+        // console.log('New message', { msg })
         const { head, refs, type, data, meta } = msg // receive msg
         inbox[head.join('/')] = msg                  // store msg
         const [from, to] = head
@@ -3482,9 +3715,7 @@ function logs (opts, parent_protocol) {
             const data_info = bel`<span aira-label="data" class="data">data: ${typeof data === 'object' ? JSON.stringify(data) : data}</span>`
             const type_info = bel`<span aria-type="${type}" aria-label="${type}" class="type">${type}</span>`
             const refs_info = bel`<div class="refs"><span>refs:</span></div>`
-            refs.map( (ref, i) => 
-                refs_info.append(bel`<span>${ref}${i < refs.length - 1 ? ',  ' : ''}</span>`)
-            )
+            if (!(Object.keys(refs).length === 0)) Object.keys(refs).map((key) => refs_info.append(bel`<span>${refs[key]}${i < Object.keys(keys).length - 1 ? ',  ' : ''}</span>`))
             const info = bel`<div class="info">${data_info}${refs_info}</div>`
             const header = bel`
             <div class="head">
@@ -3504,8 +3735,10 @@ function logs (opts, parent_protocol) {
             if (i_logs.childElementCount < range) i_logs.append(list)
             load_more.style.visibility = i_logs.childElementCount < len ? 'visible' : 'hidden'
             // have an issue with i-footer, it would be return as a msg to make_logs, so make footer_get to saprate make_logs from others
-            recipients[`${name}-footer`](make({type: 'messages-count', data: len}))
+            const { address: name_address, notify: name_notify, make: name_make } = recipients[`${name}-footer`]
+            name_notify(name_make({ to: name_address, type: 'messages-count', data: len }))
         } catch (error) {
+            // console.log({error})
             document.addEventListener('DOMContentLoaded', () => i_logs.append(list))
             return false
         }
@@ -3857,7 +4090,7 @@ mark.current {
 }
 `
 }).call(this)}).call(this,"/src/index.js")
-},{"bel":5,"datdot-ui-button":25,"footer":45,"generator-color":46,"make-grid":47,"message-maker":40,"support-style-sheet":48}],45:[function(require,module,exports){
+},{"bel":5,"datdot-ui-button":25,"footer":49,"generator-color":50,"make-grid":51,"message-maker":44,"support-style-sheet":52}],49:[function(require,module,exports){
 (function (__filename){(function (){
 const bel = require('bel')
 const style_sheet = require('support-style-sheet')
@@ -3891,7 +4124,7 @@ function footer (opts = {}, parent_protocol) {
     }
     
     function listen (msg) {
-        console.log('New message', { msg })
+        // console.log('New message', { msg })
         const { head, refs, type, data, meta } = msg // receive msg
         inbox[head.join('/')] = msg                  // store msg
         const [from, to] = head
@@ -3899,12 +4132,13 @@ function footer (opts = {}, parent_protocol) {
         const { notify, address, make } = recipients['parent']
         if (type.match(/ready|click|changed|selected|unselected/)) notify(make({ to: address, type, data }))
         if (type === 'messages-count') return num.textContent = data
-        if (type === 'click') return click_event (from, role, data)
+        if (type === 'click') return click_event (from, type, data)
     }
 
 // --------------------------------------------
-    const {flow = 'i-footer', name, theme = {}} = opts
-    const make = message_maker(`${name} / ${flow}`)
+    const { name } = opts
+    var num = bel`<span>0</span>`
+    const { make } = recipients['parent']
 
     function widget () {
         const footer = document.createElement('i-footer')
@@ -3921,11 +4155,7 @@ function footer (opts = {}, parent_protocol) {
             }
         }
         const filter = bel`<input class="filter" type='text' name='filter' placeholder='Filter' aria-label='search filter'>`
-        const clear = i_button({
-            name: 'clear-filter',
-            icons: {
-                icon: {name: 'cross'}
-            },
+        const clear = i_button({ name: 'clear-filter', icons: { icon: {name: 'cross'} },
             theme: {
                 props: {
                     icon_fill: 'var(--color-grey66)',
@@ -3942,115 +4172,79 @@ function footer (opts = {}, parent_protocol) {
                 }
             }
         }, make_protocol('clear-filter'))
-        const search = bel`<div class="search">${filter}${clear}</div>`
-        const expanded = i_button(
-        {
-            name: 'expanded', 
-            body: 'Collapsed', 
-            role: 'switch',
-            theme: {
-                props: {
-                    ...theme_option.button
-                }
-            }
-        }, make_protocol('expanded'))
 
-        // option for terminal-selector 
-        const terminal_option = 
-        {
-            name: 'terminal',
-            mode : 'single-select',
-            expanded: false,
-            options: {
-                button: {
-                    theme: {
-                        props: {
-                            border_radius: '0',
-                            padding: '2px 4px',
-                        }
-                    }
-                },
-                list: {
-                    direction: 'up',
-                    array: [
-                        {
-                            text: 'Compact messages'
-                        },
-                        {
-                            text: 'Comfortable messages',
-                        }
-                    ],
-                    theme: {
-                        grid: {
-                            button: {
-                                auto: {
-                                    auto_flow: 'column'
-                                },
-                                justify: 'content-left',
-                                gap: '5px'
-                            }
-                        }
-                    }
-                }
-            }
+        const search = bel`<div class="search">${filter}${clear}</div>`
+        const expanded = i_button({ name: 'expanded', body: 'Collapsed', role: 'switch', theme: { props: { ...theme_option.button } } }, make_protocol('expanded'))
+
+        // options for terminal-selector 
+        const terminal_opts = { 
+            name: 'terminal', 
+            mode : 'listbox-single', 
+            expanded: false, 
+            button: { theme: { props: { border_radius: '0', padding: '2px 4px', } } },
+            list: { direction: 'up', array: [{ text: 'Compact messages' }, { text: 'Comfortable messages', }], theme: { grid: { button: { auto: { auto_flow: 'column' }, justify: 'content-left', gap: '5px' } } } }
         }
 
-        const terminal_selector = i_dropdown(terminal_option, make_protocol(terminal_option.name))
-        const num = bel`<span>0</span>`
+        const terminal_selector = i_dropdown(terminal_opts, make_protocol(terminal_opts.name))
         const total = bel`<span class="total">All messages: ${num}</span>`
         const actions = bel`<div class="actions">${search}${terminal_selector}${expanded}</div>`
         shadow.append(total, actions)
         filter.addEventListener('keyup', handle_keyup_event)
         // to prevent fullsrceen event from fullscreen.js
         filter.addEventListener('keydown', (event) => event.stopPropagation())
+        
         return footer
-
-        function handle_keyup_event (e) {
-            const key = e.which || e.keyCode || e.keyCodeAt
-            // if (key === 8) return
-            let letter = e.target.value.toLowerCase()
-            return send(make({type: 'search-filter', data: {letter}}))
-        }
-
-        // handle events
-        function switch_event (from, data) {
-            const state = !data
-            const text = state ? 'Expanded' : 'Collapsed'
-            recipients[from](make({type: 'switched', data: state}))
-            recipients[from](make({type: 'changed', data: {text}}))
-            send(make({to: from, type: 'triggered', data: {checked: state}}) )
-            send(make({type: 'layout-mode', data: {expanded: state}}))
-        }
-
-        function selector_event (from, data) {
-            const dropdowns = actions.querySelectorAll('i-dropdown')
-            const state = data.expanded
-            const type = state ? 'expanded' : 'collapsed'
-            const to = `${from} / listbox / ui-list`
-            recipients[from]( make({to, type, data: {from, expanded: state}}) )
-            send( make({to, type, data: {from, expanded: state}}) )
-            dropdowns.forEach( item => {
-                const name = item.getAttribute('aria-label')
-                const to = `${name} / listbox / ui-list`
-                item.style.zIndex = '99'
-                if (name !== from) {
-                    recipients[name]( make({to, type: 'collapsed', data: {name, expanded: false}}) )
-                    send( make({to, type: 'collapsed', data: {name, expanded: false}}) )
-                    item.removeAttribute('style')
-                }
-            })
-        }
-        function clear_input_event () {
-            if (filter.value === '') return
-            filter.value = ''
-            send(make({to: `${name} / index.js`, type: 'cleared-search', data: ''}))
-        }
-        function click_event (from, role, data) {
-            if (role === 'switch') return switch_event(from, data)
-            if (role === 'listbox') return selector_event(from, data)
-            if (from === 'clear-filter') return clear_input_event()
-        }   
     }
+
+    function handle_keyup_event (e) {
+        const key = e.which || e.keyCode || e.keyCodeAt
+        // if (key === 8) return
+        let letter = e.target.value.toLowerCase()
+        return notify(make({type: 'search-filter', data: {letter}}))
+    }
+
+    // handle events
+    function switch_event (from, data) {
+        const state = !data
+        const text = state ? 'Expanded' : 'Collapsed'
+        const { notify: from_notify, address: from_address, make: from_make } = names[from]
+        from_notify(from_make({ to: from_address, type: 'switched', data: state }))
+        from_notify(from_make({ to: from_address, type: 'changed', data: {text} }))
+        notify(make({to: from, type: 'triggered', data: {checked: state}}) )
+        notify(make({type: 'layout-mode', data: {expanded: state}}))
+    }
+
+    function selector_event (from, data) {
+        const dropdowns = actions.querySelectorAll('i-dropdown')
+        const state = data.expanded
+        const type = state ? 'expanded' : 'collapsed'
+        const to = `${from} / listbox / ui-list`
+        recipients[from]( make({to, type, data: {from, expanded: state}}) )
+        notify(make({to, type, data: {from, expanded: state}}) )
+        dropdowns.forEach( item => {
+            const name = item.getAttribute('aria-label')
+            const to = `${name} / listbox / ui-list`
+            item.style.zIndex = '99'
+            if (name !== names[from].name) {
+                const { notify: from_notify, address: from_address, make: from_make } = names[from]
+                from_notify(from_make({ to: from_address, type: 'collapsed', data: {name, expanded: false }}) )
+                notify(make({ to: address, type: 'collapsed', data: {name, expanded: false } }) )
+                item.removeAttribute('style')
+            }
+        })
+    }
+    function clear_input_event () {
+        if (filter.value === '') return
+        filter.value = ''
+        notify(make({to: `${name} / index.js`, type: 'cleared-search', data: ''}))
+    }
+    function click_event (from, type, data) {
+        console.log('click event', {from, data, type} )
+        const name = names[from].name
+        if (name === 'switch') return switch_event(from, data)
+        if (name === 'listbox') return selector_event(from, data)
+        if (name === 'clear-filter') return clear_input_event()
+    }   
     
     const style = `
     :host(i-footer) {
@@ -4127,7 +4321,7 @@ function footer (opts = {}, parent_protocol) {
     return widget()
 }
 }).call(this)}).call(this,"/src/node_modules/footer.js")
-},{"./make-grid":47,"bel":5,"datdot-ui-button":25,"datdot-ui-dropdown":31,"message-maker":40,"support-style-sheet":48}],46:[function(require,module,exports){
+},{"./make-grid":51,"bel":5,"datdot-ui-button":25,"datdot-ui-dropdown":30,"message-maker":44,"support-style-sheet":52}],50:[function(require,module,exports){
  module.exports = {int2hsla, str2hashint}
  function int2hsla (i) { return `hsla(${i % 360}, 100%, 70%, 1)` }
  function str2hashint (str) {
@@ -4138,8 +4332,8 @@ function footer (opts = {}, parent_protocol) {
      })
      return hash
  }
-},{}],47:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"dup":27}],48:[function(require,module,exports){
-arguments[4][30][0].apply(exports,arguments)
-},{"dup":30}]},{},[1]);
+},{"dup":27}],52:[function(require,module,exports){
+arguments[4][29][0].apply(exports,arguments)
+},{"dup":29}]},{},[1]);
