@@ -189,48 +189,13 @@ function demo () {
         notify(make({to: address, type: 'expanded'}))
         notify(make({to: address, type: 'collapsed'}))
     }
-    const click = i_button({name: 'click', body: 'Click', 
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('click'))
-    const open = i_button({name: 'open', body: 'Open', 
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('open'))
-    const close = i_button({name: 'close', body: 'Close', 
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('close'))
-    const error = i_button({name: 'error', body: 'Error', 
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('error'))
-    const warning = i_button({name: 'warning', body: 'Warning', 
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('warning'))
-    const select = i_button({name: 'select', role: 'button', body: 'Select', selected: is_selected, 
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('select'))
-    const toggle = i_button({name: 'toggle', role: 'switch', body: 'Toggle',
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('toggle'))
+    const click = i_button({name: 'click', body: 'Click', theme: { props: {  border_radius: '0' } }}, make_protocol('click'))
+    const open = i_button({name: 'open', body: 'Open', theme: { props: {  border_radius: '0' } }}, make_protocol('open'))
+    const close = i_button({name: 'close', body: 'Close', theme: { props: {  border_radius: '0' } }}, make_protocol('close'))
+    const error = i_button({name: 'error', body: 'Error', theme: { props: {  border_radius: '0' } }}, make_protocol('error'))
+    const warning = i_button({name: 'warning', body: 'Warning', theme: { props: {  border_radius: '0' } }}, make_protocol('warning'))
+    const select = i_button({name: 'select', body: 'Select', theme: { props: {  border_radius: '0' } }}, make_protocol('select'))
+    const toggle = i_button({name: 'toggle', body: 'Toggle', theme: { props: {  border_radius: '0' } }}, make_protocol('toggle'))
             
     const actions = bel`<div class="${css.actions}">${click}${open}${close}${error}${warning}${toggle}${select}</div>`
 

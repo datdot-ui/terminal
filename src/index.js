@@ -30,10 +30,10 @@ function logs (opts, parent_protocol) {
     notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
     
     function listen (msg) {
-        // console.log('New message', { msg })
         const { head, refs, type, data, meta } = msg // receive msg
         inbox[head.join('/')] = msg                  // store msg
         const [from, to] = head
+        console.log('TERMINAL', { type })
         make_logs(msg)
         //handle
         if (type === 'click') handle_load_more(store_msg)
