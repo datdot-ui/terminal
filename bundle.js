@@ -191,48 +191,13 @@ function demo () {
         notify(make({to: address, type: 'expanded'}))
         notify(make({to: address, type: 'collapsed'}))
     }
-    const click = i_button({name: 'click', body: 'Click', 
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('click'))
-    const open = i_button({name: 'open', body: 'Open', 
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('open'))
-    const close = i_button({name: 'close', body: 'Close', 
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('close'))
-    const error = i_button({name: 'error', body: 'Error', 
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('error'))
-    const warning = i_button({name: 'warning', body: 'Warning', 
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('warning'))
-    const select = i_button({name: 'select', role: 'button', body: 'Select', selected: is_selected, 
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('select'))
-    const toggle = i_button({name: 'toggle', role: 'switch', body: 'Toggle',
-    theme: {
-        props: { 
-            border_radius: '0'
-        }
-    }}, make_protocol('toggle'))
+    const click = i_button({name: 'click', body: 'Click', theme: { props: {  border_radius: '0' } }}, make_protocol('click'))
+    const open = i_button({name: 'open', body: 'Open', theme: { props: {  border_radius: '0' } }}, make_protocol('open'))
+    const close = i_button({name: 'close', body: 'Close', theme: { props: {  border_radius: '0' } }}, make_protocol('close'))
+    const error = i_button({name: 'error', body: 'Error', theme: { props: {  border_radius: '0' } }}, make_protocol('error'))
+    const warning = i_button({name: 'warning', body: 'Warning', theme: { props: {  border_radius: '0' } }}, make_protocol('warning'))
+    const select = i_button({name: 'select', body: 'Select', theme: { props: {  border_radius: '0' } }}, make_protocol('select'))
+    const toggle = i_button({name: 'toggle', body: 'Toggle', theme: { props: {  border_radius: '0' } }}, make_protocol('toggle'))
             
     const actions = bel`<div class="${css.actions}">${click}${open}${close}${error}${warning}${toggle}${select}</div>`
 
@@ -557,7 +522,7 @@ button:hover {
 
 document.body.append( demo() )
 }).call(this)}).call(this,"/demo/demo.js")
-},{"..":48,"../src/node_modules/make-grid":51,"bel":5,"csjs-inject":8,"datdot-ui-button":25,"fullscreen":2,"head":3,"message-maker":44}],2:[function(require,module,exports){
+},{"..":50,"../src/node_modules/make-grid":53,"bel":5,"csjs-inject":8,"datdot-ui-button":25,"fullscreen":2,"head":3,"message-maker":46}],2:[function(require,module,exports){
 module.exports = fullscreen
 
 function fullscreen () {
@@ -826,7 +791,7 @@ module.exports = hyperx(belCreateElement, {comments: true})
 module.exports.default = module.exports
 module.exports.createElement = belCreateElement
 
-},{"./appendChild":4,"hyperx":46}],6:[function(require,module,exports){
+},{"./appendChild":4,"hyperx":48}],6:[function(require,module,exports){
 (function (global){(function (){
 'use strict';
 
@@ -845,7 +810,7 @@ function csjsInserter() {
 module.exports = csjsInserter;
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"csjs":11,"insert-css":47}],7:[function(require,module,exports){
+},{"csjs":11,"insert-css":49}],7:[function(require,module,exports){
 'use strict';
 
 module.exports = require('csjs/get-css');
@@ -1362,7 +1327,7 @@ function i_button (opts, parent_protocol) {
         const { head, refs, type, data, meta } = msg // receive msg
         inbox[head.join('/')] = msg                  // store msg
         const [from, to, msg_id] = head
-        console.log('New message', { from, msg })
+        console.log('BUTTON', { type, name: names[from].name, msg })
         // toggle
         if (type.match(/switched/)) return switched_event(data)
         // dropdown
@@ -1374,6 +1339,7 @@ function i_button (opts, parent_protocol) {
         if (type.match(/selected|unselected/)) return list_selected_event(data)
         if (type.match(/changed/)) return changed_event(data)
         if (type.match(/current/)) {
+            // debugger
             is_current = data
             return set_attr({aria: 'current', prop: is_current})
         }
@@ -1480,10 +1446,10 @@ function i_button (opts, parent_protocol) {
         set_attr({aria: 'selected', prop: is_selected})
         el.setAttribute('tabindex', is_current ? 0 : -1)
     }
-    function list_selected_event (state) {
-        is_selected = state
+    function list_selected_event (data) {
+        is_selected = data
         set_attr({aria: 'selected', prop: is_selected})
-        if (mode === 'single-select') {
+        if (mode === 'listbox-single') {
             is_current = is_selected
             set_attr({aria: 'current', prop: is_current})
         }
@@ -1549,30 +1515,36 @@ function i_button (opts, parent_protocol) {
     function handle_click () {
         const { make } = recipients['parent']
         const type = 'click'
-        if ('current' in opts) {
+        const prev_state = {
+            expanded: is_expanded,
+            selected: is_selected
+        }
+        // debugger
+        if (is_current) {
             notify(make({ to: address, type: 'current', data: {name, current: is_current } }) )
         }
         if (expanded !== undefined) {
-            const type = !is_expanded ? 'expanded' : 'collapsed'
+            is_expanded = !prev_state.expanded
+            const type = is_expanded ? 'expanded' : 'collapsed'
             notify(make({ to: address, type, data: {name, expanded: is_expanded } }))
         }
         if (role === 'button') {
-            return notify( make({type, to: controls} ))
+            return notify( make({ to: address, type } ))
         }
         if (role === 'tab') {
             if (is_current) return
-            is_selected = !is_selected
+            is_selected = !prev_state.selected
             return notify(make({ to: address, type, data: {name, selected: is_selected } }) )
         }
         if (role === 'switch') {
             return notify(make({ to: address, type, data: {name, checked: is_checked } }) )
         }
         if (role === 'listbox') {
-            is_expanded = !is_expanded
+            is_expanded = !prev_state.expanded
             return notify(make({ to: address, type, data: {name, expanded: is_expanded } }))
         }
-        if (role === 'option') {
-            is_selected = !is_selected
+        if (role === 'option' || role === 'menuitem') {
+            is_selected = !prev_state.selected
             return notify(make({ to: address, type, data: {name, selected: is_selected, content: is_selected ? {text: body, cover, icon} : '' } }) )
         }
     }
@@ -1941,7 +1913,11 @@ function i_button (opts, parent_protocol) {
         --weight: ${weight_hover ? weight_hover : 'var(--menu-weight-hover)'};
         --color: ${color_hover ? color_hover : 'var(--menu-color-hover)'};
     }
-    :host(i-button[role="menuitem"]:focus) {
+    // :host(i-button[role="menuitem"][aria-selected="true"]:focus) {
+    //     --color: var(--color-focus);
+    //     --bg-color: var(--bg-color-focus);
+    // }
+    :host(i-button[role="menuitem"][aria-selected="true"]) {
         --color: var(--color-focus);
         --bg-color: var(--bg-color-focus);
     }
@@ -2029,7 +2005,7 @@ function i_button (opts, parent_protocol) {
     return widget()
 }
 }).call(this)}).call(this,"/node_modules/datdot-ui-button/src/index.js")
-},{"datdot-ui-icon":33,"make-element":26,"make-grid":27,"make-image":28,"message-maker":44,"support-style-sheet":29}],26:[function(require,module,exports){
+},{"datdot-ui-icon":32,"make-element":26,"make-grid":27,"make-image":28,"message-maker":46,"support-style-sheet":29}],26:[function(require,module,exports){
 module.exports = make_element
 
 function make_element({name = '', classlist = null, role }) {
@@ -2157,13 +2133,13 @@ function support_style_sheet (root, style) {
 const style_sheet = require('support-style-sheet')
 const message_maker = require('message-maker')
 const i_button = require('datdot-ui-button')
-const make_list = require('make-list')
+const i_list = require('datdot-ui-list')
 
 var id = 0
 
 module.exports = i_dropdown
 
-function i_dropdown (opts, parent_protocol) {
+function i_dropdown (opts, parent_protocol) {    
 // -----------------------------------------
     const myaddress = `${__filename}-${id++}`
     const inbox = {}
@@ -2187,49 +2163,50 @@ function i_dropdown (opts, parent_protocol) {
         const { head, refs, type, data, meta } = msg // receive msg
         inbox[head.join('/')] = msg                  // store msg
         const [from, to, msg_id] = head
-        console.log('New message', { from, msg })
+        console.log('DROPDOWN', { from, name: names[from].name, data })
         // handle
         const { notify, address, make } = recipients['parent']
         notify(make({ to: address, type, data }))
-        if (type.match(/expanded|collapsed/)) return handle_expanded_event( data)
+        if (type.match(/expanded|collapsed/)) return handle_expand_collapse(from, data)
         if (type.match(/selected/)) return handle_select_event(data)
     }
 // -----------------------------------------
-    const {page = '*', flow = 'ui-dropdown', name, options: {button = {}, list = {}}, expanded = false, disabled = false, mode = 'single-select', theme} = opts
+    const {name, button = {}, list = {}, expanded = true, disabled = false, mode = 'listbox-single', theme} = opts
+    var list_el
     const list_name = `${name}-list`
-    let is_expanded = expanded
-    let is_disabled = disabled
-    let store_data = []
-    if (mode === 'single-select') {
+    const button_name = `${name}-button`
+    const state = {
+        is_expanded: expanded,
+        is_disabled: disabled
+    }
+    const { icons = {} } = button
+    var shadow
+
+    let selected_items = list.array.filter(item => item.current || item.selected)
+    if (!selected_items.length) selected_items.push(list.array[0])
+
+    if (mode === 'listbox-single') {
         var init_selected = {...button}
-        list.array.map( item => {
-            const obj = item.current || item.selected ?  item : list.array[0]
-            init_selected = {
-                name,
-                body: obj.text,
-                icons: {
-                    select: button.select ? button.select : undefined,
-                    icon: obj.icon,
-                },
-                cover: obj.cover,
-            }
-        })
-        store_data.push(init_selected)
+        const [selected_item] = selected_items
+        init_selected = {
+            name,
+            body: selected_item.text,
+            icons,
+            cover: selected_item.cover,
+        }
+        
+        selected_items.push(init_selected)
     }
-    if (mode === 'multiple-select') {
-        list.array.map( item => {
-            if (item.selected) store_data.push(item)
-        })
-    }
+    
     function widget () {
         const dropdown = document.createElement('i-dropdown')
-        const shadow = dropdown.attachShadow({mode: 'closed'})
-        i_button({ 
-            name, 
+        shadow = dropdown.attachShadow({mode: 'closed'})
+        const button = i_button({ 
+            name: button_name,
             role: 'listbox', 
-            mode: mode.match(/single|multiple/) ? 'selector' : 'menu', 
-            expanded: is_expanded, 
-            disabled: is_disabled, 
+            mode: mode.match(/listbox/) ? 'selector' : 'menu', 
+            expanded: state.is_expanded, 
+            disabled: state.is_disabled, 
             theme: {
                 style: `
                     :host(i-button) > .icon {
@@ -2237,83 +2214,110 @@ function i_dropdown (opts, parent_protocol) {
                         transition: transform 0.4s ease-in-out;
                     }
                     :host(i-button[aria-expanded="true"]) > .icon {
-                        transform: rotate(${mode === 'single-select' ? '-180' : '0' }deg);
+                        transform: rotate(${mode === 'listbox-single' ? '-180' : '0' }deg);
                     }
                     ${style}
                 `,
                 props: {},
                 grid: {}
             }
-        }, make_protocol(name))
-        const i_list = make_list({page, name: list_name, option: list, mode, hidden: is_expanded}, make_protocol('list'))
+        }, make_protocol(button_name))
+        
+        list_el = i_list({
+            list_name, 
+            body: list.array.map(option => {
+                if (option.current || option.selected) {
+                    // if only current or selected set to true, update the other one to true too
+                    if (mode === 'listbox-multi') option.current = option.selected = true
+                    else if (mode === 'listbox-single') {
+                        // if many set as selected or true, take first only for single select
+                        if (!first) option.current = option.selected = true
+                        first = true
+                    } 
+                }
+                return option
+            }),
+            mode, 
+            hidden: state.is_expanded, 
+            expanded: !state.is_expanded, 
+            theme
+        }, make_protocol(list_name))
+        
         // notify(message)
         dropdown.setAttribute('aria-label', name)
-        if (is_disabled) dropdown.setAttribute('disabled', is_disabled)
+        if (state.is_disabled) dropdown.setAttribute('disabled', state.is_disabled)
         style_sheet(shadow, style)
-        handle_collapsed()
-        shadow.append(i_button)
+        add_collapse_all()
+        shadow.append(button)
         // need to add this to avoid document.body.addEventListener('click)
         dropdown.onclick = event => event.stopPropagation()
-        return dropdown
 
-        function handle_collapsed () {
-            // trigger expanded event via document.body
-            document.body.addEventListener('click', (e)=> {
-                const type = 'collapsed'
-                if (is_expanded) {
-                    is_expanded = false
-                    const { name: name_notify, make: name_make, address: name_address } = recipients[name]
-                    name_notify(name_make({ to: name_address, type, data: is_expanded }))
-                    const { notify: list_notify, make: list_make, address: list_address } = recipients[list_name]
-                    list_notify(list_make({ to: list_address, type, data: !is_expanded }))
-                    const { notify, make, address } = recipients['parent']
-                    notify(make({to: address, type, data: { selected: store_data }}) )
+        return dropdown
+    }
+
+    // HANDLERS
+    function notify_change (content) {
+        const { notify: name_notify, make: name_make, address: name_address } = recipients[button_name]
+        name_notify(name_make({ to: name_address, type: 'changed', data: content }))
+        
+        const { notify, make, address } = recipients['parent']
+        notify(make({ to: address, type: 'changed', data: content }))
+    }
+
+    function handle_select_event (data) {
+        const {mode, selected} = data
+        let filtered = []
+        if (mode === 'dropdown') return
+        if (mode === 'listbox-single') {
+            selected.forEach(obj => {
+                if (obj.selected) {
+                    filtered.push(obj)
+                    const content = {text: obj.text, cover: obj.cover, icon: obj.icon}
+                    return notify_change(content)
                 }
             })
         }
-        function handle_change_event (content) {
-            const { notify: name_notify, make: name_make, address: name_address } = recipients[name]
-            name_notify(name_make({ to: name_address, type: 'changed', data: content }))
-            
-            const { notify, make, address } = recipients['parent']
-            notify(make({ to: address, type: 'changed', data: content }))
+        if (mode === 'listbox-multi') {
+            filtered = selected.filter( obj => obj.selected )
         }
-        function handle_select_event (data) {
-            const {mode, selected} = data
-            let new_data = []
-            if (mode === 'dropdown') return
-            if (mode === 'single-select') {
-                selected.map( obj => {
-                    if (obj.selected) {
-                        const content = {text: obj.text, cover: obj.cover, icon: obj.icon}
-                        new_data.push(obj)
-                        return handle_change_event (content)
-                    }
-                })
-            }
-            if (mode === 'multiple-select') {
-                new_data = selected.filter( obj => obj.selected )
-            }
-            store_data = new_data
-        }
-        function handle_expanded_event (data) {
-            const {from, expanded} = data
-            is_expanded = expanded
-            const type = is_expanded ? 'expanded' : 'collapsed'
-            // check which one dropdown is not using then do collapsed
-            const { notify: name_notify, make: name_make, address: name_address } = recipients[name]
-            const { notify: list_notify, make: list_make, address: list_address } = recipients[list_name]
-            if (from !== name) {
-                name_notify(name_make({ to: name_address,type: 'collapsed', data: is_expanded }))
-                list_notify(list_make({ to: list_address, type, data: !is_expanded }))
-            }
-            // check which dropdown is currently using then do expanded
-            name_notify(name_make({ to: name_address, type, data: is_expanded }))
-            list_notify(list_make({ to: list_address, type, data: !is_expanded }))
-            if (is_expanded && from == name) shadow.append(i_list)
-        }
+        selected_items = filtered
     }
 
+    function handle_expand_collapse (from, data) {
+        state.is_expanded = data.expanded
+        const type = state.is_expanded ? 'expanded' : 'collapsed'
+        // check which one dropdown is not using then do collapsed
+        const { notify: button_notify, make: button_make, address: button_address } = recipients[button_name]
+        const { notify: list_notify, make: list_make, address: list_address } = recipients[list_name]
+        if (names[from].name !== button_name) {
+            button_notify(button_make({ to: button_address,type: 'collapsed', data: state.is_expanded }))
+            list_notify(list_make({ to: list_address, type, data: !state.is_expanded }))
+        }
+        // check which dropdown is currently using then do expanded
+        button_notify(button_make({ to: button_address, type, data: state.is_expanded }))
+        list_notify(list_make({ to: list_address, type, data: state.is_expanded }))
+        if (state.is_expanded && names[from].name === button_name) shadow.append(list_el)
+    }
+
+    function add_collapse_all () {
+        // trigger expanded event via document.body
+        document.body.addEventListener('click', (e) => {
+            const type = 'collapsed'
+            if (state.is_expanded) {
+                state.is_expanded = false
+
+                // notify button
+                const { notify: name_notify, make: name_make, address: name_address } = recipients[button_name]
+                name_notify(name_make({ to: name_address, type, data: state.is_expanded }))
+                // notify list
+                const { notify: list_notify, make: list_make, address: list_address } = recipients[list_name]
+                list_notify(list_make({ to: list_address, type, data: state.is_expanded }))
+                // notify parent
+                const { notify, make, address } = recipients['parent']
+                notify(make({to: address, type, data: { selected: selected_items }}) )
+            }
+        })
+    }
     
     // insert CSS style
     const custom_style = theme ? theme.style : ''
@@ -2335,65 +2339,65 @@ function i_dropdown (opts, parent_protocol) {
     const {direction = 'down', start = '0', end = '40px'} = list
 
     const style = `
-    :host(i-dropdown) {
-        position: relative;
-        display: grid;
-        max-width: 100%;
-    }
-    :host(i-dropdown[disabled]) {
-        cursor: not-allowed;
-    }
-    i-button {
-        position: relative;
-        z-index: 2;
-    }
-    i-list {
-        position: absolute;
-        left: 0;
-        margin-top: ${margin_top};
-        z-index: 1;
-        width: 100%;
-        ${direction === 'down' ? `top: ${end}` : `bottom: ${end};`}
-    }
-    i-list[aria-hidden="false"] {
-        animation: down 0.3s ease-in;
-    }
-    i-list[aria-hidden="true"] {
-        animation: up 0.3s ease-out;
-    } 
-    
-    @keyframes down {
-        0% {
-            opacity: 0;
-            ${direction === 'down' ? `top: ${start};` : `bottom: ${start};`}
+        :host(i-dropdown) {
+            position: relative;
+            display: grid;
+            max-width: 100%;
         }
-        50% {
-            opacity: 0.5;
-            ${direction === 'down' ? `top: 20px;` : `bottom: 20px;`}
+        :host(i-dropdown[disabled]) {
+            cursor: not-allowed;
         }
-        100%: {
-            opacity: 1;
+        i-button {
+            position: relative;
+            z-index: 2;
+        }
+        i-list {
+            position: absolute;
+            left: 0;
+            margin-top: ${margin_top};
+            z-index: 1;
+            width: 100%;
             ${direction === 'down' ? `top: ${end}` : `bottom: ${end};`}
         }
-    }
-    
-    @keyframes up {
-        0% {
-            opacity: 1;
-            ${direction === 'down' ? `top: ${end}` : `bottom: ${end};`}
+        i-list[aria-hidden="false"] {
+            animation: down 0.3s ease-in;
         }
-        50% {
-            ${direction === 'down' ? `top: 20px;` : `bottom: 20px;`}
+        i-list[aria-hidden="true"] {
+            animation: up 0.3s ease-out;
+        } 
+        
+        @keyframes down {
+            0% {
+                opacity: 0;
+                ${direction === 'down' ? `top: ${start};` : `bottom: ${start};`}
+            }
+            50% {
+                opacity: 0.5;
+                ${direction === 'down' ? `top: 20px;` : `bottom: 20px;`}
+            }
+            100%: {
+                opacity: 1;
+                ${direction === 'down' ? `top: ${end}` : `bottom: ${end};`}
+            }
         }
-        75% {
-            opacity: 0.5;
-        }
-        100%: {
-            opacity: 0;
-            ${direction === 'down' ? `top: ${start};` : `bottom: ${start};`}
-        }
-    } 
-    ${custom_style}
+        
+        @keyframes up {
+            0% {
+                opacity: 1;
+                ${direction === 'down' ? `top: ${end}` : `bottom: ${end};`}
+            }
+            50% {
+                ${direction === 'down' ? `top: 20px;` : `bottom: 20px;`}
+            }
+            75% {
+                opacity: 0.5;
+            }
+            100%: {
+                opacity: 0;
+                ${direction === 'down' ? `top: ${start};` : `bottom: ${start};`}
+            }
+        } 
+        ${custom_style}
     `
 
     return widget()
@@ -2401,100 +2405,9 @@ function i_dropdown (opts, parent_protocol) {
 
 
 }).call(this)}).call(this,"/node_modules/datdot-ui-dropdown/src/index.js")
-},{"datdot-ui-button":25,"make-list":31,"message-maker":44,"support-style-sheet":32}],31:[function(require,module,exports){
-(function (__filename){(function (){
-const i_list = require('datdot-ui-list')
-const message_maker = require('message-maker')
-
-var id = 0
-
-module.exports = make_list
-
-function make_list ({page, name, option = {}, mode, hidden}, parent_protocol) {
-// ----------------------------------------
-    const myaddress = `${__filename}-${id++}`
-    const inbox = {}
-    const outbox = {}
-    const recipients = {}
-    const names = {}
-    const message_id = to => (outbox[to] = 1 + (outbox[to]||0))
-
-    const {notify, address} = parent_protocol(myaddress, listen)
-    names[address] = recipients['parent'] = { name: 'parent', notify, address, make: message_maker(myaddress) }
-    notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
-
-    function make_protocol (name) {
-        return function protocol (address, notify) {
-            names[address] = recipients[name] = { name, address, notify, make: message_maker(myaddress) }
-            return { notify: listen, address: myaddress }
-        }
-    }
-    
-    function listen (msg) {
-        console.log('New message', { msg })
-    }
-// ----------------------------------------
-    const {flow = 'ui-dropdown-list', role = 'option', array, theme} = option
-    let store_selected = []
-    let render_list = []
-    const check_current_undefined = (args) => args.current === undefined 
-    const check_selected_undefined = (args) => args.selected === undefined 
-    if (mode === 'single-select') render_list = make_single_select(array) 
-    if (mode === 'multiple-select') render_list = make_multiple_select(array) 
-    render_list.filter( item => {
-        if (item.selected) return store_selected.push(item.text)
-    })
-    return i_list({page, flow, name, role, body: render_list, mode, hidden, expanded: !hidden, theme}, make_protocol(name))
-
-    function make_single_select (args) {
-        return args.map((opt, index) => {
-            const check_options_current = args.every(check_current_undefined)
-            const check_options_selected = args.every(check_selected_undefined)
-            const obj = {...opt}
-            // console.log('current undefined:', check_options_current);
-            // console.log('selected undefined:', check_options_selected);
-            // if current and selected are undefined, then find first element to be current and selected, others would be false
-            if (check_options_current && check_options_selected && index === 0) {
-                obj.current = check_options_current
-                obj.selected = check_options_current
-            } 
-            // if current is true and selected is undefined, then make selected is true, others would be false
-            if (opt.current && check_options_selected) {
-                obj.current = opt.current
-                obj.selected = opt.current
-            }
-            // if selected is true and current is undefined, then make current is true, others would be false
-            if (check_options_current && opt.selected) {
-                obj.current = opt.selected
-                obj.selected = opt.selected
-            }
-            // if find current, then content would be shown text in current
-            if (obj.current) content = obj.text
-            /* 
-            if selected is undefined but current is false, 
-            or current is undefined but selected is false, 
-            content would be replaced 'Select' into as selector tip on button by default
-            */
-            if (check_options_selected && opt.current === false || check_options_current && opt.selected === false ) content = 'Select'
-            return obj
-        })
-    }
-
-    function make_multiple_select (args) {
-        const check_options_selected = args.every(check_selected_undefined)
-        return args.map((opt, index) => {
-            const obj = {...opt}
-            // console.log('selected undefined:', check_options_selected);
-            if (check_options_selected) obj.selected = check_options_selected
-            obj.selected = opt.selected === undefined ? true : opt.selected 
-            return obj
-        })
-    }
-}
-}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-dropdown@33f8bcb041c9061a14232822825fa7bcf170aebb/node_modules/datdot-ui-dropdown/src/node_modules/make-list.js")
-},{"datdot-ui-list":41,"message-maker":44}],32:[function(require,module,exports){
+},{"datdot-ui-button":25,"datdot-ui-list":43,"message-maker":46,"support-style-sheet":31}],31:[function(require,module,exports){
 arguments[4][29][0].apply(exports,arguments)
-},{"dup":29}],33:[function(require,module,exports){
+},{"dup":29}],32:[function(require,module,exports){
 (function (__filename){(function (){
 const style_sheet = require('support-style-sheet')
 const svg = require('svg')
@@ -2581,10 +2494,10 @@ module.exports = ({name, path, is_shadow = false, theme}, parent_protocol) => {
     return symbol
 }
 
-}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-button@036821f16611a24c307f2e9601b719db79dcd703/node_modules/datdot-ui-icon/src/index.js")
-},{"message-maker":44,"support-style-sheet":34,"svg":35}],34:[function(require,module,exports){
+}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdot-ui+button@708e0af87c13f35be3d7845642f6056f643b495d/node_modules/datdot-ui-icon/src/index.js")
+},{"message-maker":46,"support-style-sheet":33,"svg":34}],33:[function(require,module,exports){
 arguments[4][29][0].apply(exports,arguments)
-},{"dup":29}],35:[function(require,module,exports){
+},{"dup":29}],34:[function(require,module,exports){
 module.exports = svg
 function svg (path) {
     const span = document.createElement('span')
@@ -2598,7 +2511,99 @@ function svg (path) {
     }
     return span
 }   
-},{}],36:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
+(function (__filename){(function (){
+const style_sheet = require('support-style-sheet')
+const svg = require('svg')
+const message_maker = require('message-maker')
+
+var id = 0
+
+module.exports = ({name, path, is_shadow = false, theme}, parent_protocol) => {
+// ---------------------------------------------------------------
+    const myaddress = `${__filename}-${id++}`
+    const inbox = {}
+    const outbox = {}
+    const recipients = {}
+    const names = {}
+    const message_id = to => (outbox[to] = 1 + (outbox[to]||0))
+
+    const {notify, address} = parent_protocol(myaddress, listen)
+    names[address] = recipients['parent'] = { name: 'parent', notify, address, make: message_maker(myaddress) }
+    notify(recipients['parent'].make({ to: address, type: 'ready', refs: ['old_logs', 'new_logs'] }))
+
+    function listen (msg) {
+        const {head, refs, type, data, meta } = msg
+        inbox[head.join('/')] = msg                  // store msg
+        const [from, to, msg_id] = head    
+        console.log('New message', { msg })
+    }
+ // ---------------------------------------------------------------   
+    const url = path ? path : './src/svg'
+    const symbol = svg(`${url}/${name}.svg`)
+    if (is_shadow) {
+        function layout (style) {
+            const icon = document.createElement('i-icon')
+            const shadow = icon.attachShadow({mode: 'closed'})
+            const slot = document.createElement('slot')
+            slot.name = 'icon'
+            style_sheet(shadow, style)
+            slot.append(symbol)
+            shadow.append(slot)
+            shadow.addEventListener('click', handleOnClick)
+            return icon
+        }
+
+        function handleOnClick (e) {
+            console.log('Click', e)
+            const { notify, address, make } = recipients['parent']
+            notify(make({ to: address, type: 'click', data: { event: e }, refs: {} }))
+        }
+
+        // insert CSS style
+        const custom_style = theme ? theme.style : ''
+        // set CSS variables
+        if (theme && theme.props) {
+            var { fill, size } = theme.props
+        }
+        const style = `
+        :host(i-icon) {
+            --size: ${size ? size : '24px'};
+            --fill: ${fill ? fill : 'var(--primary-color)'};
+            display: block;
+        }
+        slot[name='icon'] {
+            display: grid;
+            justify-content: center;
+            align-items: center;
+        }
+        slot[name='icon'] span {
+            display: block;
+            width: var(--size);
+            height: var(--size);
+        }
+        slot[name='icon'] svg {
+            width: 100%;
+            height: auto;
+        }
+        slot[name='icon'] g {
+            fill: hsl(var(--fill));
+            transition: fill .3s ease-in-out;
+        }
+        ${custom_style}
+        `
+        return layout(style)
+    }
+
+    return symbol
+}
+
+}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdot-ui+link@faa7bcfb80a9a8c160cd81b28292640532e21c49/node_modules/datdot-ui-icon/src/index.js")
+},{"message-maker":46,"support-style-sheet":36,"svg":37}],36:[function(require,module,exports){
+arguments[4][29][0].apply(exports,arguments)
+},{"dup":29}],37:[function(require,module,exports){
+arguments[4][34][0].apply(exports,arguments)
+},{"dup":34}],38:[function(require,module,exports){
 (function (__filename){(function (){
 const style_sheet = require('support-style-sheet')
 const message_maker = require('message-maker')
@@ -2865,8 +2870,8 @@ function i_link (opts, parent_protocol) {
     `
     return widget()
 }
-}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-list@38604900402b741439363ebcfe1092ae7b05592e/node_modules/datdot-ui-link/src/index.js")
-},{"datdot-ui-icon":33,"make-element":37,"make-grid":38,"make-image":39,"message-maker":44,"support-style-sheet":40}],37:[function(require,module,exports){
+}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdot-ui+list@c5f5c92fa4efc08d0cc29c7c687213699965cd08/node_modules/datdot-ui-link/src/index.js")
+},{"datdot-ui-icon":35,"make-element":39,"make-grid":40,"make-image":41,"message-maker":46,"support-style-sheet":42}],39:[function(require,module,exports){
 module.exports = make_element
 
 function make_element({name = '', classlist = null, role }) {
@@ -2887,13 +2892,13 @@ function make_element({name = '', classlist = null, role }) {
 }
 
 
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"dup":27}],39:[function(require,module,exports){
+},{"dup":27}],41:[function(require,module,exports){
 arguments[4][28][0].apply(exports,arguments)
-},{"dup":28}],40:[function(require,module,exports){
+},{"dup":28}],42:[function(require,module,exports){
 arguments[4][29][0].apply(exports,arguments)
-},{"dup":29}],41:[function(require,module,exports){
+},{"dup":29}],43:[function(require,module,exports){
 (function (__filename){(function (){
 const style_sheet = require('support-style-sheet')
 const button = require('datdot-ui-button')
@@ -2903,6 +2908,7 @@ const make_grid = require('make-grid')
 module.exports = i_list
 
 var id = 0
+var count = 0
 
 function i_list (opts = {}, parent_protocol) {
 // -----------------------------------
@@ -2919,6 +2925,7 @@ function i_list (opts = {}, parent_protocol) {
 
     function make_protocol (name) {
         return function protocol (address, notify) {
+            console.log('PROTOCOL INIT', { name, address })
             names[address] = recipients[name] = { name, address, notify, make: message_maker(myaddress) }
             return { notify: listen, address: myaddress }
         }
@@ -2927,13 +2934,11 @@ function i_list (opts = {}, parent_protocol) {
     function listen (msg) {
         const { head, refs, type, data, meta } = msg // receive msg
         inbox[head.join('/')] = msg                  // store msg
-        const [from, to] = head
-        // console.log('New message', { from, name: names[from].name, msg, data })
+        const [from] = head
+        console.log('LIST LISTENING', { type, from, name: names[from].name, msg, data })
         // handle
-        console.log({from, name: names[from].name, type, recipients})
-        if (from === 'menuitem') return handle_click_event(msg)
         if (type.match(/expanded|collapsed/)) return handle_expanded_event(data)
-        if (type === 'click') return handle_select_event({from, to, data})
+        if (type === 'click') return handle_select_event(msg)
         // if (type === 'click' && role === 'option') return handle_select_event({from, to, data})
     }
 // -----------------------------------
@@ -2970,6 +2975,7 @@ function i_list (opts = {}, parent_protocol) {
 
         function make_list (body) {
             body.forEach( (item, i) => {
+                console.log('NEW LIST CREATED', { item })
                 const { 
                     list_name, 
                     address = undefined, 
@@ -3028,7 +3034,8 @@ function i_list (opts = {}, parent_protocol) {
                 }
 
                 else if (role === 'menuitem') {
-                    el = button({ name: list_name, body: text, role, icons, cover, disabled, 
+                    const button_name = `button-${count++}`
+                    el = button({ name: button_name, body: text, role, icons, cover, disabled, 
                         theme: {
                             style,
                             props: {
@@ -3044,11 +3051,12 @@ function i_list (opts = {}, parent_protocol) {
                             },
                             grid
                         }
-                    }, make_protocol(list_name))
+                    }, make_protocol(button_name))
                 }
 
                 else {
-                    el = button({ name: list_name, body: text, role, icons, cover, current: is_current, selected, disabled,
+                    const button_name = `button-${count++}`
+                    el = button({ name: button_name, body: text, role, icons, cover, current: is_current, selected, disabled,
                         theme: {
                             style,
                             props: {
@@ -3066,7 +3074,7 @@ function i_list (opts = {}, parent_protocol) {
                                 opacity
                             },
                             grid
-                    } }, make_protocol(list_name))
+                    } }, make_protocol(button_name))
                 }
 
 
@@ -3084,50 +3092,57 @@ function i_list (opts = {}, parent_protocol) {
     }
 
     // ------------------------------------------------------------------
+
+    // function notify_parent (msg) {
+    //     const { head, refs, type, data, meta } = msg // receive msg
+    //     inbox[head.join('/')] = msg                  // store msg
+    //     const [from] = head
+    //     const { make } = recipients['parent']
+    //     notify(make({ to: address, type, data }))
+    // }
     
-    function handle_expanded_event (data) {
-        list.setAttribute('aria-hidden', data)
-        list.setAttribute('aria-expanded', !data)
-    }
-    function handle_mutiple_selected ({from, lists, selected}) {
-        const type = selected ? 'selected' : 'unselected'
-        const { notify, address, make } = names[from]
-        notify(make({ to: address, type, data: { selected } }))
-        lists.forEach( list => {
-            const label = list.firstChild.getAttribute('aria-label') 
-            if (label === from) list.setAttribute('aria-selected', selected)
-        })
-        notify(make({type: 'selected', data: {selected: from}}))
+    function set_attr ({el, aria, prop}) {
+        el.setAttribute(`aria-${aria}`, prop)
+        console.log('LISTSETTING ATTR', {el, aria, prop})
     }
 
-    function handle_single_selected ({from, lists, selected}) {
-        lists.forEach( list => {
-            const label = list.firstChild.getAttribute('aria-label') 
-            const state = label === from
-            const type = state ? 'selected' : 'unselected'
-            const name = state ? from : label
-            const { notify, address, make } = recipients[name]
-            notify(make({ to: address, type, data: { state } }))
-            notify(make({ to: address, type: 'current', data: { state }}))
-            list.setAttribute('aria-current', state)
-            list.setAttribute('aria-selected', state)
-        })
-        const { make } = recipients['parent']
-        notify(make({ to: address, type: 'selected', data: { selected: from } }))
+    function handle_expanded_event (data) {
+        const is_expanded  = data
+        set_attr({el: list, aria: 'hidden', prop: !is_expanded})
+        set_attr({el: list, aria: 'expanded', prop: is_expanded})
     }
-    function handle_select_event ({from, to, data}) {
-        const {selected} = data
-        // !important  <style> as a child into inject shadowDOM, only Safari and Firefox did, Chrome, Brave, Opera and Edge are not count <style> as a childElemenet
-        const lists = shadow.firstChild.tagName !== 'STYLE' ? shadow.childNodes : [...shadow.childNodes].filter( (child, index) => index !== 0)
-        if (mode === 'listbox-single')  handle_single_selected({from, lists, selected})
-        if (mode === 'listbox-multi') handle_mutiple_selected({from, lists, selected})
-        
-    }
-    function handle_click_event(msg) {
+
+    function handle_select_event (msg) {
         const {head, type, data} = msg
         const [from] = head
+        const lists = shadow.firstChild.tagName !== 'STYLE' ? shadow.childNodes : [...shadow.childNodes].filter( (child, index) => index !== 0)
+        const name = names[from].name
+        const { selected: new_state } = data
         const { make } = recipients['parent']
-        notify(make({to: address, type, data}))
+        const new_type = new_state ? 'selected' : 'unselected'
+
+        // !important  <style> as a child into inject shadowDOM, only Safari and Firefox did, Chrome, Brave, Opera and Edge are not count <style> as a childElemenet   
+        lists.forEach( list => {
+            // const role = list.firstChild.getAttribute('role')            
+            // if (role === 'menuitem') { return notify(make({to: address, type: new_type, data})) }
+            const label = list.firstChild.getAttribute('aria-label')
+            const { notify: label_notify, address: label_address, make: label_make } = recipients[label]
+
+            if (mode === 'listbox-single') {
+                // unselect currently selected item if listbox single
+                const aria_selected = list.getAttribute('aria-selected')
+                if (aria_selected === 'true')  {
+                    set_attr({el: list, aria: 'selected', prop: 'false' })
+                    return label_notify(label_make({ to: label_address, type: new_type, data: false }))
+                }
+            }
+           if (label === name) {
+                set_attr({el: list, aria: 'selected', prop: new_state})
+                label_notify(label_make({ to: label_address, type: new_type, data: new_state }))
+
+            }
+        })
+        
     }
     
     // insert CSS style
@@ -3240,12 +3255,12 @@ function i_list (opts = {}, parent_protocol) {
 
     return widget()
 }
-}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdotorg+datdot-ui-dropdown@33f8bcb041c9061a14232822825fa7bcf170aebb/node_modules/datdot-ui-list/src/index.js")
-},{"datdot-ui-button":25,"datdot-ui-link":36,"make-grid":42,"message-maker":44,"support-style-sheet":43}],42:[function(require,module,exports){
+}).call(this)}).call(this,"/node_modules/.pnpm/github.com+datdot-ui+dropdown@bce981203be03bb9d06178b8dc1751bf1f28aeca/node_modules/datdot-ui-list/src/index.js")
+},{"datdot-ui-button":25,"datdot-ui-link":38,"make-grid":44,"message-maker":46,"support-style-sheet":45}],44:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"dup":27}],43:[function(require,module,exports){
+},{"dup":27}],45:[function(require,module,exports){
 arguments[4][29][0].apply(exports,arguments)
-},{"dup":29}],44:[function(require,module,exports){
+},{"dup":29}],46:[function(require,module,exports){
 module.exports = function message_maker (from) {
   let msg_id = 0
   return function make ({to, type, data = null, refs = {} }) {
@@ -3253,7 +3268,7 @@ module.exports = function message_maker (from) {
       return { head: [from, to, msg_id++], refs, type, data, meta: { stack }}
   }
 }
-},{}],45:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 module.exports = attributeToProperty
 
 var transform = {
@@ -3274,7 +3289,7 @@ function attributeToProperty (h) {
   }
 }
 
-},{}],46:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 var attrToProp = require('hyperscript-attribute-to-property')
 
 var VAR = 0, TEXT = 1, OPEN = 2, CLOSE = 3, ATTR = 4
@@ -3571,7 +3586,7 @@ var closeRE = RegExp('^(' + [
 ].join('|') + ')(?:[\.#][a-zA-Z0-9\u007F-\uFFFF_:-]+)*$')
 function selfClosing (tag) { return closeRE.test(tag) }
 
-},{"hyperscript-attribute-to-property":45}],47:[function(require,module,exports){
+},{"hyperscript-attribute-to-property":47}],49:[function(require,module,exports){
 var inserted = {};
 
 module.exports = function (css, options) {
@@ -3595,7 +3610,7 @@ module.exports = function (css, options) {
     }
 };
 
-},{}],48:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 (function (__filename){(function (){
 const bel = require('bel')
 const style_sheet = require('support-style-sheet')
@@ -3629,10 +3644,10 @@ function logs (opts, parent_protocol) {
     notify(recipients['parent'].make({ to: address, type: 'ready', refs: {} }))
     
     function listen (msg) {
-        // console.log('New message', { msg })
         const { head, refs, type, data, meta } = msg // receive msg
         inbox[head.join('/')] = msg                  // store msg
         const [from, to] = head
+        console.log('TERMINAL', { type })
         make_logs(msg)
         //handle
         if (type === 'click') handle_load_more(store_msg)
@@ -4090,7 +4105,7 @@ mark.current {
 }
 `
 }).call(this)}).call(this,"/src/index.js")
-},{"bel":5,"datdot-ui-button":25,"footer":49,"generator-color":50,"make-grid":51,"message-maker":44,"support-style-sheet":52}],49:[function(require,module,exports){
+},{"bel":5,"datdot-ui-button":25,"footer":51,"generator-color":52,"make-grid":53,"message-maker":46,"support-style-sheet":54}],51:[function(require,module,exports){
 (function (__filename){(function (){
 const bel = require('bel')
 const style_sheet = require('support-style-sheet')
@@ -4124,10 +4139,10 @@ function footer (opts = {}, parent_protocol) {
     }
     
     function listen (msg) {
-        // console.log('New message', { msg })
         const { head, refs, type, data, meta } = msg // receive msg
         inbox[head.join('/')] = msg                  // store msg
         const [from, to] = head
+        console.log('FOOTER', { type, msg })
         // handle
         const { notify, address, make } = recipients['parent']
         if (type.match(/ready|click|changed|selected|unselected/)) notify(make({ to: address, type, data }))
@@ -4321,7 +4336,7 @@ function footer (opts = {}, parent_protocol) {
     return widget()
 }
 }).call(this)}).call(this,"/src/node_modules/footer.js")
-},{"./make-grid":51,"bel":5,"datdot-ui-button":25,"datdot-ui-dropdown":30,"message-maker":44,"support-style-sheet":52}],50:[function(require,module,exports){
+},{"./make-grid":53,"bel":5,"datdot-ui-button":25,"datdot-ui-dropdown":30,"message-maker":46,"support-style-sheet":54}],52:[function(require,module,exports){
  module.exports = {int2hsla, str2hashint}
  function int2hsla (i) { return `hsla(${i % 360}, 100%, 70%, 1)` }
  function str2hashint (str) {
@@ -4332,8 +4347,8 @@ function footer (opts = {}, parent_protocol) {
      })
      return hash
  }
-},{}],51:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 arguments[4][27][0].apply(exports,arguments)
-},{"dup":27}],52:[function(require,module,exports){
+},{"dup":27}],54:[function(require,module,exports){
 arguments[4][29][0].apply(exports,arguments)
 },{"dup":29}]},{},[1]);
